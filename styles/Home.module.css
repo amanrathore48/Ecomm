@@ -7,6 +7,14 @@
   min-height: 100vh;
 }
 
+.hideScrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.redbg{
+  background-color: red;
+}
+
 .description {
   display: inherit;
   justify-content: inherit;

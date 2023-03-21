@@ -1,0 +1,26 @@
+export const shipAt = [
+  {
+    id: 1,
+    name: "Aman Rathore",
+    phoneNo: 9266655548,
+    email: "aman@mail.com",
+    houseNo: "House No. 45, A block",
+    street: "Janta Vihar, Mukandpur",
+    city: "New Delhi",
+    state: "Delhi",
+    country: "India",
+    zipCode: 110042,
+  },
+  {
+    id: 2,
+    name: "Aman Kumar Singh",
+    phoneNo: 9266655548,
+    email: "techmon@mail.com",
+    houseNo: "House No. 45, A block",
+    street: "Janta Vihar, Mukandpur",
+    city: "New Delhi",
+    state: "Delhi",
+    country: "India",
+    zipCode: 110042,
+  },
+];
