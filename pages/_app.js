@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Header from "@/components/Header";
 import PhoneMenu from "@/components/PhoneMenu";
 import { SessionProvider } from "next-auth/react";
-import CartProvider from "@/Hooks/useCart";
+import CartProvider from "@/hooks/useCart";
 
 function MyApp({ Component, pageProps }) {
   return (

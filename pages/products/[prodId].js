@@ -7,7 +7,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { allProducts } from "@/data";
 import { useContext } from "react";
-import { CartContext } from "@/Hooks/useCart";
+import { CartContext } from "@/hooks/useCart";
 
 const Product = ({ prod }) => {
   const { cart, addToCart, removeFromCart } = useContext(CartContext);
