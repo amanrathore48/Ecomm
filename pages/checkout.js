@@ -1,4 +1,4 @@
-import { CartContext } from "@/hooks/useCart";
+import { CartContext } from "@/stores/useCart";
 import { shipAt } from "@/data/address";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
