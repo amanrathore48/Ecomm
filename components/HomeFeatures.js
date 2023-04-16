@@ -5,49 +5,57 @@ import { TbDiscount2 } from "react-icons/tb";
 
 const HomeFeatures = () => {
   return (
-    <div>
-      <div class="text-gray-600 body-font">
-        <div class="container px-5 py-24 mx-auto">
-          <div class="flex flex-col text-center w-full mb-20">
-            <h1 class="sm:text-3xl text-2xl font-medium text-black title-font mb-4 font-monster">
-              Best Customer Services
-            </h1>
-            <p class="lg:w-2/3 mx-auto leading-relaxed text-base font-pango">
-              We ensure that our customes have best shopping experience
-            </p>
+    <div className="pt-10">
+      <div className="bg-zinc-900 mx-auto py-10 grid max-w-screen grid-cols-1 text-white pl-6 pr-4 sm:px-20 lg:grid-cols-3 ">
+        <div className="col-span-1 flex flex-col justify-center text-center sm:text-left md:pr-10">
+          <h1 className="mb-6 text-4xl">Save More with Ecomm.</h1>
+          <p className="text-gray-400">
+            We make your shopping experience better!
+          </p>
+        </div>
+        <div className="col-span-2 mt-10 grid grid-cols-1 gap-6 rounded-2xl bg-black p-8 sm:p-10 md:grid-cols-2 lg:mt-0">
+          <div className="relative flex gap-5">
+            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-zinc-500 sm:relative md:bg-transparent md:text-5xl">
+              01
+            </div>
+            <div className="">
+              <h3 className="text-xl font-semibold">Premium Products</h3>
+              <p className="text-gray-400 mt-3">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit..
+              </p>
+            </div>
           </div>
-          <div class="flex flex-wrap justify-around -m-4 text-center">
-            <div class="p-4 md:w-1/4 sm:w-1/2 w-full">
-              <div class="border-2 border-gray-200 px-4 py-6 rounded-lg hover:scale-110 hover:shadow-lg cursor-pointer transition-all">
-                <FaBoxOpen
-                  size={50}
-                  color={"#D11732"}
-                  style={{ margin: "auto" }}
-                />
-                <p class="leading-relaxed">Premium Products</p>
-              </div>
+          <div className="relative flex gap-5">
+            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-gray-500 sm:relative md:bg-transparent md:text-5xl">
+              02
             </div>
-            <div class="p-4 md:w-1/4 sm:w-1/2 w-full">
-              <div class="border-2 border-gray-200 px-4 py-6 rounded-lg hover:scale-110 hover:shadow-lg cursor-pointer transition-all ">
-                <FaShippingFast
-                  size={50}
-                  color={"#D11732"}
-                  style={{ margin: "auto" }}
-                />
-
-                <p class="leading-relaxed">Free Shipping</p>
-              </div>
+            <div className="">
+              <h3 className="text-xl font-semibold">Free Shipping</h3>
+              <p className="text-gray-400 mt-3">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit..
+              </p>
             </div>
-            <div class="p-4 md:w-1/4 sm:w-1/2 w-full">
-              <div class="border-2 border-gray-200 px-4 py-6 rounded-lg hover:scale-110 hover:shadow-lg cursor-pointer transition-all ">
-                <TbDiscount2
-                  size={50}
-                  color={"#D11732"}
-                  style={{ margin: "auto" }}
-                />
-
-                <p class="leading-relaxed">Exciting Offers</p>
-              </div>
+          </div>
+          <div className="relative flex gap-5">
+            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-gray-500 sm:relative md:bg-transparent md:text-5xl">
+              03
+            </div>
+            <div className="">
+              <h3 className="text-xl font-semibold">Exciting Offers</h3>
+              <p className="text-gray-400 mt-3">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit..
+              </p>
+            </div>
+          </div>
+          <div className="relative flex gap-5">
+            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-gray-500 sm:relative md:bg-transparent md:text-5xl">
+              04
+            </div>
+            <div className="">
+              <h3 className="text-xl font-semibold">24/7 Customer Support</h3>
+              <p className="text-gray-400 mt-3">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit..
+              </p>
             </div>
           </div>
         </div>

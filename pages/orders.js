@@ -1,7 +1,10 @@
 import React from "react";
 import Head from "next/head";
+import { getBuyerOrders, getOrders } from "@/helpers/useOrder";
+import { getSession, useSession } from "next-auth/react";
 
-const orders = () => {
+const orders = ({ allOrders }) => {
+  const { data: session } = useSession();
   return (
     <div>
       <Head>
@@ -12,11 +15,16 @@ const orders = () => {
           <div className="lg:w-4/5 mx-auto flex flex-wrap">
             <div className="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
               <h2 className="text-sm title-font text-gray-500 tracking-widest">
-                HackWear
+                Don't Worry We'll deliver your order asap!
               </h2>
-              <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
-                OrderId : #897463
-              </h1>
+
+              {allOrders &&
+                allOrders.map((order, index) => (
+                  <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
+                    OrderId : {order._id}
+                  </h1>
+                ))}
+
               <p className="leading-relaxed mb-4">
                 Your Order Successfully Placed{" "}
               </p>
@@ -31,21 +39,17 @@ const orders = () => {
                   Item Total
                 </a>
               </div>
-              <div className="flex border-t border-gray-200 py-2">
-                <span className="text-gray-500">Wear the Code</span>
-                <span className="ml-auto text-gray-900">Blue</span>
-                <span className="ml-auto text-gray-900">1</span>
-              </div>
-              <div className="flex border-t border-gray-200 py-2">
-                <span className="text-gray-500">Wear the Code</span>
-                <span className="ml-auto text-gray-900">Blue</span>
-                <span className="ml-auto text-gray-900">1</span>
-              </div>
-              <div className="flex border-t border-b mb-6 border-gray-200 py-2">
-                <span className="text-gray-500">Wear the Code</span>
-                <span className="ml-auto text-gray-900">Blue</span>
-                <span className="ml-auto text-gray-900">1</span>
-              </div>
+              {allOrders &&
+                allOrders[0].cartItems?.map((item, index) => (
+                  <div className="flex border-t border-gray-200 py-2">
+                    <span className="text-gray-500">{item.title}</span>
+                    <span className="ml-auto text-gray-900">
+                      {item.quantity}
+                    </span>
+                    <span className="ml-auto text-gray-900">{item.price}</span>
+                  </div>
+                ))}
+
               <div className="flex">
                 <span className="title-font font-medium text-2xl text-gray-900">
                   $58.00
@@ -68,3 +72,22 @@ const orders = () => {
 };
 
 export default orders;
+
+export async function getServerSideProps({ req }) {
+  const session = await getSession({ req });
+  let allOrders;
+  if (session) {
+    allOrders = await getBuyerOrders(session.user.id);
+    console.log("ordersss", allOrders);
+  }
+
+  if (!session) {
+    return {
+      props: {},
+    };
+  }
+
+  return {
+    props: { allOrders },
+  };
+}

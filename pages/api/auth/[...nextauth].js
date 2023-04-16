@@ -14,8 +14,9 @@ export default NextAuth({
     Credentials({
       name: "Credentials",
       async authorize(credentials, req) {
-        dbConnect().catch((error) => {
-          error: "DB not connected";
+        await dbConnect().catch((error) => {
+          console.error(error);
+          throw new Error("DB not connected");
         });
 
         //check user existance
@@ -30,8 +31,30 @@ export default NextAuth({
         if (!checkPass || result.email !== credentials.email) {
           throw new Error("Username or Password doesn't match");
         }
+
         return result;
       },
     }),
   ],
+  session: {
+    jwt: true,
+    maxAge: 10 * 60 * 60,
+  },
+  jwt: {
+    secret: "mytopsecret",
+  },
+  callbacks: {
+    async jwt({ token, user, account, profile, isNewUser }) {
+      if (account) {
+        token.id = user._id;
+      }
+      return token;
+    },
+    async session({ session, user, token }) {
+      if (token) {
+        session.user.id = token.id;
+      }
+      return session;
+    },
+  },
 });

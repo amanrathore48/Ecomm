@@ -5,17 +5,34 @@ import { BiPurchaseTagAlt } from "react-icons/bi";
 import Head from "next/head";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { allProducts } from "@/data";
 import { useContext } from "react";
 import { CartContext } from "@/stores/useCart";
+import { getProductById, getProducts } from "@/helpers/useProd";
 
-const Product = ({ prod }) => {
+export async function getStaticPaths() {
+  const products = await getProducts();
+  const paths = products.map((product) => ({
+    params: { prodId: product._id },
+  }));
+
+  return { paths, fallback: false };
+}
+
+export async function getStaticProps({ params }) {
+  const product = await getProductById(params.prodId);
+
+  return { props: { thisProd: product } };
+}
+
+const Product = ({ thisProd }) => {
   const { cart, addToCart, removeFromCart } = useContext(CartContext);
   const router = useRouter();
   const [pin, setpin] = useState();
   const [service, setservice] = useState();
-  const [currSize, setCurrSize] = useState(prod.sizes[0]);
-  const [currColor, setCurrColor] = useState(prod.colors[0]);
+  const [currSize, setCurrSize] = useState(thisProd.sizes[0]);
+  const [currColor, setCurrColor] = useState(thisProd.colors[0]);
+
+  console.log("dd", thisProd);
 
   const checkservice = async (pin) => {
     let pins = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
@@ -30,12 +47,12 @@ const Product = ({ prod }) => {
   };
   const handleAddToCart = async () => {
     const product = {
-      id: prod._id,
-      name: prod.name,
-      img: prod.img,
-      brand: prod.brand,
-      discount: prod.discount,
-      price: prod.price,
+      id: thisProd._id,
+      title: thisProd.title,
+      img: thisProd.img,
+      brand: thisProd.brand,
+      discount: thisProd.discount,
+      price: thisProd.price,
       quantity: 1,
       size: currSize,
       color: currColor,
@@ -56,7 +73,7 @@ const Product = ({ prod }) => {
     <>
       <ToastContainer />
       <Head>
-        <title>Ecomm. | {prod.name}</title>
+        <title>Ecomm. | {thisProd.title}</title>
       </Head>
       <div>
         <section className="text-gray-600 body-font overflow-hidden">
@@ -65,14 +82,14 @@ const Product = ({ prod }) => {
               <img
                 alt="ecommerce"
                 className="lg:w-1/2 w-full lg:h-auto px-24 object-contain object-center rounded"
-                src={prod.img}
+                src={thisProd.img}
               />
               <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
                 <h2 className="text-sm title-font text-gray-500 tracking-widest">
-                  {prod.brand}
+                  {thisProd.brand}
                 </h2>
                 <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
-                  {prod.name}
+                  {thisProd.title}
                 </h1>
                 <div className="flex mb-4">
                   <span className="flex items-center">
@@ -172,11 +189,11 @@ const Product = ({ prod }) => {
                     </a>
                   </span>
                 </div>
-                <p className="leading-relaxed">{prod.des}</p>
+                <p className="leading-relaxed">{thisProd.des}</p>
                 <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                   <div className="flex gap-1">
                     <span className="mr-3">Color</span>
-                    {prod.colors.map((color, index) => (
+                    {thisProd.colors.map((color, index) => (
                       <button
                         key={index}
                         onClick={() => {
@@ -197,7 +214,7 @@ const Product = ({ prod }) => {
                           setCurrSize(selectedSize);
                         }}
                       >
-                        {prod.sizes.map((size, index) => (
+                        {thisProd.sizes.map((size, index) => (
                           <option key={index}>{size}</option>
                         ))}
                       </select>
@@ -219,7 +236,7 @@ const Product = ({ prod }) => {
                 </div>
                 <div className="flex">
                   <span className="title-font font-medium text-2xl text-gray-900">
-                    &#8377; {prod.price}
+                    &#8377; {thisProd.price}
                   </span>
                   <button
                     onClick={() => {
@@ -289,12 +306,3 @@ const Product = ({ prod }) => {
 };
 
 export default Product;
-
-export async function getServerSideProps({ params }) {
-  const { prodId } = params;
-  console.log(prodId);
-  const prod = allProducts.find((obj) => obj._id === prodId);
-  return {
-    props: { prod },
-  };
-}

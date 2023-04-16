@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import React, { useContext, useState, useEffect } from "react";
 import { IoMdAddCircle } from "react-icons/io";
+import { createOrder } from "@/helpers/useOrder";
 
 const checkout = () => {
   const router = useRouter();
@@ -11,6 +12,8 @@ const checkout = () => {
   const { cart, totalAmount } = useContext(CartContext);
 
   const [shipAdd, setShipAdd] = useState();
+
+  const [order, setOrder] = useState();
 
   const { status } = useSession({
     required: true,
@@ -28,10 +31,18 @@ const checkout = () => {
   };
   const handleOrder = async () => {
     if (shipAdd) {
-      console.log("order", { cart, shipAdd });
+      console.log("order", cart, session.user.id);
+
+      const data = {
+        buyerId: session.user.id,
+        cartItems: cart,
+        shippingAddress: shipAdd,
+        orderTotal: totalAmount,
+      };
+      await createOrder(data);
     }
 
-    // router.replace("/orders");
+    router.replace("/myorders");
   };
 
   return (
@@ -98,11 +109,13 @@ const checkout = () => {
                     alt=""
                   />
                   <div className="flex w-full flex-col px-4 py-4">
-                    <span className="font-semibold">{prod.name}</span>
+                    <span className="font-semibold text-zinc-800">
+                      {prod.title}
+                    </span>
                     <span className="float-right text-gray-400">
                       {prod.brand}
                     </span>
-                    <p className="text-lg font-bold">${prod.price}</p>
+                    <p className="text-lg font-bold">&#8377;{prod.price}</p>
                   </div>
                 </div>
               ))}
@@ -192,7 +205,7 @@ const checkout = () => {
               <div className="mt-6 flex items-center justify-between">
                 <p className="text-sm font-medium text-gray-900">Total</p>
                 <p className="text-2xl font-semibold text-gray-900">
-                  ${totalAmount}
+                  &#8377;{totalAmount}
                 </p>
               </div>
             </div>

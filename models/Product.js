@@ -3,9 +3,22 @@ const mongoose = require("mongoose");
 const ProductSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    slug: { type: String, required: true, unique: true },
     desc: { type: String, required: true },
     img: { type: String, required: true },
+    brand: { type: String, required: true },
+    stock: { type: Number, required: true },
+    price: { type: Number, required: true },
+    discount: { type: Number },
+    sizes: [
+      {
+        type: String,
+      },
+    ],
+    colors: [
+      {
+        type: String,
+      },
+    ],
     categories: [
       {
         type: String,
@@ -16,13 +29,6 @@ const ProductSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    brand: {
-      type: String,
-    },
-    size: { type: String },
-    color: { type: String },
-    price: { type: Number, required: true },
-    available: { type: Number, required: true },
   },
   { timestamps: true }
 );

@@ -11,8 +11,11 @@ import { getSession } from "next-auth/react";
 import FeaturedCard from "@/components/Cards/FeaturedCard";
 import { f1, f2 } from "../data";
 import TodaysDeals from "@/components/Cards/TodaysDeals";
+import { useRouter } from "next/router";
+import BlogCard from "@/components/Cards/BlogCard";
 
 export default function Home({ session }) {
+  const router = useRouter();
   const [phrase, setPhrase] = useState("");
 
   const heroImages = [1, 2, 3, 4];
@@ -61,7 +64,10 @@ export default function Home({ session }) {
                     <p className="font-pango text-lg  ">
                       Save more with coupons & upto 30% off!
                     </p>
-                    <button className=" w-max bg-slate-200 rounded-md font-pango text-4xl font-semibold mt-2 text-zinc-800 px-2">
+                    <button
+                      onClick={() => router.push("/products")}
+                      className=" w-max bg-slate-200 rounded-md font-pango text-4xl font-semibold mt-2 text-zinc-800 px-2"
+                    >
                       Shop Now
                     </button>
                   </div>
@@ -82,7 +88,7 @@ export default function Home({ session }) {
           <FeaturedCard data={data} />
         ))}
       </div>
-
+      <BlogCard />
       {/* <TopCat products={products} /> */}
       <HomeFeatures />
     </>

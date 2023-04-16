@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const SingleCard = ({ data }) => {
@@ -7,9 +8,12 @@ const SingleCard = ({ data }) => {
       <div className="w-full flex flex-col gap-2">
         <h1 className="font-pango text-2xl font-semibold">{data.title}</h1>
         <img className=" object-contain" alt="" src={data.img}></img>
-        <span className="absolute bottom-1 text-left text-sm mt-1 text-blue-700 font-medium">
+        <Link
+          href={"/products"}
+          className="absolute bottom-1 text-left text-sm mt-1 text-blue-700 font-medium"
+        >
           Shop Now
-        </span>
+        </Link>
       </div>
     </div>
   );
@@ -26,9 +30,12 @@ const QuadCard = ({ data }) => {
           </div>
         ))}
       </div>
-      <span className="absolute bottom-1 text-left text-sm mt-1 text-blue-700 font-medium">
+      <Link
+        href={"/products"}
+        className="absolute bottom-1 text-left text-sm mt-1 text-blue-700 font-medium"
+      >
         Explore
-      </span>
+      </Link>
     </div>
   );
 };

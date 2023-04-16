@@ -1,6 +1,7 @@
 import { CartContext } from "@/stores/useCart";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { useContext, useState } from "react";
 import {
   AiFillYoutube,
@@ -20,6 +21,16 @@ const Header = () => {
   const { status } = useSession();
   const { totalAmount, totalQuantity } = useContext(CartContext);
   const [isUserMenu, setIsUserMenu] = useState(false);
+  const router = useRouter();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (e.target.value.length >= 3) {
+      router.push(`/products?search=${e.target.value}`);
+    } else {
+      router.push("/products");
+    }
+  };
   return (
     <header>
       <div className="px-4 py-2 block border-b border-gray-200 border-1">
@@ -69,6 +80,7 @@ const Header = () => {
               name="search"
               className="w-full px-4 py-2 border-2 border-gray-100 rounded-md outline-none pl-10 max-sm:pl-0 font-pango"
               placeholder="Search.. "
+              onChange={(e) => handleSearch(e)}
             />
             <button class="absolute top-0 right-0 h-full w-10 text-gray-600">
               <BsSearch class="h-6 w-6" />
@@ -133,281 +145,6 @@ const Header = () => {
           </div>
         </div>
       </div>
-
-      {/* <nav className="mobile-navigation-menu  has-scrollbar" data-mobile-menu>
-        <div className="menu-top">
-          <h2 className="menu-title">Menu</h2>
-
-          <button className="menu-close-btn" data-mobile-menu-close-btn>
-            <ion-icon name="close-outline"></ion-icon>
-          </button>
-        </div>
-
-        <ul className="mobile-menu-category-list">
-          <li className="menu-category">
-            <Link href="#" className="menu-title">
-              Home
-            </Link>
-          </li>
-
-          <li className="menu-category">
-            <button className="accordion-menu" data-accordion-btn>
-              <p className="menu-title">Men's</p>
-
-              <div>
-                <ion-icon name="add-outline" className="add-icon"></ion-icon>
-                <ion-icon
-                  name="remove-outline"
-                  className="remove-icon"
-                ></ion-icon>
-              </div>
-            </button>
-
-            <ul className="submenu-category-list" data-accordion>
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Shirt
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Shorts & Jeans
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Safety Shoes
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Wallet
-                </Link>
-              </li>
-            </ul>
-          </li>
-
-          <li className="menu-category">
-            <button className="accordion-menu" data-accordion-btn>
-              <p className="menu-title">Women's</p>
-
-              <div>
-                <ion-icon name="add-outline" className="add-icon"></ion-icon>
-                <ion-icon
-                  name="remove-outline"
-                  className="remove-icon"
-                ></ion-icon>
-              </div>
-            </button>
-
-            <ul className="submenu-category-list" data-accordion>
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Dress & Frock
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Earrings
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Necklace
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Makeup Kit
-                </Link>
-              </li>
-            </ul>
-          </li>
-
-          <li className="menu-category">
-            <button className="accordion-menu" data-accordion-btn>
-              <p className="menu-title">Jewelry</p>
-
-              <div>
-                <ion-icon name="add-outline" className="add-icon"></ion-icon>
-                <ion-icon
-                  name="remove-outline"
-                  className="remove-icon"
-                ></ion-icon>
-              </div>
-            </button>
-
-            <ul className="submenu-category-list" data-accordion>
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Earrings
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Couple Rings
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Necklace
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Bracelets
-                </Link>
-              </li>
-            </ul>
-          </li>
-
-          <li className="menu-category">
-            <button className="accordion-menu" data-accordion-btn>
-              <p className="menu-title">Perfume</p>
-
-              <div>
-                <ion-icon name="add-outline" className="add-icon"></ion-icon>
-                <ion-icon
-                  name="remove-outline"
-                  className="remove-icon"
-                ></ion-icon>
-              </div>
-            </button>
-
-            <ul className="submenu-category-list" data-accordion>
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Clothes Perfume
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Deodorant
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Flower Fragrance
-                </Link>
-              </li>
-
-              <li className="submenu-category">
-                <Link href="#" className="submenu-title">
-                  Air Freshener
-                </Link>
-              </li>
-            </ul>
-          </li>
-
-          <li className="menu-category">
-            <Link href="#" className="menu-title">
-              Blog
-            </Link>
-          </li>
-
-          <li className="menu-category">
-            <Link href="#" className="menu-title">
-              Hot Offers
-            </Link>
-          </li>
-        </ul>
-
-        <div className="menu-bottom">
-          <ul className="menu-category-list">
-            <li className="menu-category">
-              <button className="accordion-menu" data-accordion-btn>
-                <p className="menu-title">Language</p>
-
-                <ion-icon
-                  name="caret-back-outline"
-                  className="caret-back"
-                ></ion-icon>
-              </button>
-
-              <ul className="submenu-category-list" data-accordion>
-                <li className="submenu-category">
-                  <Link href="#" className="submenu-title">
-                    English
-                  </Link>
-                </li>
-
-                <li className="submenu-category">
-                  <Link href="#" className="submenu-title">
-                    Espa&ntilde;ol
-                  </Link>
-                </li>
-
-                <li className="submenu-category">
-                  <Link href="#" className="submenu-title">
-                    Fren&ccedil;h
-                  </Link>
-                </li>
-              </ul>
-            </li>
-
-            <li className="menu-category">
-              <button className="accordion-menu" data-accordion-btn>
-                <p className="menu-title">Currency</p>
-                <ion-icon
-                  name="caret-back-outline"
-                  className="caret-back"
-                ></ion-icon>
-              </button>
-
-              <ul className="submenu-category-list" data-accordion>
-                <li className="submenu-category">
-                  <Link href="#" className="submenu-title">
-                    USD &dollar;
-                  </Link>
-                </li>
-
-                <li className="submenu-category">
-                  <Link href="#" className="submenu-title">
-                    EUR &euro;
-                  </Link>
-                </li>
-              </ul>
-            </li>
-          </ul>
-
-          <ul className="menu-social-container">
-            <li>
-              <Link href="#" className="social-link">
-                <ion-icon name="logo-facebook"></ion-icon>
-              </Link>
-            </li>
-
-            <li>
-              <Link href="#" className="social-link">
-                <ion-icon name="logo-twitter"></ion-icon>
-              </Link>
-            </li>
-
-            <li>
-              <Link href="#" className="social-link">
-                <ion-icon name="logo-instagram"></ion-icon>
-              </Link>
-            </li>
-
-            <li>
-              <Link href="#" className="social-link">
-                <ion-icon name="logo-linkedin"></ion-icon>
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </nav> */}
     </header>
   );
 };

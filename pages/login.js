@@ -110,7 +110,7 @@ export default function Login() {
                 LogIn
               </button>
             </div>
-            <div className="input-btn">
+            {/* <div className="input-btn">
               <button
                 onClick={handleGoogle}
                 type="button"
@@ -124,7 +124,7 @@ export default function Login() {
                   height={20}
                 ></Image>
               </button>
-            </div>
+            </div> */}
           </form>
           <p className="text-center text-gray-400">
             don't have an account yet?{" "}
