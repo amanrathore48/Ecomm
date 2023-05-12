@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext } from "react";
 
-const cart = () => {
+const Cart = () => {
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -327,4 +327,4 @@ const cart = () => {
   );
 };
 
-export default cart;
+export default Cart;

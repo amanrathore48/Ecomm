@@ -6,7 +6,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { IoMdAddCircle } from "react-icons/io";
 import { createOrder } from "@/helpers/useOrder";
 
-const checkout = () => {
+const Checkout = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const { cart, totalAmount } = useContext(CartContext);
@@ -222,4 +222,4 @@ const checkout = () => {
   );
 };
 
-export default checkout;
+export default Checkout;

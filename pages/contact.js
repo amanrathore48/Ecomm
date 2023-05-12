@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 
-const contact = () => {
+const Contact = () => {
   return (
     <div>
       <Head>
@@ -101,4 +101,4 @@ const contact = () => {
   );
 };
 
-export default contact;
+export default Contact;

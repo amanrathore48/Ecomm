@@ -1,7 +1,7 @@
 import React from "react";
 import Head from "next/head";
 
-const terms = () => {
+const Terms = () => {
   return (
     <div>
       <Head>
@@ -312,4 +312,4 @@ const terms = () => {
   );
 };
 
-export default terms;
+export default Terms;
