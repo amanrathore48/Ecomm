@@ -12,6 +12,10 @@ import { getProductById, getProducts } from "@/helpers/useProd";
 export async function getStaticPaths() {
   const products = await getProducts();
 
+  if (products.length === 0) {
+    return { paths: [], fallback: false };
+  }
+
   const paths = products.map((product) => ({
     params: { prodId: product._id.toString() },
   }));

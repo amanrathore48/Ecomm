@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const server = "http://localhost:3000/api";
+const server = process.env.SERVER;
 
 export const getUser = async () => {
   try {
