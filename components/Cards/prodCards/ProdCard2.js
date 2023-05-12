@@ -33,9 +33,10 @@ const ProdCard2 = ({ product }) => {
               <span class="text-sm text-slate-900 line-through">$699</span>
             </p>
             <div class="flex items-center">
-              {stars.map(() => {
+              {stars.map((index) => {
                 return (
                   <svg
+                    key={index}
                     aria-hidden="true"
                     class="h-5 w-5 text-yellow-300"
                     fill="currentColor"

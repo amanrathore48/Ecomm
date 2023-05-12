@@ -55,7 +55,7 @@ const orders = ({ allOrders }) => {
                     {allOrders &&
                       allOrders.map((items, index) =>
                         items?.cartItems.map((item, index) => (
-                          <Rows index={index} item={item} />
+                          <Rows key={index} index={index} item={item} />
                         ))
                       )}
                   </tbody>

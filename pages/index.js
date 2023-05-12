@@ -79,13 +79,13 @@ export default function Home({ session }) {
       </div>
       <div className="w-full px-4 lg:px-20 mt-4 lg:mt-2 flex gap-1 justify-evenly flex-wrap">
         {f1.map((data, index) => (
-          <FeaturedCard data={data} />
+          <FeaturedCard key={index} data={data} />
         ))}
       </div>
       <TodaysDeals />
       <div className="w-full px-4 lg:px-20 mt-4 lg:mt-2 flex gap-1 justify-evenly flex-wrap">
         {f2.map((data, index) => (
-          <FeaturedCard data={data} />
+          <FeaturedCard key={index} data={data} />
         ))}
       </div>
       <BlogCard />

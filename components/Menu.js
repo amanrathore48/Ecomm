@@ -53,7 +53,7 @@ const Menu = () => {
 
             <div className="absolute mx-auto px-5 py-5 hidden group-hover:flex justify-between  bg-white z-50 gap-4 rounded-md transition duration-200 ease-in ">
               {menuLinks.map((data, index) => (
-                <div className=" p-2">
+                <div key={index} className=" p-2">
                   <ul className="w-64 ">
                     <li className="">
                       <b>
@@ -67,7 +67,7 @@ const Menu = () => {
                     </li>
 
                     {data.links.map((links, index) => (
-                      <div>
+                      <div key={index}>
                         <li className="">
                           <Link
                             className="text-zinc-700 font-pango flex p-2"
@@ -104,7 +104,10 @@ const Menu = () => {
 
             <ul className="hidden group-hover:flex flex-col bg-white px-4 py-4 gap-2 rounded-md absolute z-50">
               {men.map((name, index) => (
-                <li className="text-gray-700 font-pango py-1 px-4 text-md capitalize">
+                <li
+                  key={index}
+                  className="text-gray-700 font-pango py-1 px-4 text-md capitalize"
+                >
                   <Link href="#">{name}</Link>
                 </li>
               ))}
@@ -122,7 +125,10 @@ const Menu = () => {
 
             <ul className="hidden group-hover:flex flex-col bg-white px-4 py-4 gap-2 rounded-md absolute z-50">
               {women.map((name, index) => (
-                <li className="text-gray-700 font-pango py-1 px-4 text-md capitalize">
+                <li
+                  key={index}
+                  className="text-gray-700 font-pango py-1 px-4 text-md capitalize"
+                >
                   <Link href="#">{name}</Link>
                 </li>
               ))}
@@ -140,7 +146,10 @@ const Menu = () => {
 
             <ul className="hidden group-hover:flex flex-col bg-white px-4 py-4 gap-2 rounded-md absolute z-50">
               {jewellery.map((name, index) => (
-                <li className="text-gray-700 font-pango py-1 px-4 text-md capitalize">
+                <li
+                  key={index}
+                  className="text-gray-700 font-pango py-1 px-4 text-md capitalize"
+                >
                   <Link href="#">{name}</Link>
                 </li>
               ))}

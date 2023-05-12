@@ -39,7 +39,10 @@ const Cart = () => {
                 <div className="flow-root">
                   <ul className="-my-8">
                     {cart.map((prod, index) => (
-                      <li className="flex flex-col space-y-3 py-6 text-left sm:flex-row sm:space-x-5 sm:space-y-0">
+                      <li
+                        key={index}
+                        className="flex flex-col space-y-3 py-6 text-left sm:flex-row sm:space-x-5 sm:space-y-0"
+                      >
                         <div className="shrink-0">
                           <img
                             className="h-24 w-24 max-w-full rounded-lg object-cover"

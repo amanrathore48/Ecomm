@@ -62,9 +62,10 @@ const ProdCard3 = ({ product }) => {
           <span className="mr-2 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
             {stars.length}.0
           </span>
-          {stars.map(() => {
+          {stars.map((index) => {
             return (
               <svg
+                key={index}
                 aria-hidden="true"
                 className="h-5 w-5 text-yellow-300"
                 fill="currentColor"

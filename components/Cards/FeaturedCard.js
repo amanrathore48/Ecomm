@@ -24,7 +24,7 @@ const QuadCard = ({ data }) => {
       <h1 className="font-pango text-2xl font-semibold">{data.title}</h1>
       <div className="flex flex-wrap  justify-evenly mt-2">
         {data.blocks.map((block, index) => (
-          <div className="w-1/2">
+          <div key={index} className="w-1/2">
             <img className="w-full p-1" src={block.img} alt="" />
             <p className="text-left text-xs font-pango p-1 ">{block.des}</p>
           </div>

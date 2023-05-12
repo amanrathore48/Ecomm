@@ -24,7 +24,10 @@ const Filter = () => {
   return (
     <div className="mt-4">
       {items.map((item, index, array) => (
-        <div className="rounded-t-lg border border-neutral-200 bg-white dark:border-white dark:bg-white">
+        <div
+          key={index}
+          className="rounded-t-lg border border-neutral-200 bg-white dark:border-white dark:bg-white"
+        >
           <h2 className="mb-0" id="headingOne">
             <button
               className={`
@@ -80,6 +83,7 @@ const Filter = () => {
                 {item.filters.map((filter, index, array) => (
                   <>
                     <li
+                      key={index}
                       className={` ${
                         index === array.length - 1 ? "" : "border-b"
                       } w-full  border-gray-200 `}

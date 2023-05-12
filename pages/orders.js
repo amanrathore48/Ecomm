@@ -20,7 +20,10 @@ export default Orders = ({ allOrders }) => {
 
               {allOrders &&
                 allOrders.map((order, index) => (
-                  <h1 className="text-gray-900 text-3xl title-font font-medium mb-4">
+                  <h1
+                    key={index}
+                    className="text-gray-900 text-3xl title-font font-medium mb-4"
+                  >
                     OrderId : {order._id}
                   </h1>
                 ))}
@@ -41,7 +44,10 @@ export default Orders = ({ allOrders }) => {
               </div>
               {allOrders &&
                 allOrders[0].cartItems?.map((item, index) => (
-                  <div className="flex border-t border-gray-200 py-2">
+                  <div
+                    key={index}
+                    className="flex border-t border-gray-200 py-2"
+                  >
                     <span className="text-gray-500">{item.title}</span>
                     <span className="ml-auto text-gray-900">
                       {item.quantity}
