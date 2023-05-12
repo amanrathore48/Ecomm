@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const server = "http://localhost:3000/api";
+const server = `http://${window.location.hostname}/api`;
 
 export const addProduct = async (data) => {
   try {
