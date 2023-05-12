@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const server = `http://${window.location.hostname}/api`;
+const server = process.env.SERVER;
 
 export const addProduct = async (data) => {
   try {
