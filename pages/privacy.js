@@ -8,7 +8,8 @@ const Privacy = () => {
       <Head>
         <title>Ecomm. | Privacy Policy</title>
       </Head>
-      <div class="py-24 mx-auto">
+      <p>privacy</p>
+      {/* <div class="py-24 mx-auto">
         <h2 class="text-gray-600 font-bold title-font tracking-wider text-4xl text-center mb-4">
           Privacy Policy
         </h2>
@@ -108,7 +109,7 @@ const Privacy = () => {
             </li>
             <li>
               <p>
-                <strong>Website</strong> refers to Ecomm, accessible from{" "}
+                <strong>Website</strong> refers to Ecomm, accessible from
                 <Link href={"/"}>Here</Link>
               </p>
             </li>
@@ -217,7 +218,7 @@ const Privacy = () => {
               settings as those used for Browser Cookies. For more information
               on how You can delete Flash Cookies, please read "Where can I
               change the settings for disabling, or deleting local shared
-              objects?" available at{" "}
+              objects? available at
               <a
                 href="https://helpx.adobe.com/flash-player/kb/disable-local-shared-objects-flash.html#main_Where_can_I_change_the_settings_for_disabling__or_deleting_local_shared_objects_"
                 rel="external nofollow noopener noreferrer"
@@ -562,7 +563,7 @@ const Privacy = () => {
             </li>
           </ul>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

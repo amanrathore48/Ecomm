@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 
 const Features = () => {
@@ -12,7 +13,7 @@ const Features = () => {
                 Perfect Clothing For Programmers
               </h1>
               <p className="text-base leading-relaxed xl:w-2/4 lg:w-3/4 mx-auto">
-                Programming isn't about what you know; it's about what you can
+                Programming isnt about what you know; its about what you can
                 figure out.
               </p>
             </div>

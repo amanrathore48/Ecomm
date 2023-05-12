@@ -7,7 +7,7 @@ const TrackOrder = () => {
       <div className="relative my-10 flex h-full flex-col overflow-hidden rounded-2xl bg-white text-gray-600 shadow-lg ring-1 ring-gray-200">
         <div className="border-b p-6">
           <h6 className="mb-2 text-base font-semibold">
-            Don't worry we will deliver your product asap!
+            Dont worry we will deliver your product asap!
           </h6>
           <p className="mb-4 text-sm font-light">
             <i

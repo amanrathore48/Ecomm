@@ -127,7 +127,7 @@ export default function Login() {
             </div> */}
           </form>
           <p className="text-center text-gray-400">
-            don't have an account yet?{" "}
+            dont have an account yet?{" "}
             <Link
               className="no-underline border-b border-blue text-blue-700"
               href={"/signup"}

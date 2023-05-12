@@ -6,7 +6,7 @@ const TodaysDeals = () => {
   return (
     <div className="py-4 px-4 lg:px-20">
       <div className="bg-white shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-4">
-        <h1 className="font-semibold font-pango text-2xl">Today's Deals</h1>
+        <h1 className="font-semibold font-pango text-2xl">Todays Deals</h1>
         <Swiper
           // pagination={{ clickable: true }}
           scrollbar={{ draggable: true }}

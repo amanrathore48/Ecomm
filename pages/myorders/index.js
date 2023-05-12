@@ -5,7 +5,6 @@ import { getSession, useSession } from "next-auth/react";
 import Rows from "@/components/Rows";
 
 const orders = ({ allOrders }) => {
-  const { data: session } = useSession();
   return (
     <div>
       <Head>

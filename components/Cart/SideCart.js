@@ -1,4 +1,12 @@
+import Link from "next/link";
 import React from "react";
+import {
+  AiFillCloseSquare,
+  AiFillDelete,
+  AiFillMinusSquare,
+  AiFillPlusSquare,
+} from "react-icons/ai";
+import { BsCartCheckFill } from "react-icons/bs";
 
 const SideCart = () => {
   return (
@@ -81,7 +89,7 @@ const SideCart = () => {
                       type="button"
                       className="flex items-center px-2 py-1 space-x-1 hover:bg-gray-200"
                     >
-                      <VscDebugBreakpointLog size={20} />
+                      <AiFillDelete size={20} />
                       <span>Remove Item</span>
                     </button>
                   </div>

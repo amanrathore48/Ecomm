@@ -7,7 +7,8 @@ const Terms = () => {
       <Head>
         <title>Ecomm. | Terms & Condition</title>
       </Head>
-      <div class="text-black-600 mx-2 md:mx-10 my-2 py-24">
+      <p>Terms</p>
+      {/* <div class="text-black-600 mx-2 md:mx-10 my-2 py-24">
         <h2 class="px-10 py-2 text-gray-600 font-bold title-font tracking-wider text-4xl text-center mb-4">
           Terms &amp; Conditions
         </h2>
@@ -307,7 +308,7 @@ const Terms = () => {
           are provided free of charge, we will not be liable for any loss or
           damage of any nature.
         </p>
-      </div>
+      </div> */}
     </div>
   );
 };

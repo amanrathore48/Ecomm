@@ -3,7 +3,7 @@ import Head from "next/head";
 import { getBuyerOrders, getOrders } from "@/helpers/useOrder";
 import { getSession, useSession } from "next-auth/react";
 
-export default Orders = ({ allOrders }) => {
+const Orders = ({ allOrders }) => {
   const { data: session } = useSession();
   return (
     <div>
@@ -15,7 +15,7 @@ export default Orders = ({ allOrders }) => {
           <div className="lg:w-4/5 mx-auto flex flex-wrap">
             <div className="lg:w-1/2 w-full lg:pr-10 lg:py-6 mb-6 lg:mb-0">
               <h2 className="text-sm title-font text-gray-500 tracking-widest">
-                Don't Worry We'll deliver your order asap!
+                Dont Worry Well deliver your order asap!
               </h2>
 
               {allOrders &&
@@ -76,6 +76,8 @@ export default Orders = ({ allOrders }) => {
     </div>
   );
 };
+
+export default Orders;
 
 export async function getServerSideProps({ req }) {
   const session = await getSession({ req });

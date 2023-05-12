@@ -98,7 +98,7 @@ const Menu = () => {
               href="#"
               className="group font-ubuntu font-semibold uppercase text-gray-700"
             >
-              Men's
+              Mens
               <span class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
             </Link>
 
@@ -119,7 +119,7 @@ const Menu = () => {
               href="#"
               className="font-ubuntu font-semibold uppercase text-gray-700"
             >
-              Women's
+              Womens
               <span class="group block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
             </Link>
 
