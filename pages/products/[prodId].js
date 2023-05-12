@@ -11,9 +11,11 @@ import { getProductById, getProducts } from "@/helpers/useProd";
 
 export async function getStaticPaths() {
   const products = await getProducts();
+
   const paths = products.map((product) => ({
     params: { prodId: product._id.toString() },
   }));
+
   return { paths, fallback: false };
 }
 
@@ -192,7 +194,7 @@ const Product = ({ thisProd }) => {
                 <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                   <div className="flex gap-1">
                     <span className="mr-3">Color</span>
-                    {thisProd.colors?.map((color, index) => (
+                    {thisProd.colors.map((color, index) => (
                       <button
                         key={index}
                         onClick={() => {
@@ -213,7 +215,7 @@ const Product = ({ thisProd }) => {
                           setCurrSize(selectedSize);
                         }}
                       >
-                        {thisProd.sizes?.map((size, index) => (
+                        {thisProd.sizes.map((size, index) => (
                           <option key={index}>{size}</option>
                         ))}
                       </select>
