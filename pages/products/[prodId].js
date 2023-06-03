@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 
   if (products) {
     const paths = products.map((product) => ({
-      params: { prodId: product._id.toString() },
+      params: { prodId: product?._id.toString() },
     }));
 
     return { paths, fallback: false };
@@ -24,7 +24,11 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  const product = await getProductById(params.prodId);
+  let product;
+  if (params.prodId) {
+    product = await getProductById(params.prodId);
+  }
+
   if (product) {
     return { props: { thisProd: product } };
   } else {
@@ -40,7 +44,7 @@ const Product = ({ thisProd }) => {
   const [currSize, setCurrSize] = useState(thisProd?.sizes[0]);
   const [currColor, setCurrColor] = useState(thisProd?.colors[0]);
 
-  console.log("dd", thisProd);
+  // console.log("dd", thisProd);
 
   const checkservice = async (pin) => {
     let pins = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
