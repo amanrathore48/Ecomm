@@ -40,6 +40,8 @@ const Product = ({ thisProd }) => {
   const [currSize, setCurrSize] = useState();
   const [currColor, setCurrColor] = useState();
 
+  console.log("thisProd", thisProd);
+
   const checkservice = async (pin) => {
     let pins = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
     let data = await pins.json();
