@@ -21,6 +21,7 @@ export const getProducts = async () => {
       withCredentials: true,
     });
     console.log("res", res.data);
+    console.log("server auth", process.env.SERVER);
     return res.data.data;
   } catch (error) {
     console.log(error?.response?.data);

@@ -30,7 +30,6 @@ export default function Home({ session }) {
   }
 
   console.log("session Home", session);
-  console.log("server", process.env.SERVER);
 
   return (
     <>
