@@ -14,7 +14,7 @@ export async function getStaticPaths() {
 
   if (products) {
     const paths = products.map((product) => ({
-      params: { prodId: product?._id.toString() },
+      params: { prodId: product._id.toString() },
     }));
 
     return { paths, fallback: false };
@@ -24,11 +24,7 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }) {
-  let product;
-  if (params.prodId) {
-    product = await getProductById(params.prodId);
-  }
-
+  const product = await getProductById(params.prodId);
   if (product) {
     return { props: { thisProd: product } };
   } else {
@@ -44,7 +40,7 @@ const Product = ({ thisProd }) => {
   const [currSize, setCurrSize] = useState(thisProd?.sizes[0]);
   const [currColor, setCurrColor] = useState(thisProd?.colors[0]);
 
-  // console.log("dd", thisProd);
+  console.log("dd", thisProd);
 
   const checkservice = async (pin) => {
     let pins = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
@@ -87,7 +83,7 @@ const Product = ({ thisProd }) => {
     <>
       <ToastContainer />
       <Head>
-        <title>Ecomm. | prod</title>
+        <title>Ecomm. | {thisProd?.title}</title>
       </Head>
       <div>
         {thisProd && (
@@ -97,14 +93,14 @@ const Product = ({ thisProd }) => {
                 <img
                   alt="ecommerce"
                   className="lg:w-1/2 w-full lg:h-auto px-24 object-contain object-center rounded"
-                  src={thisProd?.img}
+                  src={thisProd.img}
                 />
                 <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
                   <h2 className="text-sm title-font text-gray-500 tracking-widest">
-                    {thisProd?.brand}
+                    {thisProd.brand}
                   </h2>
                   <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">
-                    {thisProd?.title}
+                    {thisProd.title}
                   </h1>
                   <div className="flex mb-4">
                     <span className="flex items-center">
@@ -204,11 +200,11 @@ const Product = ({ thisProd }) => {
                       </a>
                     </span>
                   </div>
-                  <p className="leading-relaxed">{thisProd?.des}</p>
+                  <p className="leading-relaxed">{thisProd.des}</p>
                   <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                     <div className="flex gap-1">
                       <span className="mr-3">Color</span>
-                      {thisProd?.colors.map((color, index) => (
+                      {thisProd.colors.map((color, index) => (
                         <button
                           key={index}
                           onClick={() => {
@@ -229,7 +225,7 @@ const Product = ({ thisProd }) => {
                             setCurrSize(selectedSize);
                           }}
                         >
-                          {thisProd?.sizes.map((size, index) => (
+                          {thisProd.sizes.map((size, index) => (
                             <option key={index}>{size}</option>
                           ))}
                         </select>
@@ -251,7 +247,7 @@ const Product = ({ thisProd }) => {
                   </div>
                   <div className="flex">
                     <span className="title-font font-medium text-2xl text-gray-900">
-                      &#8377; {thisProd?.price}
+                      &#8377; {thisProd.price}
                     </span>
                     <button
                       onClick={() => {
