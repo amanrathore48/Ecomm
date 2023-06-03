@@ -85,7 +85,7 @@ const Product = ({ thisProd }) => {
       <Head>
         <title>Ecomm. | {thisProd?.title}</title>
       </Head>
-      {/* <div>
+      <div>
         {thisProd && (
           <section className="text-gray-600 body-font overflow-hidden">
             <div className="container px-5 py-24 mx-auto">
@@ -312,7 +312,7 @@ const Product = ({ thisProd }) => {
             </div>
           </section>
         )}
-      </div> */}
+      </div>
     </>
   );
 };
