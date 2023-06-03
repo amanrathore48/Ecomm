@@ -37,8 +37,8 @@ const Product = ({ thisProd }) => {
   const router = useRouter();
   const [pin, setpin] = useState();
   const [service, setservice] = useState();
-  const [currSize, setCurrSize] = useState(thisProd?.sizes[0]);
-  const [currColor, setCurrColor] = useState(thisProd?.colors[0]);
+  const [currSize, setCurrSize] = useState();
+  const [currColor, setCurrColor] = useState();
 
   const checkservice = async (pin) => {
     let pins = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
