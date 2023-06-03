@@ -28,7 +28,7 @@ const Products = ({ allProducts }) => {
         </div>
         <div className="w-full py-10 p-2 grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 justify-items-center">
           {allProducts.map((product, index) => (
-            <ProdCard3 key={product.id} product={product} />
+            <>{product && <ProdCard3 key={product?.id} product={product} />}</>
           ))}
         </div>
       </section>
