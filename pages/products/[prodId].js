@@ -87,7 +87,7 @@ const Product = ({ thisProd }) => {
     <>
       <ToastContainer />
       <Head>
-        <title>Ecomm. | {thisProd?.title}</title>
+        <title>Ecomm. | prod</title>
       </Head>
       <div>
         {thisProd && (
