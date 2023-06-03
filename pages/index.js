@@ -28,7 +28,9 @@ export default function Home({ session }) {
     };
     setProd();
   }
+
   console.log("session Home", session);
+  console.log("server", process.env.SERVER);
 
   return (
     <>
