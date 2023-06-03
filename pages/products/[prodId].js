@@ -202,16 +202,17 @@ const Product = ({ thisProd }) => {
                   <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
                     <div className="flex gap-1">
                       <span className="mr-3">Color</span>
-                      {thisProd.colors.map((color, index) => (
-                        <button
-                          key={index}
-                          onClick={() => {
-                            setCurrColor(color);
-                          }}
-                          style={{ backgroundColor: color }}
-                          className="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"
-                        ></button>
-                      ))}
+                      {thisProd.colors &&
+                        thisProd.colors.map((color, index) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              setCurrColor(color);
+                            }}
+                            style={{ backgroundColor: color }}
+                            className="border-2 border-gray-300 rounded-full w-6 h-6 focus:outline-none"
+                          ></button>
+                        ))}
                     </div>
                     <div className="flex ml-6 items-center">
                       <span className="mr-3">Size</span>
@@ -223,9 +224,10 @@ const Product = ({ thisProd }) => {
                             setCurrSize(selectedSize);
                           }}
                         >
-                          {thisProd.sizes.map((size, index) => (
-                            <option key={index}>{size}</option>
-                          ))}
+                          {thisProd.sizes &&
+                            thisProd.sizes.map((size, index) => (
+                              <option key={index}>{size}</option>
+                            ))}
                         </select>
                         <span className="absolute right-0 top-0 h-full w-10 text-center text-gray-600 pointer-events-none flex items-center justify-center">
                           <svg
