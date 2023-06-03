@@ -4,7 +4,7 @@ const Refund = () => {
   return (
     <>
       <Head>
-        <title>Ecomm. | Refund Policy</title>
+        <title>Ecomm. | Refund Policy!</title>
       </Head>
       <div class="py-2 mx-auto">
         <h1 class="text-gray-600 font-bold title-font tracking-wider text-3xl text-center mx-4 my-6">
