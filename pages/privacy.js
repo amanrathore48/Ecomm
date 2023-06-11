@@ -9,11 +9,11 @@ const Privacy = () => {
         <title>Ecomm. | Privacy Policy</title>
       </Head>
       <p>privacy</p>
-      {/* <div class="py-24 mx-auto">
-        <h2 class="text-gray-600 font-bold title-font tracking-wider text-4xl text-center mb-4">
+      {/* <div className="py-24 mx-auto">
+        <h2 className="text-gray-600 font-bold title-font tracking-wider text-4xl text-center mb-4">
           Privacy Policy
         </h2>
-        <div class="mx-6 md:mx-12 break-words">
+        <div className="mx-6 md:mx-12 break-words">
           <p>
             This Privacy Policy describes Our policies and procedures on the
             collection, use and disclosure of Your information when You use the
@@ -25,17 +25,17 @@ const Privacy = () => {
             using the Service, You agree to the collection and use of
             information in accordance with this Privacy Policy.
           </p>
-          <h1 class="my-2 font-semibold text-3xl">
+          <h1 className="my-2 font-semibold text-3xl">
             Interpretation and Definitions
           </h1>
-          <h2 class="my-2 font-semibold text-2xl">Interpretation</h2>
+          <h2 className="my-2 font-semibold text-2xl">Interpretation</h2>
           <p>
             The words of which the initial letter is capitalized have meanings
             defined under the following conditions. The following definitions
             shall have the same meaning regardless of whether they appear in
             singular or in plural.
           </p>
-          <h2 class="my-2 font-semibold text-2xl">Definitions</h2>
+          <h2 className="my-2 font-semibold text-2xl">Definitions</h2>
           <p>For the purposes of this Privacy Policy:</p>
           <ul>
             <li>
@@ -122,11 +122,11 @@ const Privacy = () => {
               </p>
             </li>
           </ul>
-          <h1 class="my-2 font-semibold text-3xl">
+          <h1 className="my-2 font-semibold text-3xl">
             Collecting and Using Your Personal Data
           </h1>
-          <h2 class="my-2 font-semibold text-2xl">Types of Data Collected</h2>
-          <h3 class="my-2 font-semibold text-xl">Personal Data</h3>
+          <h2 className="my-2 font-semibold text-2xl">Types of Data Collected</h2>
+          <h3 className="my-2 font-semibold text-xl">Personal Data</h3>
           <p>
             While using Our Service, We may ask You to provide Us with certain
             personally identifiable information that can be used to contact or
@@ -150,7 +150,7 @@ const Privacy = () => {
               <p>Usage Data</p>
             </li>
           </ul>
-          <h3 class="my-2 font-semibold text-xl">Usage Data</h3>
+          <h3 className="my-2 font-semibold text-xl">Usage Data</h3>
           <p>Usage Data is collected automatically when using the Service.</p>
           <p>
             Usage Data may include information such as Your Device"s Internet
@@ -172,7 +172,7 @@ const Privacy = () => {
             visit our Service or when You access the Service by or through a
             mobile device.
           </p>
-          <h3 class="my-2 font-semibold text-xl">
+          <h3 className="my-2 font-semibold text-xl">
             Information from Third-Party Social Media Services
           </h3>
           <p>
@@ -190,7 +190,7 @@ const Privacy = () => {
             use, share, and store it in a manner consistent with this Privacy
             Policy.
           </p>
-          <h3 class="my-2 font-semibold text-xl">
+          <h3 className="my-2 font-semibold text-xl">
             Tracking Technologies and Cookies
           </h3>
           <p>
@@ -303,7 +303,7 @@ const Privacy = () => {
             regarding cookies, please visit our Cookies Policy or the Cookies
             section of our Privacy Policy.
           </p>
-          <h2 class="my-2 font-semibold text-2xl">Use of Your Personal Data</h2>
+          <h2 className="my-2 font-semibold text-2xl">Use of Your Personal Data</h2>
           <p>The Company may use Personal Data for the following purposes:</p>
           <ul>
             <li>
@@ -420,7 +420,7 @@ const Privacy = () => {
               information for any other purpose with Your consent.
             </li>
           </ul>
-          <h2 class="my-2 font-semibold text-2xl">
+          <h2 className="my-2 font-semibold text-2xl">
             Retention of Your Personal Data
           </h2>
           <p>
@@ -438,7 +438,7 @@ const Privacy = () => {
             improve the functionality of Our Service, or We are legally
             obligated to retain this data for longer time periods.
           </p>
-          <h2 class="my-2 font-semibold text-2xl">
+          <h2 className="my-2 font-semibold text-2xl">
             Transfer of Your Personal Data
           </h2>
           <p>
@@ -462,24 +462,24 @@ const Privacy = () => {
             place including the security of Your data and other personal
             information.
           </p>
-          <h2 class="my-2 font-semibold text-2xl">
+          <h2 className="my-2 font-semibold text-2xl">
             Disclosure of Your Personal Data
           </h2>
-          <h3 class="my-2 font-semibold text-xl">Business Transactions</h3>
+          <h3 className="my-2 font-semibold text-xl">Business Transactions</h3>
           <p>
             If the Company is involved in a merger, acquisition or asset sale,
             Your Personal Data may be transferred. We will provide notice before
             Your Personal Data is transferred and becomes subject to a different
             Privacy Policy.
           </p>
-          <h3 class="my-2 font-semibold text-xl">Law enforcement</h3>
+          <h3 className="my-2 font-semibold text-xl">Law enforcement</h3>
           <p>
             Under certain circumstances, the Company may be required to disclose
             Your Personal Data if required to do so by law or in response to
             valid requests by public authorities (e.g. a court or a government
             agency).
           </p>
-          <h3 class="my-2 font-semibold text-xl">Other legal requirements</h3>
+          <h3 className="my-2 font-semibold text-xl">Other legal requirements</h3>
           <p>
             The Company may disclose Your Personal Data in the good faith belief
             that such action is necessary to:
@@ -496,7 +496,7 @@ const Privacy = () => {
             </li>
             <li>Protect against legal liability</li>
           </ul>
-          <h2 class="my-2 font-semibold text-2xl">
+          <h2 className="my-2 font-semibold text-2xl">
             Security of Your Personal Data
           </h2>
           <p>
@@ -506,7 +506,7 @@ const Privacy = () => {
             commercially acceptable means to protect Your Personal Data, We
             cannot guarantee its absolute security.
           </p>
-          <h2 class="my-2 font-semibold text-3xl">Children's Privacy</h2>
+          <h2 className="my-2 font-semibold text-3xl">Children's Privacy</h2>
           <p>
             Our Service does not address anyone under the age of 13. We do not
             knowingly collect personally identifiable information from anyone
@@ -522,7 +522,7 @@ const Privacy = () => {
             require Your parent's consent before We collect and use that
             information.
           </p>
-          <h2 class="my-2 font-semibold text-2xl">Links to Other Websites</h2>
+          <h2 className="my-2 font-semibold text-2xl">Links to Other Websites</h2>
           <p>
             Our Service may contain links to other websites that are not
             operated by Us. If You click on a third party link, You will be
@@ -534,7 +534,7 @@ const Privacy = () => {
             content, privacy policies or practices of any third party sites or
             services.
           </p>
-          <h2 class="my-2 font-semibold text-2xl">
+          <h2 className="my-2 font-semibold text-2xl">
             Changes to this Privacy Policy
           </h2>
           <p>
@@ -551,7 +551,7 @@ const Privacy = () => {
             changes. Changes to this Privacy Policy are effective when they are
             posted on this page.
           </p>
-          <h2 class="my-2 font-semibold text-2xl">Contact Us</h2>
+          <h2 className="my-2 font-semibold text-2xl">Contact Us</h2>
           <p>
             If you have any questions about this Privacy Policy, You can contact
             us:

@@ -6,11 +6,11 @@ const Refund = () => {
       <Head>
         <title>Ecomm. | Refund Policy!</title>
       </Head>
-      <div class="py-2 mx-auto">
-        <h1 class="text-gray-600 font-bold title-font tracking-wider text-3xl text-center mx-4 my-6">
+      <div className="py-2 mx-auto">
+        <h1 className="text-gray-600 font-bold title-font tracking-wider text-3xl text-center mx-4 my-6">
           Refund and Cancellation Policy
         </h1>
-        <div class="mx-4 md:mx-24">
+        <div className="mx-4 md:mx-24">
           <p>
             At Ecomm, our focus is complete customer satisfaction. In the event,
             if you are displeased with the services provided , we will refund
@@ -26,7 +26,7 @@ const Refund = () => {
           </p>
           <br />
           <p>
-            <strong class="text-xl">&nbsp;Cancellation Policy</strong>
+            <strong className="text-xl">&nbsp;Cancellation Policy</strong>
             <br />
             <br />
             For Cancellations please contact the us via contact us link.&nbsp;
@@ -36,7 +36,7 @@ const Refund = () => {
             of the product will not be processed.
             <br />
             <br />
-            <strong class="text-xl">Refund Policy</strong>
+            <strong className="text-xl">Refund Policy</strong>
             <br />
             <br />
             We will try our best to create the best products for our customers.

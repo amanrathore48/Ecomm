@@ -13,7 +13,7 @@ const Card = ({ image, type, width, productInfo }) => {
           <div className="mt-4">
             <h1 className="text-2xl font-bold text-gray-700">
               {productInfo.name}
-              <span class="uppercase text-xs bg-green-50 p-0.5 border-green-500 border rounded text-green-700 font-medium select-none">
+              <span className="uppercase text-xs bg-green-50 p-0.5 border-green-500 border rounded text-green-700 font-medium select-none">
                 {type}
               </span>
             </h1>

@@ -8,11 +8,11 @@ const Terms = () => {
         <title>Ecomm. | Terms & Condition</title>
       </Head>
       <p>Terms</p>
-      {/* <div class="text-black-600 mx-2 md:mx-10 my-2 py-24">
-        <h2 class="px-10 py-2 text-gray-600 font-bold title-font tracking-wider text-4xl text-center mb-4">
+      {/* <div className="text-black-600 mx-2 md:mx-10 my-2 py-24">
+        <h2 className="px-10 py-2 text-gray-600 font-bold title-font tracking-wider text-4xl text-center mb-4">
           Terms &amp; Conditions
         </h2>
-        <p class="px-10 py-2">
+        <p className="px-10 py-2">
           These terms and conditions outline the rules and regulations for the
           use of Ecomm's Website, located at www.ecomm.com. By accessing this
           website we assume you accept these terms and conditions. Do not
@@ -32,8 +32,8 @@ const Terms = () => {
           other words in the singular, plural, capitalization and/or he/she or
           they, are taken as interchangeable and therefore as referring to same.
         </p>
-        <h1 class="mx-10 font-semibold text-2xl">Cookies</h1>
-        <p class="px-10 py-2">
+        <h1 className="mx-10 font-semibold text-2xl">Cookies</h1>
+        <p className="px-10 py-2">
           We employ the use of cookies. By accessing Ecomm, you agreed to use
           cookies in agreement with the Ecomm's Privacy Policy. Most interactive
           websites use cookies to let us retrieve the user’s details for each
@@ -41,8 +41,8 @@ const Terms = () => {
           certain areas to make it easier for people visiting our website. Some
           of our affiliate/advertising partners may also use cookies.
         </p>
-        <h1 class="mx-10 font-semibold text-2xl">License</h1>
-        <p class="px-10 py-2">
+        <h1 className="mx-10 font-semibold text-2xl">License</h1>
+        <p className="px-10 py-2">
           Unless otherwise stated, Ecomm and/or its licensors own the
           intellectual property rights for all material on ecomm.com. All
           intellectual property rights are reserved. You may access this from
@@ -50,20 +50,20 @@ const Terms = () => {
           these terms and conditions.
         </p>
         <div>
-          <p class="mb-4 mx-10 font-semibold">You must not:</p>
-          <li class="ml-10">Republish material from ecomm.com</li>
-          <li class="ml-10">
+          <p className="mb-4 mx-10 font-semibold">You must not:</p>
+          <li className="ml-10">Republish material from ecomm.com</li>
+          <li className="ml-10">
             Sell, rent or sub-license material from ecomm.com
           </li>
-          <li class="ml-10">
+          <li className="ml-10">
             Reproduce, duplicate or copy material from ecomm.com
           </li>
-          <li class="ml-10">Redistribute content from ecomm.com</li>
+          <li className="ml-10">Redistribute content from ecomm.com</li>
         </div>
-        <h1 class="mx-10 my-2">
+        <h1 className="mx-10 my-2">
           This Agreement shall begin on the date hereof.
         </h1>
-        <p class="mx-10 my-2 ">
+        <p className="mx-10 my-2 ">
           Parts of this website offer an opportunity for users to post and
           exchange opinions and information in certain areas of the website.
           Ecomm does not filter, edit, publish or review Comments prior to their
@@ -79,58 +79,58 @@ const Terms = () => {
           Conditions.
         </p>
         <div>
-          <p class="mx-10 my-2 font-semibold">
+          <p className="mx-10 my-2 font-semibold">
             {" "}
             You warrant and represent that:
           </p>
-          <li class="ml-10">
+          <li className="ml-10">
             You are entitled to post the Comments on our website and have all
             necessary licenses and consents to do so;
           </li>
-          <li class="ml-10">
+          <li className="ml-10">
             The Comments do not invade any intellectual property right,
             including without limitation copyright, patent or trademark of any
             third party;
           </li>
-          <li class="ml-10">
+          <li className="ml-10">
             The Comments do not contain any defamatory, libelous, offensive,
             indecent or otherwise unlawful material which is an invasion of
             privacy
           </li>
-          <li class="ml-10">
+          <li className="ml-10">
             The Comments will not be used to solicit or promote business or
             custom or present commercial activities or unlawful activity.
           </li>
-          <p class="mx-10 my-2">
+          <p className="mx-10 my-2">
             {" "}
             You hereby grant Ecomm a non-exclusive license to use, reproduce,
             edit and authorize others to use, reproduce and edit any of your
             Comments in any and all forms, formats or media.
           </p>
         </div>
-        <h1 class="mx-10 font-semibold text-2xl">
+        <h1 className="mx-10 font-semibold text-2xl">
           Hyperlinking to our Content
         </h1>
-        <p class="px-10 py-2">
+        <p className="px-10 py-2">
           The following organizations may link to our Website without prior
           written approval:
         </p>
         <div>
-          <li class="ml-10">Government agencies;</li>
-          <li class="ml-10">Search engines;</li>
-          <li class="ml-10">News organizations;</li>
-          <li class="ml-10">
+          <li className="ml-10">Government agencies;</li>
+          <li className="ml-10">Search engines;</li>
+          <li className="ml-10">News organizations;</li>
+          <li className="ml-10">
             Online directory distributors may link to our Website in the same
             manner as they hyperlink to the Websites of other listed businesses;
             and
           </li>
-          <li class="ml-10">
+          <li className="ml-10">
             System wide Accredited Businesses except soliciting non-profit
             organizations, charity shopping malls, and charity fundraising
             groups which may not hyperlink to our Web site.
           </li>
         </div>
-        <p class="px-10 py-2">
+        <p className="px-10 py-2">
           These organizations may link to our home page, to publications or to
           other Website information so long as the link: (a) is not in any way
           deceptive; (b) does not falsely imply sponsorship, endorsement or
@@ -138,25 +138,25 @@ const Terms = () => {
           (c) fits within the context of the linking party’s site.
         </p>
         <div>
-          <p class="ml-10 mb-1">
+          <p className="ml-10 mb-1">
             We may consider and approve other link requests from the following
             types of organizations{" "}
           </p>
-          <li class="ml-10">
+          <li className="ml-10">
             commonly-known consumer and/or business information sources;
           </li>
-          <li class="ml-10">dot.com community sites;</li>
-          <li class="ml-10">
+          <li className="ml-10">dot.com community sites;</li>
+          <li className="ml-10">
             associations or other groups representing charities;
           </li>
-          <li class="ml-10">online directory distributors;</li>
-          <li class="ml-10">internet portals;</li>
-          <li class="ml-10">accounting, law and consulting firms; and</li>
-          <li class="ml-10">
+          <li className="ml-10">online directory distributors;</li>
+          <li className="ml-10">internet portals;</li>
+          <li className="ml-10">accounting, law and consulting firms; and</li>
+          <li className="ml-10">
             educational institutions and trade associations.
           </li>
         </div>
-        <p class="px-10 py-2">
+        <p className="px-10 py-2">
           We will approve link requests from these organizations if we decide
           that: (a) the link would not make us look unfavorably to ourselves or
           to our accredited businesses; (b) the organization does not have any
@@ -174,32 +174,32 @@ const Terms = () => {
           which you intend to link to our Website, and a list of the URLs on our
           site to which you would like to link. Wait 2-3 weeks for a response.
         </p>
-        <h1 class="ml-10 mb-1">
+        <h1 className="ml-10 mb-1">
           Approved organizations may hyperlink to our Website as follows:
         </h1>
         <div>
-          <li class="ml-10">By use of our corporate name; or</li>
-          <li class="ml-10">
+          <li className="ml-10">By use of our corporate name; or</li>
+          <li className="ml-10">
             By use of the uniform resource locator being linked to; or
           </li>
-          <li class="ml-10">
+          <li className="ml-10">
             By use of any other description of our Website being linked to that
             makes sense within the context and format of content on the linking
             party’s site.
           </li>
-          <p class="ml-10 mt-4">
+          <p className="ml-10 mt-4">
             No use of Ecomm's logo or other artwork will be allowed for linking
             absent a trademark license agreement.
           </p>
         </div>
-        <h1 class="mt-4 mx-10 text-xl font-semibold">iFrames</h1>
-        <p class="px-10 py-2">
+        <h1 className="mt-4 mx-10 text-xl font-semibold">iFrames</h1>
+        <p className="px-10 py-2">
           Without prior approval and written permission, you may not create
           frames around our Webpages that alter in any way the visual
           presentation or appearance of our Website.
         </p>
-        <h1 class="mx-10 text-xl font-semibold">Content Liability</h1>
-        <p class="px-10 py-2">
+        <h1 className="mx-10 text-xl font-semibold">Content Liability</h1>
+        <p className="px-10 py-2">
           We shall not be hold responsible for any content that appears on your
           Website. You agree to protect and defend us against all claims that is
           rising on your Website. No link(s) should appear on any Website that
@@ -207,10 +207,10 @@ const Terms = () => {
           infringes, otherwise violates, or advocates the infringement or other
           violation of, any third party rights.
         </p>
-        <h1 class="mx-10 font-semibold">Your Privacy</h1>
-        <p class="px-10 py-2">Please read Privacy Policy</p>
-        <h1 class="mx-10 text-xl font-semibold">Orders</h1>
-        <p class="px-10 py-2">
+        <h1 className="mx-10 font-semibold">Your Privacy</h1>
+        <p className="px-10 py-2">Please read Privacy Policy</p>
+        <h1 className="mx-10 text-xl font-semibold">Orders</h1>
+        <p className="px-10 py-2">
           We will try our best to confirm 100% of the orders but in an uncertain
           event if we are being not able to fulfil the order, we may attempt to
           notify you by contacting the e-mail and/or billing address/phone
@@ -253,8 +253,8 @@ const Terms = () => {
           Majeure, and shall resume on the date such Force Majeure event
           actually ends, whether or not this is the same as the tentative date.
         </p>
-        <h1 class="mx-10 text-xl font-semibold">Reservation of Rights</h1>
-        <p class="px-10 py-2">
+        <h1 className="mx-10 text-xl font-semibold">Reservation of Rights</h1>
+        <p className="px-10 py-2">
           We reserve the right to request that you remove all links or any
           particular link to our Website. You approve to immediately remove all
           links to our Website upon request. We also reserve the right to amen
@@ -262,10 +262,10 @@ const Terms = () => {
           continuously linking to our Website, you agree to be bound to and
           follow these linking terms and conditions.
         </p>
-        <h1 class="mx-10 text-xl font-semibold">
+        <h1 className="mx-10 text-xl font-semibold">
           Removal of links from our website
         </h1>
-        <p class="px-10 py-2">
+        <p className="px-10 py-2">
           If you find any link on our Website that is offensive for any reason,
           you are free to contact and inform us any moment. We will consider
           requests to remove links but we are not obligated to or so or to
@@ -274,30 +274,30 @@ const Terms = () => {
           nor do we promise to ensure that the website remains available or that
           the material on the website is kept up to date.
         </p>
-        <h1 class="mx-10 text-xl font-semibold">Disclaimer</h1>
-        <p class="px-10 py-2">
+        <h1 className="mx-10 text-xl font-semibold">Disclaimer</h1>
+        <p className="px-10 py-2">
           To the maximum extent permitted by applicable law, we exclude all
           representations, warranties and conditions relating to our website and
           the use of this website. Nothing in this disclaimer will:
         </p>
         <div>
-          <li class="ml-10">
+          <li className="ml-10">
             limit or exclude our or your liability for death or personal injury;
           </li>
-          <li class="ml-10">
+          <li className="ml-10">
             limit or exclude our or your liability for fraud or fraudulent
             misrepresentation;
           </li>
-          <li class="ml-10">
+          <li className="ml-10">
             limit any of our or your liabilities in any way that is not
             permitted under applicable law; or
           </li>
-          <li class="ml-10">
+          <li className="ml-10">
             exclude any of our or your liabilities that may not be excluded
             under applicable la
           </li>
         </div>
-        <p class="px-10 py-2">
+        <p className="px-10 py-2">
           The limitations and prohibitions of liability set in this Section and
           elsewhere in this disclaimer: (a) are subject to the preceding
           paragraph; and (b) govern all liabilities arising under the

@@ -8,37 +8,37 @@ const ProdCard2 = ({ product }) => {
     <>
       <div
         key={product._id}
-        class="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md"
+        className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md"
       >
         <Link
-          class="relative mx-3 mt-3 flex justify-center h-60 overflow-hidden rounded-xl"
+          className="relative mx-3 mt-3 flex justify-center h-60 overflow-hidden rounded-xl"
           href={`/products/${product._id}`}
         >
-          <img class="object-cover" src={product.img} alt="product image" />
-          <span class="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
+          <img className="object-cover" src={product.img} alt="product image" />
+          <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
             {product.discount}% OFF
           </span>
         </Link>
-        <div class="mt-4 px-5 pb-5">
+        <div className="mt-4 px-5 pb-5">
           <Link href="#">
-            <h5 class="text-xl tracking-tight text-slate-900">
+            <h5 className="text-xl tracking-tight text-slate-900">
               {product.title}
             </h5>
           </Link>
-          <div class="mt-2 mb-5 flex items-center justify-between">
+          <div className="mt-2 mb-5 flex items-center justify-between">
             <p>
-              <span class="text-3xl font-bold text-slate-900">
+              <span className="text-3xl font-bold text-slate-900">
                 ${product.price}
               </span>
-              <span class="text-sm text-slate-900 line-through">$699</span>
+              <span className="text-sm text-slate-900 line-through">$699</span>
             </p>
-            <div class="flex items-center">
+            <div className="flex items-center">
               {stars.map((index) => {
                 return (
                   <svg
                     key={index}
                     aria-hidden="true"
-                    class="h-5 w-5 text-yellow-300"
+                    className="h-5 w-5 text-yellow-300"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                     xmlns="http://www.w3.org/2000/svg"
@@ -48,14 +48,14 @@ const ProdCard2 = ({ product }) => {
                 );
               })}
 
-              <span class="mr-2 ml-3 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
+              <span className="mr-2 ml-3 rounded bg-yellow-200 px-2.5 py-0.5 text-xs font-semibold">
                 {stars.length}.0
               </span>
             </div>
           </div>
           <Link
             href="#"
-            class="flex gap-2 items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
+            className="flex gap-2 items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300"
           >
             <AiOutlineShoppingCart className="text-2xl" />
             Add to cart

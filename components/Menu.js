@@ -38,7 +38,7 @@ const Menu = () => {
               className="group font-ubuntu font-semibold uppercase text-gray-700"
             >
               Home
-              <span class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
+              <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
             </Link>
           </li>
 
@@ -48,7 +48,7 @@ const Menu = () => {
               className="group font-ubuntu font-semibold uppercase text-gray-700"
             >
               Categories
-              <span class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
+              <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
             </Link>
 
             <div className="absolute mx-auto px-5 py-5 hidden group-hover:flex justify-between  bg-white z-50 gap-4 rounded-md transition duration-200 ease-in ">
@@ -99,7 +99,7 @@ const Menu = () => {
               className="group font-ubuntu font-semibold uppercase text-gray-700"
             >
               Mens
-              <span class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
+              <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
             </Link>
 
             <ul className="hidden group-hover:flex flex-col bg-white px-4 py-4 gap-2 rounded-md absolute z-50">
@@ -120,7 +120,7 @@ const Menu = () => {
               className="font-ubuntu font-semibold uppercase text-gray-700"
             >
               Womens
-              <span class="group block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
+              <span className="group block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
             </Link>
 
             <ul className="hidden group-hover:flex flex-col bg-white px-4 py-4 gap-2 rounded-md absolute z-50">
@@ -141,7 +141,7 @@ const Menu = () => {
               className="group font-ubuntu font-semibold uppercase text-gray-700"
             >
               Jewellery
-              <span class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
+              <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
             </Link>
 
             <ul className="hidden group-hover:flex flex-col bg-white px-4 py-4 gap-2 rounded-md absolute z-50">
@@ -162,7 +162,7 @@ const Menu = () => {
               className="group font-ubuntu font-semibold uppercase text-gray-700"
             >
               Blog
-              <span class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
+              <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
             </Link>
           </li>
 
@@ -172,7 +172,7 @@ const Menu = () => {
               className="group font-ubuntu font-semibold uppercase text-gray-700"
             >
               Offers
-              <span class="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
+              <span className="block max-w-0 group-hover:max-w-full transition-all duration-500 h-0.5 bg-zinc-800"></span>
             </Link>
           </li>
         </ul>

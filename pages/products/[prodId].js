@@ -85,11 +85,11 @@ const Product = ({ thisProd }) => {
       <div>
         {thisProd && (
           <section className="text-gray-600 body-font overflow-hidden">
-            <div className="container px-5 py-24 mx-auto">
+            <div className="container px-5 py-24 max-sm:py-10 mx-auto">
               <div className="lg:w-4/5 mx-auto flex flex-wrap">
                 <img
                   alt="ecommerce"
-                  className="lg:w-1/2 w-full lg:h-auto px-24 object-contain object-center rounded"
+                  className="lg:w-1/2 w-full lg:h-auto object-contain object-center rounded-md"
                   src={thisProd.img}
                 />
                 <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
@@ -244,15 +244,15 @@ const Product = ({ thisProd }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex">
-                    <span className="title-font font-medium text-2xl text-gray-900">
+                  <div className="flex max-sm:flex-col max-sm:gap-2">
+                    <span className="title-font font-medium text-2xl text-gray-900 max-sm:py-3">
                       &#8377; {thisProd.price}
                     </span>
                     <button
                       onClick={() => {
                         router.push("/checkout");
                       }}
-                      className="flex ml-14 text-white bg-[#D11732] border-0 py-2 px-6 focus:outline-none hover:bg-red-500 rounded"
+                      className="flex ml-14 text-white bg-[#D11732] border-0 py-2 px-6 focus:outline-none hover:bg-red-500 rounded max-sm:ml-0 max-sm:py-3 justify-center"
                     >
                       Buy Now
                       <span className="ml-1 mt-1">
@@ -261,15 +261,14 @@ const Product = ({ thisProd }) => {
                     </button>
                     <button
                       onClick={handleAddToCart}
-                      className="flex ml-5 text-white bg-[#D11732] border-0 py-2 px-6 focus:outline-none md:text-sm hover:bg-red-500 rounded"
+                      className="flex ml-5 text-white bg-[#D11732] border-0 py-2 px-6 focus:outline-none md:text-sm hover:bg-red-500 rounded justify-center max-sm:ml-0 max-sm:py-3"
                     >
-                      Add to Cart{" "}
+                      Add to Cart
                       <span className="ml-1 mt-1">
-                        {" "}
-                        <BsFillCartFill />{" "}
+                        <BsFillCartFill />
                       </span>
                     </button>
-                    <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4 hover:bg-pink-300 hover:text-pink-600">
+                    <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4 hover:bg-pink-300 hover:text-pink-600 max-sm:hidden">
                       <svg
                         fill="currentColor"
                         strokeLinecap="round"
@@ -282,10 +281,10 @@ const Product = ({ thisProd }) => {
                       </svg>
                     </button>
                   </div>
-                  <div className="flex justify-center items-center mt-7 h-15">
+                  <div className="flex justify-center items-center mt-7 h-15 ">
                     <input
                       type={"number"}
-                      className="border-2 focus:outline-none rounded-md border-[#D11732] p-2 mt-3 text-black font-bold"
+                      className="border-2 focus:outline-none rounded-md border-[#D11732] p-2 mt-3 text-black font-bold max-sm:w-[90%]"
                       placeholder="Pincode"
                       onChange={(e) => setpin(e.target.value)}
                     />
@@ -293,7 +292,7 @@ const Product = ({ thisProd }) => {
                       className="ml-2 text-white bg-[#D11732] border-0 py-2 px-6 focus:outline-none hover:bg-red-500 mt-3 rounded"
                       onClick={checkservice}
                     >
-                      Check{" "}
+                      Check
                     </button>
                   </div>
                   {service && service != null && (

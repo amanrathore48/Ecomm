@@ -22,7 +22,7 @@ const PhoneMenu = () => {
   return (
     <>
       <div
-        class={`hidden max-lg:flex justify-between py-4 px-4  gap-4 bg-white max-sm:w-[100%] w-[80%] fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50
+        className={`hidden max-lg:flex justify-between py-4 px-4  gap-4 bg-white max-sm:w-[100%] w-[80%] fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50
         ${!isMenu && "rounded-t-md"}
       `}
       >

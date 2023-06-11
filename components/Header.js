@@ -74,7 +74,7 @@ const Header = () => {
             <span className="ml-3 text-xl">Ecomm.</span>
           </Link>
 
-          <div class="relative w-full">
+          <div className="relative w-full">
             <input
               type="search"
               name="search"
@@ -82,8 +82,8 @@ const Header = () => {
               placeholder="Search.. "
               onChange={(e) => handleSearch(e)}
             />
-            <button class="absolute top-0 right-0 h-full w-10 text-gray-600">
-              <BsSearch class="h-6 w-6" />
+            <button className="absolute top-0 right-0 h-full w-10 text-gray-600">
+              <BsSearch className="h-6 w-6" />
             </button>
           </div>
 
