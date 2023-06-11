@@ -22,7 +22,6 @@ export async function getStaticPaths() {
 
   return { paths: [], fallback: false };
 }
-
 export async function getStaticProps({ params }) {
   const product = await getProductById(params.prodId);
   if (product) {

@@ -28,8 +28,6 @@ export const getProducts = async () => {
 
 export const getProductById = async (prodId) => {
   try {
-    console.log("server prod", process.env.SERVER);
-    console.log("server prod id", prodId);
     const res = await axios.get(`${server}/products/${prodId}`, {
       withCredentials: true,
     });
