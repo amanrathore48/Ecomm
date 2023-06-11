@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const server = process.env.SERVER;
+import { server } from "./api";
 
 export const addProduct = async (data) => {
   try {
@@ -28,6 +27,7 @@ export const getProducts = async () => {
 
 export const getProductById = async (prodId) => {
   try {
+    console.log("ser", server);
     const res = await axios.get(`${server}/products/${prodId}`, {
       withCredentials: true,
     });

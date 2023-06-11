@@ -53,7 +53,7 @@ export default function Login() {
         <title>Ecomm. LogIn</title>
       </Head>
       <FormLayout>
-        <div className="w-full mx-auto flex flex-col gap-10">
+        <div className="w-full p-8 mx-auto flex flex-col gap-10">
           <div className="title">
             <h1 className="text-gray-800 text-4xl font-bold py-4 font-pango">
               <Link href={"/"}>Ecomm.</Link>

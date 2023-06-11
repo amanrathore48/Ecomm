@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const server = process.env.SERVER;
+import { server } from "./api";
 
 export const createOrder = async (data) => {
   try {

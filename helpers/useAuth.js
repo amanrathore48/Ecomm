@@ -1,10 +1,8 @@
 import axios from "axios";
-
-const server = process.env.SERVER;
+import { server } from "./api";
 
 export const createUser = async (cred) => {
   try {
-    console.log("cred", cred);
     const res = await axios.post(`${server}/auth/signup`, cred);
     console.log(res.data);
     return res.data;
