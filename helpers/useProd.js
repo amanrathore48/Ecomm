@@ -20,8 +20,6 @@ export const getProducts = async () => {
     const res = await axios.get(`${server}/products`, {
       withCredentials: true,
     });
-    console.log("res", res.data);
-    console.log("server allprod", process.env.SERVER);
     return res.data.data;
   } catch (error) {
     console.log(error?.response?.data);
@@ -38,7 +36,7 @@ export const getProductById = async (prodId) => {
     console.log("res", res.data);
     return res.data.data;
   } catch (error) {
-    console.log(error?.response?.data);
+    console.log("error", error?.response?.data);
   }
 };
 
