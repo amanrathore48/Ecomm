@@ -55,7 +55,7 @@ export default function SignUp() {
     console.log("data", data);
     const res = await createUser(data);
     // if (res) captchaRef.current.reset();
-    // if (res.ok) router.push("/login");
+    if (res) router.push("/login");
   };
 
   const [show, setShow] = useState({ pass: false, cpass: false });

@@ -8,6 +8,7 @@ export const createUser = async (cred) => {
     return res.data;
   } catch (error) {
     console.log(error);
+    return false;
   }
 };
 export const login = async (cred) => {
