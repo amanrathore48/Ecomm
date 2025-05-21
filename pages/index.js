@@ -54,7 +54,7 @@ export default function Home({ session }) {
                 <div className="relative rounded-md h-[32rem] w-full bg-herobg-1 bg-center bg-cover ">
                   <div className="absolute left-10 bottom-10 text-gray-200 flex flex-col gap-2">
                     <h4 className="font-pango text-4xl font-semibold ">
-                      Trending Items
+                      Trending Items @ Ecomm.
                     </h4>
                     <h2 className="font-pango text-2xl font-semibold ">
                       Super Value Deals
