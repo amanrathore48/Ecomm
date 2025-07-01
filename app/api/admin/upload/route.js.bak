@@ -1,0 +1,256 @@
+import { NextResponse } from "next/server";
+import formidable from "formidable";
+import fs from "fs";
+import path from "path";
+import s3Client from "@/config/s3Client";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import crypto from "crypto";
+import sharp from "sharp"; // Add sharp for image optimization
+
+// For Next.js App Router, we need to use a different approach
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
+
+// This is required to disable body parsing as we're handling it with formidable
+export const config = { api: { bodyParser: false } };
+
+// Allowed file types
+const ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_IMAGE_DIMENSION = 2000; // Max width/height in pixels
+
+export async function POST(request) {
+  let filePath = null;
+  try {
+    // Debug the environment variables without exposing values
+    console.log("S3 Upload Debug: Environment variables set:", {
+      AWS_REGION: !!process.env.AWS_REGION,
+      AWS_ACCESS_KEY_ID: !!process.env.AWS_ACCESS_KEY_ID,
+      AWS_SECRET_ACCESS_KEY: !!process.env.AWS_SECRET_ACCESS_KEY,
+      S3_BUCKET_NAME: !!process.env.S3_BUCKET_NAME,
+    });
+
+    console.log("Upload route accessed, processing request");
+
+    // In Next.js App Router, we need to convert the request to a NodeJS request
+    // This is needed because formidable expects a Node.js IncomingMessage
+    const readableStream = await request.arrayBuffer();
+    const nodeJsBuffer = Buffer.from(readableStream);
+    
+    // Get form data from the request
+    const formData = await request.formData();
+    
+    // Extract the file and fields from formData
+    const file = formData.get("file");
+    const slug = formData.get("slug");
+    const isMain = formData.get("isMain") === "true";
+    const index = formData.get("index") || "0";
+    
+    console.log("Form data received:", { 
+      slug, 
+      isMain, 
+      index, 
+      hasFile: !!file,
+      fileType: file?.type,
+      fileSize: file?.size
+    });
+    
+    // Validate required fields
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+    
+    if (!slug) {
+      return NextResponse.json({ error: "Slug is required" }, { status: 400 });
+    }
+    
+    // Create a temporary file path to store the uploaded file
+    const tmpDir = path.join(process.cwd(), "tmp");
+    if (!fs.existsSync(tmpDir)) {
+      fs.mkdirSync(tmpDir, { recursive: true });
+    }
+    
+    const fileBytes = await file.arrayBuffer();
+    const buffer = Buffer.from(fileBytes);
+    
+    const fileExt = file.name.split('.').pop().toLowerCase();
+    const tempFilePath = path.join(tmpDir, `${crypto.randomBytes(8).toString('hex')}.${fileExt}`);
+    filePath = tempFilePath;
+    
+    fs.writeFileSync(tempFilePath, buffer);
+    
+    console.log(
+      `Processing ${
+        isMain ? "main" : `additional #${index}`
+      } image for product: ${slug} (size: ${buffer.length} bytes)`
+    );
+
+    // Validate required fields
+    const file = files.file;
+    if (!file) {
+      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+    }
+
+    filePath = file.filepath;
+
+    const slug = fields.slug?.[0] || fields.slug;
+    if (!slug) {
+      return NextResponse.json({ error: "Slug is required" }, { status: 400 });
+    }
+
+    // Process file info
+    const index = fields.index?.[0] || fields.index || "0";
+    const isMain = (fields.isMain?.[0] || fields.isMain) === "true";
+
+    console.log(
+      `Processing ${
+        isMain ? "main" : `additional #${index}`
+      } image for product: ${slug} (size: ${file.size} bytes)`
+    );
+
+    // Validate file type
+    const originalName = file.originalFilename || file.newFilename;
+    const ext = path.extname(originalName).toLowerCase();
+
+    if (!ALLOWED_EXTENSIONS.includes(ext)) {
+      return NextResponse.json(
+        {
+          error: `Invalid file type. Allowed types: ${ALLOWED_EXTENSIONS.join(
+            ", "
+          )}`,
+        },
+        { status: 400 }
+      );
+    }
+
+    // Generate unique filename to avoid collisions
+    const uniqueId = crypto.randomBytes(8).toString("hex");
+    const cleanSlug = slug.replace(/\s+/g, "-").toLowerCase();
+
+    // Use a consistent naming convention for images
+    const fileName = isMain
+      ? `main_${uniqueId}${ext}`
+      : `image_${index}_${uniqueId}${ext}`;
+
+    // Store in a product-specific folder structure
+    const Key = `products/${cleanSlug}/${fileName}`;
+
+    console.log(`Preparing to upload to S3: ${Key}`);
+
+    // Read file content and optimize
+    const fileContent = await fs.promises.readFile(file.filepath);
+
+    // Check if the image needs optimization
+    let optimizedBuffer;
+    try {
+      // Only optimize images larger than 100KB to avoid unnecessary processing for small files
+      if (file.size > 100 * 1024) {
+        // Use sharp to resize and optimize the image
+        const image = sharp(fileContent);
+        const metadata = await image.metadata();
+
+        // Only resize if the image is larger than our max dimension
+        const needsResize =
+          metadata.width > MAX_IMAGE_DIMENSION ||
+          metadata.height > MAX_IMAGE_DIMENSION;
+
+        if (needsResize) {
+          console.log(
+            `Optimizing image: ${metadata.width}x${metadata.height} px`
+          );
+          optimizedBuffer = await image
+            .resize({
+              width: Math.min(metadata.width, MAX_IMAGE_DIMENSION),
+              height: Math.min(metadata.height, MAX_IMAGE_DIMENSION),
+              fit: "inside",
+              withoutEnlargement: true,
+            })
+            .toBuffer();
+        } else {
+          // Just optimize without resizing
+          optimizedBuffer = await image
+            .jpeg({ quality: 85, progressive: true })
+            .toBuffer();
+        }
+
+        console.log(
+          `Image optimized: Original size: ${fileContent.length} bytes, New size: ${optimizedBuffer.length} bytes`
+        );
+      } else {
+        // For small images, skip optimization
+        console.log(
+          `Image is small (${file.size} bytes), skipping optimization`
+        );
+        optimizedBuffer = fileContent;
+      }
+    } catch (error) {
+      console.error(`Error optimizing image: ${error}`);
+      // If optimization fails, use the original
+      optimizedBuffer = fileContent;
+    }
+
+    // Upload to S3 with optimized content
+    const uploadCommand = new PutObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key,
+      Body: optimizedBuffer,
+      ContentType: file.mimetype || "application/octet-stream",
+      CacheControl: "max-age=31536000", // Cache for 1 year
+    });
+
+    await s3Client.send(uploadCommand);
+
+    // Generate public URL
+    const url = `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${Key}`;
+
+    console.log(`Upload successful, URL: ${url}`);
+
+    // Clean up temp file
+    if (fs.existsSync(file.filepath)) {
+      fs.unlinkSync(file.filepath);
+    }
+
+    return NextResponse.json({
+      success: true,
+      url,
+      key: Key,
+    });
+  } catch (error) {
+    console.error("S3 upload error:", error);
+
+    // Clean up temp file if it exists
+    if (filePath && fs.existsSync(filePath)) {
+      try {
+        fs.unlinkSync(filePath);
+      } catch (cleanupError) {
+        console.error("Error cleaning up temp file:", cleanupError);
+      }
+    }
+
+    // Provide more specific error messages
+    let errorMessage = "Failed to upload image";
+    let statusCode = 500;
+
+    if (error.name === "AbortError") {
+      errorMessage = "Upload timed out";
+    } else if (error.name === "AccessDenied") {
+      errorMessage = "Access denied to S3 bucket";
+      statusCode = 403;
+    } else if (error.name === "NoSuchBucket") {
+      errorMessage = "S3 bucket not found";
+      statusCode = 404;
+    } else if (error.code === "ENOTFOUND") {
+      errorMessage = "Network error - Could not connect to S3";
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+
+    return NextResponse.json(
+      {
+        error: errorMessage,
+        details: error.message,
+      },
+      { status: statusCode }
+    );
+  }
+}

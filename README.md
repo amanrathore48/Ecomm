@@ -1,8 +1,52 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Modern E-Commerce Application
+
+A modern, responsive e-commerce application built with Next.js 14, Tailwind CSS, and shadcn/ui.
+
+## Features
+
+- **Modern Tech Stack**: Next.js 14 with App Router, React 18, Tailwind CSS, and shadcn/ui components
+- **Responsive Design**: Mobile-first approach with full responsiveness across all devices
+- **Dark Mode Support**: Seamlessly switch between light and dark mode
+- **User Authentication**: Complete sign-in, sign-up, and password recovery flows
+- **Product Browsing**: Advanced filtering, sorting, and search capabilities
+- **Product Details**: Comprehensive product pages with image galleries, specifications, and reviews
+- **Shopping Cart**: Full-featured cart with quantity controls and persistent storage
+- **Wishlist**: Save products for later
+- **Checkout Flow**: Multi-step checkout process
+- **Order Management**: Track and view order history
+- **Admin Dashboard**: Manage products, orders, and users
+- **API Routes**: RESTful API for all product and user operations
+
+## Tech Stack
+
+- **Frontend**:
+
+  - Next.js 14 with App Router
+  - React 18
+  - Tailwind CSS for styling
+  - shadcn/ui for UI components
+  - Lucide icons
+  - React Hook Form for forms
+  - Zod for schema validation
+
+- **Backend**:
+  - Next.js API Routes
+  - MongoDB for data storage (simulated with mock data)
+  - Authentication system
 
 ## Getting Started
 
-First, run the development server:
+First, install the dependencies:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -13,21 +57,6 @@ pnpm dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
