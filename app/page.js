@@ -1,15 +1,58 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import FeaturedProducts from "@/components/FeaturedProducts";
+import ShopByCategory from "@/components/ShopByCategory";
 
 // Categories for the shop by category section
 const categories = [
-  { id: "electronics", name: "Electronics", icon: "🖥️" },
-  { id: "clothing", name: "Clothing", icon: "👕" },
-  { id: "books", name: "Books", icon: "📚" },
-  { id: "home", name: "Home", icon: "🏠" },
-  { id: "beauty", name: "Beauty", icon: "💄" },
-  { id: "sports", name: "Sports", icon: "⚽" },
+  {
+    id: "electronics",
+    name: "Electronics",
+    icon: "🖥️",
+    image:
+      "https://images.unsplash.com/photo-1593344484962-796055d4a3a4?q=80&w=1000&auto=format&fit=crop",
+    description: "Latest gadgets and tech essentials",
+  },
+  {
+    id: "clothing",
+    name: "Clothing",
+    icon: "👕",
+    image:
+      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?q=80&w=1000&auto=format&fit=crop",
+    description: "Trendy fashion for all seasons",
+  },
+  {
+    id: "books",
+    name: "Books",
+    icon: "📚",
+    image:
+      "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?q=80&w=1000&auto=format&fit=crop",
+    description: "Bestsellers and literary classics",
+  },
+  {
+    id: "home",
+    name: "Home",
+    icon: "🏠",
+    image:
+      "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1000&auto=format&fit=crop",
+    description: "Beautiful decor and essentials",
+  },
+  {
+    id: "beauty",
+    name: "Beauty",
+    icon: "💄",
+    image:
+      "https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=1000&auto=format&fit=crop",
+    description: "Premium skincare and makeup",
+  },
+  {
+    id: "sports",
+    name: "Sports",
+    icon: "⚽",
+    image:
+      "https://images.unsplash.com/photo-1535131749006-b7d58e7ffca1?q=80&w=1000&auto=format&fit=crop",
+    description: "Equipment for every athlete",
+  },
 ];
 
 // Featured Products Section Component
@@ -89,33 +132,7 @@ export default function Home() {
       <FeaturedProductsSection />
 
       {/* Interactive Shop By Category - Always visible */}
-      <section className="py-16 bg-white dark:bg-gray-900">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Shop By Category</h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Explore our collections across different categories
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
-            {categories.map((category) => (
-              <Link
-                href={`/products?category=${category.id}`}
-                key={category.id}
-                className="group relative overflow-hidden rounded-lg transition-all duration-300 hover:shadow-xl"
-              >
-                <div className="aspect-square bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                  <span className="text-4xl">{category.icon}</span>
-                </div>
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <p className="text-white font-semibold">{category.name}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+      <ShopByCategory categories={categories} />
 
       {/* Features Section */}
       <section className="py-16 bg-gray-100 dark:bg-gray-800">

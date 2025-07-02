@@ -1,103 +1,185 @@
 import React from "react";
 import Link from "next/link";
-import { FaFacebookSquare } from "react-icons/fa";
-import { AiFillYoutube, AiOutlineInstagram } from "react-icons/ai";
-import { BsTwitter } from "react-icons/bs";
+import { FaFacebook, FaTwitter, FaInstagram, FaYoutube } from "react-icons/fa";
 
 const Footer = () => {
-  return (
-    <footer className="bg-black text-gray-200 ">
-      <div className="px-5 py-10 mx-auto block border-b border-b-zinc-700 border-1">
-        <div className="flex flex-wrap md:text-left text-center order-first">
-          <div className="lg:w-1/4 lg:mb-0 lg:border-none pb-1 mb-2 border-b border-1 border-zinc-700 w-full px-4">
-            <div className=" flex justify-between items-start">
-              <div className="lg:hidden max-[640px]:hidden  w-1/2 font-monster flex flex-col justify-between gap-2 ">
-                <div>
-                  <p className="text-left">
-                    Hello Lorem ipsum dolor sit amet consectetur adipisicing
-                    elit. Fuga eaque voluptatibus quisquam? Iusto ut quia
-                    voluptatum atque tenetur. Fugit, quod.
-                  </p>
-                </div>
+  const currentYear = new Date().getFullYear();
 
-                <div className="flex gap-4 items-center justify-start mt-2 py-2  ">
-                  <FaFacebookSquare className="w-8 h-8" />
-                  <AiOutlineInstagram className="w-8 h-8" />
-                  <BsTwitter className="w-8 h-8" />
-                  <AiFillYoutube className="w-8 h-8" />
+  return (
+    <footer className="bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-300">
+      {/* Main Footer Content */}
+      <div className="container mx-auto px-5 py-12">
+        <div className="flex flex-wrap md:text-left text-center">
+          {/* Logo & Info Section */}
+          <div className="lg:w-1/4 w-full px-4 mb-10 lg:mb-0">
+            <div className="flex flex-col items-center md:items-start">
+              <div className="flex items-center mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center rounded-xl shadow-sm mr-2">
+                  <span className="text-lg font-bold text-white">E</span>
                 </div>
+                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 leading-tight">
+                  Ecomm
+                </span>
               </div>
-              <div className="flex max-[640px]:w-full flex-col max-[640px]:items-center max-[640px]:mb-2">
-                <div className="w-24 h-24 ">
-                  <img
-                    className="object-contain rounded-lg"
-                    alt="logo"
-                    src="/ecomm.png"
-                  />
-                </div>
-                <div className="w-32  mt-2">
-                  <span className="font-pango font-semibold text-2xl lg:text-left text-right">
-                    Ecomm.
-                  </span>
-                </div>
+              <p className="text-sm leading-relaxed mb-6 text-gray-500 dark:text-gray-400 text-center md:text-left">
+                Your one-stop shop for premium quality products. We offer the
+                best selection with excellent customer service.
+              </p>
+              <div className="flex space-x-4 justify-center md:justify-start">
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors duration-300"
+                >
+                  <FaFacebook className="w-5 h-5" />
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-pink-500 dark:hover:text-pink-400 transition-colors duration-300"
+                >
+                  <FaInstagram className="w-5 h-5" />
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300"
+                >
+                  <FaTwitter className="w-5 h-5" />
+                </a>
+                <a
+                  href="#"
+                  className="text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors duration-300"
+                >
+                  <FaYoutube className="w-5 h-5" />
+                </a>
               </div>
             </div>
           </div>
-          <div className="lg:w-1/4 md:w-1/3 w-full px-4">
-            <h2 className="title-font font-medium tracking-widest text-sm mb-3">
-              SHOP
+
+          {/* Shop Links */}
+          <div className="lg:w-1/4 md:w-1/2 w-full px-4 mb-10 md:mb-0">
+            <h2 className="title-font font-semibold text-gray-900 dark:text-gray-100 tracking-wider text-sm mb-4 uppercase">
+              Shop
             </h2>
-            <nav className="list-none mb-10">
-              <Link href={"/products"}>
-                <li className="cursor-pointer">Electronics</li>
-              </Link>
-              <Link href={"/products"}>
-                <li className=" cursor-pointer ">Men</li>
-              </Link>
-              <Link href={"/products"}>
-                <li className=" cursor-pointer ">Women</li>
-              </Link>
-              <Link href={"/products"}>
-                <li className=" cursor-pointer ">Top Deals</li>
-              </Link>
+            <nav className="list-none space-y-2">
+              <li>
+                <Link
+                  href="/products"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  Electronics
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  Men's Fashion
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  Women's Fashion
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/products"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  Top Deals
+                </Link>
+              </li>
             </nav>
           </div>
-          <div className="lg:w-1/4 md:w-1/3 w-full px-4">
-            <h2 className="title-font font-medium tracking-widest text-sm mb-3">
-              CUSTOMER SERVICE
+
+          {/* Customer Service */}
+          <div className="lg:w-1/4 md:w-1/2 w-full px-4 mb-10 md:mb-0">
+            <h2 className="title-font font-semibold text-gray-900 dark:text-gray-100 tracking-wider text-sm mb-4 uppercase">
+              Customer Service
             </h2>
-            <nav className="list-none mb-10">
-              <Link href={"/contact"}>
-                <li className=" cursor-pointer ">Contact Us</li>
-              </Link>
-              <Link href={"/about"}>
-                <li className="cursor-pointer ">About Us</li>
-              </Link>
+            <nav className="list-none space-y-2">
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/about"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/faq"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  FAQs
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/shipping"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  Shipping Info
+                </Link>
+              </li>
             </nav>
           </div>
-          <div className="lg:w-1/4 md:w-1/3 w-full px-4">
-            <h2 className="title-font font-medium tracking-widest text-sm mb-3">
-              POLICY
+
+          {/* Policies */}
+          <div className="lg:w-1/4 md:w-1/2 w-full px-4">
+            <h2 className="title-font font-semibold text-gray-900 dark:text-gray-100 tracking-wider text-sm mb-4 uppercase">
+              Policies
             </h2>
-            <nav className="list-none mb-10">
-              <Link href={"/privacy"}>
-                <li className=" cursor-pointer ">Privacy Policy</li>
-              </Link>
-              <Link href={"/terms"}>
-                <li className=" cursor-pointer ">Terms and Condition</li>
-              </Link>
-              <Link href={"/refund"}>
-                <li className="cursor-pointer ">Refund Policy</li>
-              </Link>
+            <nav className="list-none space-y-2">
+              <li>
+                <Link
+                  href="/privacy"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  Terms & Conditions
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/refund"
+                  className="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200"
+                >
+                  Refund Policy
+                </Link>
+              </li>
             </nav>
           </div>
         </div>
       </div>
-      <div className="bg-black">
-        <div className="container px-5 py-4 mx-auto flex items-center justify-center">
-          <p className="text-sm text-gray-200 sm:ml-6 sm:mt-0 mt-4">
-            Copyright © 2022 Ecomm.
+
+      {/* Copyright */}
+      <div className="bg-gray-100 dark:bg-gray-950">
+        <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
+          <p className="text-gray-500 dark:text-gray-400 text-sm text-center sm:text-left">
+            © {currentYear} Ecomm — All Rights Reserved
           </p>
+          <span className="sm:ml-auto sm:mt-0 mt-2 sm:w-auto w-full sm:text-left text-center text-gray-500 dark:text-gray-400 text-sm">
+            Crafted with ♥ for a better shopping experience
+          </span>
         </div>
       </div>
     </footer>

@@ -7,24 +7,7 @@ import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-
-// Mock data for cart items - will be replaced with actual data fetching
-const mockCartItems = [
-  {
-    id: "1",
-    name: "Premium T-shirt",
-    price: 29.99,
-    quantity: 2,
-    image: "https://via.placeholder.com/100x100",
-  },
-  {
-    id: "2",
-    name: "Designer Jeans",
-    price: 89.99,
-    quantity: 1,
-    image: "https://via.placeholder.com/100x100",
-  },
-];
+import { useSession } from "next-auth/react";
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
@@ -32,25 +15,88 @@ export default function CartPage() {
   const [couponCode, setCouponCode] = useState("");
   const { toast } = useToast();
 
-  useEffect(() => {
-    // Simulate fetching cart data
-    setTimeout(() => {
-      setCartItems(mockCartItems);
-      setLoading(false);
-    }, 500);
-  }, []);
+  const { data: session } = useSession();
 
-  const updateQuantity = (id, newQuantity) => {
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/cart");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch cart items");
+        }
+
+        const data = await response.json();
+        setCartItems(data.items || []);
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+        toast({
+          variant: "destructive",
+          description: "Failed to load cart items",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCart();
+  }, [toast]);
+
+  const updateQuantity = async (id, newQuantity) => {
     if (newQuantity < 1) return;
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
+
+    try {
+      const response = await fetch("/api/cart", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId: id,
+          quantity: newQuantity,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update quantity");
+      }
+
+      setCartItems(
+        cartItems.map((item) =>
+          item.id === id ? { ...item, quantity: newQuantity } : item
+        )
+      );
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to update item quantity",
+      });
+    }
   };
 
-  const removeItem = (id) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
+  const removeItem = async (id) => {
+    try {
+      const response = await fetch(`/api/cart?productId=${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to remove item");
+      }
+
+      setCartItems(cartItems.filter((item) => item.id !== id));
+      toast({
+        description: "Item removed from cart",
+      });
+    } catch (error) {
+      console.error("Error removing item:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to remove item from cart",
+      });
+    }
     toast({
       description: "Item removed from cart",
     });

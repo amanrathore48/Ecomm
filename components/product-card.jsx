@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { Heart, ShoppingCart, Eye, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
+import useCartStore from "@/stores/zustand-cart";
+import useWishlistStore from "@/stores/useWishlist";
 
 export function ProductCard({ product }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -40,18 +43,66 @@ export function ProductCard({ product }) {
   // Check if product is on sale
   const isSale = p.discount && p.discount > 0;
 
-  const handleAddToCart = (e) => {
+  const { data: session } = useSession();
+  const { isInWishlist } = useWishlistStore();
+  const [isInWishlistLocal, setIsInWishlistLocal] = useState(
+    isInWishlist(p._id)
+  );
+
+  useEffect(() => {
+    if (session && p) {
+      setIsInWishlistLocal(isInWishlist(p._id));
+    }
+  }, [session, p, isInWishlist]);
+
+  const handleAddToCart = async (e) => {
     e.preventDefault();
-    toast({
-      description: `${p.name} added to cart`,
-    });
+    const { addItem, loading } = useCartStore.getState();
+    if (loading) return;
+
+    try {
+      await addItem(p, 1);
+      toast({
+        description: `${p.name} added to cart`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to add item to cart",
+      });
+    }
   };
 
-  const handleAddToWishlist = (e) => {
+  const handleAddToWishlist = async (e) => {
     e.preventDefault();
-    toast({
-      description: `${p.name} added to wishlist`,
-    });
+    const { addItem, loading } = useWishlistStore.getState();
+    if (loading) return;
+
+    try {
+      if (!session) {
+        toast({
+          title: "Login Required",
+          description: "Please login to add items to your wishlist",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      await addItem(p);
+      setIsInWishlistLocal(!isInWishlistLocal);
+      toast({
+        description: `${p.name} ${
+          isInWishlistLocal ? "removed from" : "added to"
+        } wishlist`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "Failed to add item to wishlist",
+      });
+    }
   };
 
   const handleQuickView = (e) => {
@@ -98,10 +149,14 @@ export function ProductCard({ product }) {
             <Button
               size="icon"
               variant="secondary"
-              className="rounded-full h-10 w-10"
+              className={`rounded-full h-10 w-10 ${
+                isInWishlistLocal ? "bg-primary hover:bg-primary/90" : ""
+              }`}
               onClick={handleAddToWishlist}
             >
-              <Heart className="h-5 w-5" />
+              <Heart
+                className={`h-5 w-5 ${isInWishlistLocal ? "fill-white" : ""}`}
+              />
             </Button>
           </div>
         </div>

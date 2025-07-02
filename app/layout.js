@@ -3,8 +3,9 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/toaster";
-import { Header } from "@/components/layout/header";
-import FooterWrapper from "@/components/layout/FooterWrapper";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import BottomTabNav from "@/components/BottomTabNav";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -36,8 +37,9 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
             <Header />
-            <main className="flex-1">{children}</main>
-            <FooterWrapper />
+            <main className="flex-1 pb-24 lg:pb-4">{children}</main>
+            <Footer />
+            <BottomTabNav />
             <Toaster />
           </ThemeProvider>
         </Providers>

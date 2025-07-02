@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import {
   Package,
   ExternalLink,
@@ -10,6 +11,30 @@ import {
   Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Table,
   TableBody,
@@ -33,106 +58,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-
-// Mock data for orders - will be replaced with actual data fetching
-const mockOrders = [
-  {
-    id: "ORD-2023-0001",
-    date: "2023-11-15",
-    total: 159.98,
-    status: "delivered",
-    items: [
-      {
-        id: "1",
-        name: "Wireless Earbuds",
-        price: 79.99,
-        quantity: 1,
-        image: "https://via.placeholder.com/100x100",
-      },
-      {
-        id: "2",
-        name: "Phone Case",
-        price: 19.99,
-        quantity: 4,
-        image: "https://via.placeholder.com/100x100",
-      },
-    ],
-    shippingAddress: {
-      name: "John Doe",
-      street: "123 Main St",
-      city: "Anytown",
-      state: "CA",
-      zipCode: "12345",
-      country: "United States",
-    },
-    paymentMethod: "Credit Card ending in 4242",
-    trackingNumber: "TRK123456789",
-  },
-  {
-    id: "ORD-2023-0002",
-    date: "2023-12-05",
-    total: 89.99,
-    status: "processing",
-    items: [
-      {
-        id: "3",
-        name: "Smart Watch",
-        price: 89.99,
-        quantity: 1,
-        image: "https://via.placeholder.com/100x100",
-      },
-    ],
-    shippingAddress: {
-      name: "John Doe",
-      street: "123 Main St",
-      city: "Anytown",
-      state: "CA",
-      zipCode: "12345",
-      country: "United States",
-    },
-    paymentMethod: "PayPal",
-    trackingNumber: null,
-  },
-  {
-    id: "ORD-2023-0003",
-    date: "2024-01-20",
-    total: 235.97,
-    status: "shipped",
-    items: [
-      {
-        id: "4",
-        name: "Bluetooth Speaker",
-        price: 129.99,
-        quantity: 1,
-        image: "https://via.placeholder.com/100x100",
-      },
-      {
-        id: "5",
-        name: "HDMI Cable",
-        price: 15.99,
-        quantity: 2,
-        image: "https://via.placeholder.com/100x100",
-      },
-      {
-        id: "6",
-        name: "USB-C Charger",
-        price: 24.99,
-        quantity: 3,
-        image: "https://via.placeholder.com/100x100",
-      },
-    ],
-    shippingAddress: {
-      name: "John Doe",
-      street: "123 Main St",
-      city: "Anytown",
-      state: "CA",
-      zipCode: "12345",
-      country: "United States",
-    },
-    paymentMethod: "Credit Card ending in 4242",
-    trackingNumber: "TRK987654321",
-  },
-];
+import { useSession } from "next-auth/react";
+import { useToast } from "@/components/ui/use-toast";
+// Orders are fetched from the API
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -141,13 +69,39 @@ export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
 
+  const { data: session } = useSession();
+  const { toast } = useToast();
+
   useEffect(() => {
-    // Simulate fetching orders data
-    setTimeout(() => {
-      setOrders(mockOrders);
-      setLoading(false);
-    }, 500);
-  }, []);
+    const fetchOrders = async () => {
+      if (!session?.user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const response = await fetch("/api/orders");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch orders");
+        }
+
+        const data = await response.json();
+        setOrders(data.orders || []);
+      } catch (error) {
+        console.error("Error fetching orders:", error);
+        toast({
+          variant: "destructive",
+          description: "Failed to load orders",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, [session, toast]);
 
   // Filter orders based on selected filter
   const filteredOrders =

@@ -7,60 +7,95 @@ import { Heart, ShoppingCart, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Badge } from "@/components/ui/badge";
-
-// Mock data for wishlist - will be replaced with actual data fetching
-const mockWishlistItems = [
-  {
-    id: "1",
-    name: "Wireless Bluetooth Earbuds",
-    price: 79.99,
-    image: "https://via.placeholder.com/200x200",
-    inStock: true,
-    category: "Electronics",
-  },
-  {
-    id: "2",
-    name: "Lightweight Running Shoes",
-    price: 129.99,
-    image: "https://via.placeholder.com/200x200",
-    inStock: true,
-    category: "Fashion",
-  },
-  {
-    id: "3",
-    name: "Stainless Steel Water Bottle",
-    price: 24.99,
-    image: "https://via.placeholder.com/200x200",
-    inStock: false,
-    category: "Home & Kitchen",
-  },
-];
+import { useSession } from "next-auth/react";
 
 export default function WishlistPage() {
   const [wishlistItems, setWishlistItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
-  useEffect(() => {
-    // Simulate fetching wishlist data
-    setTimeout(() => {
-      setWishlistItems(mockWishlistItems);
-      setLoading(false);
-    }, 500);
-  }, []);
+  const { data: session } = useSession();
 
-  const removeFromWishlist = (id) => {
-    setWishlistItems(wishlistItems.filter((item) => item.id !== id));
-    toast({
-      description: "Item removed from wishlist",
-    });
+  useEffect(() => {
+    const fetchWishlist = async () => {
+      if (!session?.user) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/user/wishlist");
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch wishlist");
+        }
+
+        const data = await response.json();
+        setWishlistItems(data.wishlist || []);
+      } catch (error) {
+        console.error("Error fetching wishlist:", error);
+        toast({
+          variant: "destructive",
+          description: "Failed to load wishlist items",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchWishlist();
+  }, [session, toast]);
+
+  const removeFromWishlist = async (id) => {
+    try {
+      const response = await fetch(`/api/user/wishlist?productId=${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to remove item");
+      }
+
+      setWishlistItems(wishlistItems.filter((item) => item.id !== id));
+      toast({
+        description: "Item removed from wishlist",
+      });
+    } catch (error) {
+      console.error("Error removing from wishlist:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to remove item from wishlist",
+      });
+    }
   };
 
-  const addToCart = (id) => {
-    // In a real app, this would add the item to the cart
-    toast({
-      description: "Item added to cart",
-    });
+  const addToCart = async (product) => {
+    try {
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          quantity: 1,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add item to cart");
+      }
+
+      toast({
+        description: "Item added to cart",
+      });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast({
+        variant: "destructive",
+        description: "Failed to add item to cart",
+      });
+    }
   };
 
   if (loading) {

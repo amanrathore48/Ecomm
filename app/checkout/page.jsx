@@ -34,23 +34,8 @@ import {
   ArrowLeft,
 } from "lucide-react";
 
-// Mock data for cart items - will be replaced with actual data fetching
-const mockCartItems = [
-  {
-    id: "1",
-    name: "Premium T-shirt",
-    price: 29.99,
-    quantity: 2,
-    image: "https://via.placeholder.com/100x100",
-  },
-  {
-    id: "2",
-    name: "Designer Jeans",
-    price: 89.99,
-    quantity: 1,
-    image: "https://via.placeholder.com/100x100",
-  },
-];
+// Import useCartStore for real cart data
+import useCartStore from "@/stores/zustand-cart";
 
 // Form validation schema
 const shippingFormSchema = z.object({
@@ -85,12 +70,9 @@ export default function CheckoutPage() {
   const [orderCompleted, setOrderCompleted] = useState(false);
   const { toast } = useToast();
 
-  // Calculate cart totals
-  const subtotal = mockCartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
+  const { items, getTotal } = useCartStore();
   const shipping = 5.99;
+  const subtotal = getTotal();
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + shipping + tax;
 

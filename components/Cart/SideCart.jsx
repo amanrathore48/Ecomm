@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
 
-const SideCart = ({ isOpen, onClose }) => {
+export default function SideCart({ isOpen, onClose }) {
   const {
     items,
     loading,
@@ -184,6 +184,4 @@ const SideCart = ({ isOpen, onClose }) => {
       </div>
     </div>
   );
-};
-
-export default SideCart;
+}
