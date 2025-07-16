@@ -1,16 +1,15 @@
-import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
+import "./typography.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Providers } from "./providers";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import BottomTabNav from "@/components/BottomTabNav";
+import { FontPreloader } from "@/components/ui/font-preloader";
+import { fontSans, fontSerif, fontMono } from "./fonts";
 
-const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
+// Font configuration is now handled in app/fonts.js
 
 export const metadata = {
   title: {
@@ -25,10 +24,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${fontSans.variable} font-sans min-h-screen flex flex-col`}
-      >
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable}`}
+    >
+      <head />
+      <body className="font-sans min-h-screen flex flex-col">
+        <FontPreloader />
         <Providers>
           <ThemeProvider
             attribute="class"

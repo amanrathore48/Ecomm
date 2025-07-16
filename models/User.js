@@ -48,9 +48,23 @@ const UserSchema = new mongoose.Schema(
       },
     ],
     phoneNo: { type: String },
+    phone: { type: String },
+    address: { type: String },
+    city: { type: String },
+    state: { type: String },
+    zipCode: { type: String },
+    country: { type: String },
   },
   { timestamps: true }
 );
+
+// Add toJSON transform to convert _id to id for client-side consistency
+UserSchema.set("toJSON", {
+  transform: function (doc, ret) {
+    ret.id = ret._id.toString();
+    return ret;
+  },
+});
 
 mongoose.models = {};
 

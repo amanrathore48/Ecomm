@@ -178,17 +178,22 @@ export async function PUT(request) {
     await dbConnect();
     const data = await request.json();
 
-    // Remove id from the data to prevent accidental overwrite
-    const { id, ...updateData } = data;
+    // Extract id from the data to prevent accidental overwrite
+    const { id, _id, ...updateData } = data;
 
-    if (!id) {
+    // Use either id or _id, whichever is provided
+    const productId = id || _id;
+
+    if (!productId) {
       return NextResponse.json(
         { error: "Product ID is required" },
         { status: 400 }
       );
     }
 
-    const updated = await Product.findByIdAndUpdate(id, updateData, {
+    console.log(`Updating product with ID: ${productId}`);
+
+    const updated = await Product.findByIdAndUpdate(productId, updateData, {
       new: true,
     });
 

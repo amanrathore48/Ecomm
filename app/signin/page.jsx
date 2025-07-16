@@ -61,7 +61,7 @@ export default function SignIn() {
         toast({ title: "Sign in successful" });
         const session = await getSession();
         if (session?.user?.role === "admin") {
-          router.push("/admin/analytics");
+          router.push("/admin");
         } else {
           router.push("/");
         }

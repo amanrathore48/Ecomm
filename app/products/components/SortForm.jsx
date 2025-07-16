@@ -18,7 +18,7 @@ export function SortForm({ searchParams }) {
           document.getElementById("sortForm").submit();
         }}
       >
-        <SelectTrigger className="w-[200px]">
+        <SelectTrigger className="w-[180px] border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/20 focus:ring-blue-200 dark:focus:ring-blue-800">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
         <SelectContent>

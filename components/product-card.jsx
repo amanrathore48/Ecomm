@@ -57,15 +57,24 @@ export function ProductCard({ product }) {
 
   const handleAddToCart = async (e) => {
     e.preventDefault();
+    e.stopPropagation(); // Stop event from bubbling up to parent elements
     const { addItem, loading } = useCartStore.getState();
     if (loading) return;
 
     try {
+      // Make sure we have the required product fields
+      if (!p || !p._id) {
+        throw new Error("Invalid product data");
+      }
+
       await addItem(p, 1);
       toast({
-        description: `${p.name} added to cart`,
+        title: "Added to Cart",
+        description: `${p.name} added to cart successfully`,
+        duration: 2000,
       });
     } catch (error) {
+      console.error("Add to cart error:", error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -82,8 +91,8 @@ export function ProductCard({ product }) {
     try {
       if (!session) {
         toast({
-          title: "Login Required",
-          description: "Please login to add items to your wishlist",
+          title: "Sign In Required",
+          description: "Please sign in to add items to your wishlist",
           variant: "destructive",
         });
         return;
@@ -216,10 +225,14 @@ export function ProductCard({ product }) {
           <Button
             onClick={handleAddToCart}
             className="w-full"
-            disabled={!(p.stock > 0)}
+            disabled={!(p.stock > 0) || useCartStore.getState().loading}
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
-            {p.stock > 0 ? "Add to Cart" : "Out of Stock"}
+            {useCartStore.getState().loading
+              ? "Adding..."
+              : p.stock > 0
+              ? "Add to Cart"
+              : "Out of Stock"}
           </Button>
         </div>
       </div>

@@ -17,7 +17,7 @@ const Footer = () => {
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center rounded-xl shadow-sm mr-2">
                   <span className="text-lg font-bold text-white">E</span>
                 </div>
-                <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 leading-tight">
+                <span className="text-xl font-serif font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 leading-tight">
                   Ecomm
                 </span>
               </div>

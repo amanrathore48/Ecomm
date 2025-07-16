@@ -813,11 +813,30 @@ export default function ProductForm({ product }) {
 
         console.log("Submitting product data:", productData);
 
+        // Track which images were removed (for S3 deletion)
+        let removedImages = [];
+        if (isEdit && product?.images) {
+          // Find images that were in the original product but not in the new product data
+          removedImages = product.images.filter(
+            (url) => !productData.images.includes(url)
+          );
+
+          // Also check if main image was changed
+          if (
+            product.mainImage &&
+            product.mainImage !== productData.mainImage
+          ) {
+            removedImages.push(product.mainImage);
+          }
+
+          console.log("Images to be removed from S3:", removedImages);
+        }
+
         // Now submit the product data with image URLs to the API
         const apiUrl = "/api/admin/products";
         const apiMethod = isEdit ? "PUT" : "POST";
         const apiPayload = isEdit
-          ? { id: product.id, ...productData }
+          ? { id: product._id, ...productData } // Use _id instead of id
           : productData;
 
         // Make sure we have all required data before API call
@@ -880,6 +899,31 @@ export default function ProductForm({ product }) {
         }
 
         const data = await apiRes.json();
+
+        // Clean up removed images from S3 if any
+        if (removedImages.length > 0) {
+          toast({
+            title: "Cleaning up old images...",
+            description: `Removing ${removedImages.length} old images from storage`,
+            duration: 3000,
+          });
+
+          // Delete each removed image from S3
+          for (const imageUrl of removedImages) {
+            try {
+              await fetch("/api/admin/upload/delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ imageUrl }),
+              });
+              console.log(`Successfully deleted image: ${imageUrl}`);
+            } catch (error) {
+              console.error(`Failed to delete image ${imageUrl}:`, error);
+              // Don't block the UI for image deletion failures
+            }
+          }
+        }
+
         toast({
           variant: "success",
           title: isEdit ? "Product updated" : "Product created",

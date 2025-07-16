@@ -51,8 +51,8 @@ const BottomTabNav = () => {
     {
       name: "Account",
       icon: <AiOutlineUser className="h-6 w-6" />,
-      href: status === "authenticated" ? "/profile" : "/login",
-      active: pathname?.includes("/profile") || pathname === "/login",
+      href: status === "authenticated" ? "/profile" : "/signin",
+      active: pathname?.includes("/profile") || pathname === "/signin",
     },
   ];
 

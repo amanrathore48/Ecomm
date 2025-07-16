@@ -2,26 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700;900&family=Pangolin&family=Poppins:wght@400;500;600;700&family=Roboto:wght@300;400;500&family=Ubuntu:wght@400;500;700&display=swap');
+/* Import typography system */
+@import "./typography.css";
 
-
-body{
-    overflow-x: hidden;
+body {
+  overflow-x: hidden;
 }
 
-.swiper-button-next, .swiper-button-prev {
+.swiper-button-next,
+.swiper-button-prev {
   display: none !important;
 }
 
 @media only screen and (max-width: 1000px) {
-    .medium{
-      display: none;
-      transition-delay: 2s;
-    }
+  .medium {
+    display: none;
+    transition-delay: 2s;
   }
-
-
-
-  
-
-
+}

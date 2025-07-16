@@ -11,9 +11,9 @@ export const createUser = async (cred) => {
     return false;
   }
 };
-export const login = async (cred) => {
+export const signin = async (cred) => {
   try {
-    const res = await axios.post(`${server}/users/login`, cred, {
+    const res = await axios.post(`${server}/users/signin`, cred, {
       withCredentials: true,
     });
     console.log(res.data);

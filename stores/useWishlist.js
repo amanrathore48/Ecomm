@@ -23,7 +23,7 @@ const useWishlistStore = create(
 
           if (response.status === 401) {
             set({
-              error: "Please login to add items to wishlist",
+              error: "Please sign in to add items to wishlist",
               loading: false,
             });
             throw new Error("Authentication required");
@@ -51,7 +51,7 @@ const useWishlistStore = create(
           });
 
           if (response.status === 401) {
-            set({ error: "Please login to manage wishlist", loading: false });
+            set({ error: "Please sign in to manage wishlist", loading: false });
             throw new Error("Authentication required");
           }
 
@@ -77,7 +77,7 @@ const useWishlistStore = create(
           });
 
           if (response.status === 401) {
-            set({ error: "Please login to manage wishlist", loading: false });
+            set({ error: "Please sign in to manage wishlist", loading: false });
             throw new Error("Authentication required");
           }
 
