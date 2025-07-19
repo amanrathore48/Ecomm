@@ -6,6 +6,7 @@ import { Providers } from "@/app/providers";
 // Import components
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Toaster } from "@/components/ui/toaster";
 
 // Define fonts
 const montserrat = Montserrat({
@@ -49,6 +50,7 @@ export default function RootLayout({ children }) {
             <Header />
             <main className="flex-grow">{children}</main>
             <Footer />
+            <Toaster />
           </Providers>
         </ThemeProvider>
       </body>

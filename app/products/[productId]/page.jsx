@@ -242,11 +242,14 @@ export default function ProductDetailPage({ params }) {
     try {
       if (product && product._id) {
         await addToCart(product, quantity);
+        // Enhanced toast with product name and quantity
         toast({
           title: "Added to Cart",
-          description: "Item has been added to your cart",
+          description: `${quantity} × ${product.name} added to your cart`,
           duration: 3000,
+          variant: "success",
         });
+        console.log("Toast notification triggered for cart addition");
       } else {
         throw new Error("Invalid product data");
       }

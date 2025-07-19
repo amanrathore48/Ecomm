@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import { useSession } from "next-auth/react";
 import {
   Form,
   FormControl,
@@ -59,7 +61,7 @@ const shippingFormSchema = z.object({
   shippingMethod: z.enum(["standard", "express"], {
     message: "Please select a shipping method.",
   }),
-  paymentMethod: z.enum(["credit_card", "paypal"], {
+  paymentMethod: z.enum(["credit_card", "paypal", "razorpay"], {
     message: "Please select a payment method.",
   }),
 });
@@ -68,13 +70,31 @@ export default function CheckoutPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
+  const [orderId, setOrderId] = useState("");
   const { toast } = useToast();
+  const router = useRouter();
+  const { data: session } = useSession();
 
-  const { items, getTotal } = useCartStore();
+  const { items, getTotal, clearCart } = useCartStore();
   const shipping = 5.99;
   const subtotal = getTotal();
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + shipping + tax;
+
+  // Load Razorpay script
+  useEffect(() => {
+    const loadRazorpayScript = () => {
+      return new Promise((resolve) => {
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.onload = () => resolve(true);
+        script.onerror = () => resolve(false);
+        document.body.appendChild(script);
+      });
+    };
+
+    loadRazorpayScript();
+  }, []);
 
   // Initialize form
   const form = useForm({
@@ -90,9 +110,115 @@ export default function CheckoutPage() {
       zipCode: "",
       country: "US",
       shippingMethod: "standard",
-      paymentMethod: "credit_card",
+      paymentMethod: "razorpay", // Default to Razorpay
     },
   });
+
+  // Initialize Razorpay payment
+  const initializeRazorpayPayment = async (orderData) => {
+    // Create order on the server
+    try {
+      const response = await fetch("/api/orders/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: Math.round(total * 100), // Razorpay expects amount in smallest currency unit (paise)
+          currency: "INR",
+          items: items,
+          shippingDetails: form.getValues(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create order");
+      }
+
+      const orderResponse = await response.json();
+      setOrderId(orderResponse.orderId);
+
+      // Open Razorpay payment form
+      const options = {
+        key:
+          process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_Lsb86CATOBV5aB", // Your key ID from .env
+        amount: Math.round(total * 100),
+        currency: "INR",
+        name: "Ecomm Store",
+        description: "Thank you for your purchase",
+        order_id: orderResponse.razorpayOrderId,
+        handler: function (response) {
+          // Handle successful payment
+          verifyPayment(response, orderResponse.orderId);
+        },
+        prefill: {
+          name: `${form.getValues("firstName")} ${form.getValues("lastName")}`,
+          email: form.getValues("email"),
+          contact: form.getValues("phone"),
+        },
+        theme: {
+          color: "#4F46E5", // Primary color
+        },
+        modal: {
+          ondismiss: function () {
+            setIsSubmitting(false);
+            toast({
+              title: "Payment Cancelled",
+              description: "You have cancelled the payment process.",
+              variant: "destructive",
+            });
+          },
+        },
+      };
+
+      const razorpayInstance = new window.Razorpay(options);
+      razorpayInstance.open();
+    } catch (error) {
+      console.error("Error creating order:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to initialize payment. Please try again.",
+      });
+      setIsSubmitting(false);
+    }
+  };
+
+  // Verify payment with the server
+  const verifyPayment = async (paymentResponse, orderId) => {
+    try {
+      const response = await fetch("/api/orders/verify-payment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          paymentId: paymentResponse.razorpay_payment_id,
+          orderId: paymentResponse.razorpay_order_id,
+          signature: paymentResponse.razorpay_signature,
+          orderDbId: orderId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Payment verification failed");
+      }
+
+      // Payment verified successfully - redirect to confirmation page
+      clearCart(); // Clear cart after successful payment
+      router.push(`/checkout/confirmation?orderId=${orderId}`);
+    } catch (error) {
+      console.error("Error verifying payment:", error);
+      toast({
+        variant: "destructive",
+        title: "Payment Verification Failed",
+        description:
+          "There was an issue verifying your payment. Please contact support.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const onSubmit = async (values) => {
     if (currentStep === 1) {
@@ -100,25 +226,58 @@ export default function CheckoutPage() {
       return;
     }
 
+    // Check if cart is empty
+    if (items.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "Empty Cart",
+        description: "Your cart is empty. Add products before checkout.",
+      });
+      router.push("/products");
+      return;
+    }
+
+    // Check if user is signed in (only if not in dev mode)
+    if (!session && process.env.NODE_ENV !== "development") {
+      toast({
+        variant: "destructive",
+        title: "Sign in required",
+        description: "Please sign in to complete your purchase.",
+      });
+      router.push("/login?redirect=checkout");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      // Simulate API request
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      setOrderCompleted(true);
+      // Handle different payment methods
+      if (values.paymentMethod === "razorpay") {
+        await initializeRazorpayPayment(values);
+      } else {
+        // For other payment methods (e.g. credit_card, paypal)
+        // This is where you'd integrate other payment gateways
+        toast({
+          title: "Payment Method Not Available",
+          description: "Please select Razorpay as the payment method.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+      }
     } catch (error) {
+      console.error("Checkout error:", error);
       toast({
         variant: "destructive",
         title: "Error",
         description:
           "There was a problem processing your order. Please try again.",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
 
+  // This UI is only shown for non-Razorpay payments or if we don't redirect
+  // For Razorpay payments, we redirect to the confirmation page
   if (orderCompleted) {
     return (
       <div className="container mx-auto px-4 py-16 text-center">
@@ -133,14 +292,18 @@ export default function CheckoutPage() {
             Thank you for your purchase. Your order has been confirmed and will
             be shipped soon.
           </p>
-          <p className="mb-8 text-primary font-medium">Order #ORD-2024-0045</p>
+          <p className="mb-8 text-primary font-medium">
+            {orderId
+              ? `Order #${orderId}`
+              : "Your order has been placed successfully"}
+          </p>
           <div className="space-y-4">
             <Button asChild size="lg">
               <Link href="/orders">View Order</Link>
             </Button>
             <div>
               <Button variant="outline" asChild size="lg">
-                <Link href="/">Continue Shopping</Link>
+                <Link href="/products">Continue Shopping</Link>
               </Button>
             </div>
           </div>
@@ -418,6 +581,36 @@ export default function CheckoutPage() {
                                 defaultValue={field.value}
                                 className="space-y-3"
                               >
+                                <div className="flex items-center space-x-2 border rounded-md p-3 cursor-pointer hover:bg-muted/50 bg-blue-50 border-blue-200">
+                                  <RadioGroupItem
+                                    value="razorpay"
+                                    id="razorpay"
+                                    defaultChecked
+                                  />
+                                  <div className="flex flex-1 justify-between items-center">
+                                    <label
+                                      htmlFor="razorpay"
+                                      className="flex items-center gap-2 text-sm font-medium leading-none cursor-pointer"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="18"
+                                        height="18"
+                                        viewBox="0 0 24 24"
+                                        className="text-blue-600"
+                                      >
+                                        <path
+                                          fill="currentColor"
+                                          d="M8.6 13.2l-5.6 8.8h4.8l4.8-8-4-0.8zM14.6 5.2c-1.333 0.8-2 2.133-2 4 0 2.8 2.4 3.733 2.4 3.733l4.8-8c-0.8 0-4.8 0-5.2 0.267z"
+                                        />
+                                      </svg>
+                                      Razorpay (Recommended)
+                                    </label>
+                                    <div className="text-xs text-blue-600 font-medium">
+                                      Secure Payment
+                                    </div>
+                                  </div>
+                                </div>
                                 <div className="flex items-center space-x-2 border rounded-md p-3 cursor-pointer hover:bg-muted/50">
                                   <RadioGroupItem
                                     value="credit_card"
@@ -467,6 +660,36 @@ export default function CheckoutPage() {
                           </FormItem>
                         )}
                       />
+
+                      {form.watch("paymentMethod") === "razorpay" && (
+                        <div className="space-y-4 pt-4 border-t">
+                          <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <div className="flex items-center gap-2 text-blue-700 mb-2">
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M12 16v-4"></path>
+                                <path d="M12 8h.01"></path>
+                              </svg>
+                              <h3 className="font-medium">Razorpay Payment</h3>
+                            </div>
+                            <p className="text-sm text-gray-600">
+                              You'll be redirected to Razorpay's secure payment
+                              platform to complete your purchase after clicking
+                              "Place Order".
+                            </p>
+                          </div>
+                        </div>
+                      )}
 
                       {form.watch("paymentMethod") === "credit_card" && (
                         <div className="space-y-4 pt-4 border-t">
@@ -537,6 +760,8 @@ export default function CheckoutPage() {
                         ? "Processing..."
                         : currentStep === 1
                         ? "Continue to Payment"
+                        : form.watch("paymentMethod") === "razorpay"
+                        ? "Pay with Razorpay"
                         : "Place Order"}
                     </Button>
                   </div>
@@ -551,30 +776,39 @@ export default function CheckoutPage() {
               <h2 className="text-xl font-bold mb-4">Order Summary</h2>
 
               <div className="space-y-4 mb-4">
-                {mockCartItems.map((item) => (
-                  <div key={item.id} className="flex gap-3">
-                    <div className="relative h-16 w-16 rounded bg-secondary/20 flex-shrink-0">
-                      <Image
-                        src={item.image}
-                        alt={item.name}
-                        fill
-                        className="object-cover rounded"
-                      />
-                      <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs">
-                        {item.quantity}
-                      </span>
+                {items.length > 0 ? (
+                  items.map((item) => (
+                    <div key={item.id} className="flex gap-3">
+                      <div className="relative h-16 w-16 rounded bg-secondary/20 flex-shrink-0">
+                        <Image
+                          src={item.image || "/placeholder-image.jpg"}
+                          alt={item.name}
+                          fill
+                          className="object-cover rounded"
+                        />
+                        <span className="absolute -top-2 -right-2 h-5 w-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs">
+                          {item.quantity}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-sm font-medium">{item.name}</h3>
+                        <p className="text-sm text-muted-foreground">
+                          ${parseFloat(item.price).toFixed(2)} × {item.quantity}
+                        </p>
+                      </div>
+                      <div className="text-sm font-medium">
+                        ${(parseFloat(item.price) * item.quantity).toFixed(2)}
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-sm font-medium">{item.name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        ${item.price.toFixed(2)} × {item.quantity}
-                      </p>
-                    </div>
-                    <div className="text-sm font-medium">
-                      ${(item.price * item.quantity).toFixed(2)}
-                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-muted-foreground">Your cart is empty</p>
+                    <Button variant="outline" className="mt-2" asChild>
+                      <Link href="/products">Shop Now</Link>
+                    </Button>
                   </div>
-                ))}
+                )}
               </div>
 
               <div className="border-t pt-4 mb-4">

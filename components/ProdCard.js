@@ -1,6 +1,8 @@
 import { useContext } from "react";
 import Link from "next/link";
 import { ProductsContext } from "./ProductsContext";
+import { useToast } from "@/components/ui/use-toast";
+import useCartStore from "@/stores/zustand-cart";
 
 const ProdCard = ({
   _id,
@@ -13,9 +15,42 @@ const ProdCard = ({
 }) => {
   // Use mainImage if available, fallback to picture
   const { setSelectedProducts } = useContext(ProductsContext);
+  const { toast } = useToast();
+  const { addItem: addToCart } = useCartStore();
+
   function addProduct() {
+    // Add to ProductsContext for backward compatibility
     setSelectedProducts((prev) => [...prev, _id]);
+
+    // Add to zustand cart store
+    try {
+      const product = {
+        _id,
+        name,
+        price,
+        images: [mainImage || picture || "/placeholder-product.jpg"],
+      };
+
+      addToCart(product, 1);
+
+      // Show toast notification
+      toast({
+        title: "Added to Cart",
+        description: `${name} has been added to your cart`,
+        variant: "success",
+        duration: 3000,
+      });
+    } catch (error) {
+      console.error("Add to cart error:", error);
+      toast({
+        title: "Failed to add to cart",
+        description: error.message || "An error occurred",
+        variant: "destructive",
+        duration: 3000,
+      });
+    }
   }
+
   return (
     <Link
       href={`/products/${slug || _id}`}
