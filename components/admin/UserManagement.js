@@ -59,9 +59,18 @@ export function UserManagement() {
 
       try {
         console.log("Fetching users from API...");
-        // Update to use the App Router API endpoint path
+        console.log("API URL:", "/api/admin/users"); // Log the API URL for debugging
+        // Use App Router API endpoint path with explicit headers and no-cache
         const response = await fetch("/api/admin/users", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
           cache: "no-store", // Don't cache the request
+          next: { revalidate: 0 }, // Next.js App Router specific
         });
 
         if (!response.ok) {
@@ -105,7 +114,7 @@ export function UserManagement() {
     };
 
     fetchUsers();
-  }, []);
+  }, []); // Empty dependency array means this effect runs once on mount
 
   // Helper function to get a consistent ID from user object
   const getUserId = (user) => {
@@ -200,6 +209,7 @@ export function UserManagement() {
         body: JSON.stringify({
           name: editingUser.name,
           email: editingUser.email,
+          role: editingUser.role,
         }),
       });
 

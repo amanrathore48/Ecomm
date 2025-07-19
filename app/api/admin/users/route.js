@@ -6,16 +6,18 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export async function GET() {
   try {
+    console.log("Received GET request to /api/admin/users");
+
     // Connect to database
     await dbConnect();
 
-    // Optional: Check if user is authenticated and is an admin
+    // Check if user is authenticated and is an admin
     const session = await getServerSession(authOptions);
     console.log("Session in App Router users API:", session);
 
-    // NOTE: Authentication check is temporarily disabled for debugging
-    // Uncomment once confirmed working
+    // Temporarily disable authentication check for debugging
     // if (!session) {
+    //   console.log("No session found, returning 401");
     //   return NextResponse.json(
     //     { message: "Unauthorized" },
     //     { status: 401 }
@@ -23,6 +25,7 @@ export async function GET() {
     // }
 
     // if (session?.user?.role !== "admin") {
+    //   console.log(`User role ${session?.user?.role} is not admin, returning 403`);
     //   return NextResponse.json(
     //     { message: "Forbidden: Admin access required" },
     //     { status: 403 }
