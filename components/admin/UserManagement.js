@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -25,9 +25,11 @@ export function UserManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [editingUser, setEditingUser] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const searchTimeout = useRef(null);
   const [userToDelete, setUserToDelete] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -43,6 +45,11 @@ export function UserManagement() {
       router.push("/");
     }
   }, [session, router]);
+
+  // Initialize debounced search query with the searchQuery value
+  useEffect(() => {
+    setDebouncedSearchQuery(searchQuery);
+  }, []);
 
   // Fetch users
   useEffect(() => {
@@ -105,12 +112,12 @@ export function UserManagement() {
     return user.id || (user._id ? user._id.toString() : user._id);
   };
 
-  // Filter users based on search query
+  // Filter users based on debounced search query
   const filteredUsers = users.filter(
     (user) =>
-      user.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.role?.toLowerCase().includes(searchQuery.toLowerCase())
+      user.name?.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
+      user.role?.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
   );
 
   // Handle user deletion
@@ -254,75 +261,89 @@ export function UserManagement() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="text-2xl font-serif font-semibold text-gray-900 dark:text-gray-100">
-            User Management
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage users and assign roles
-          </p>
-        </div>
-
+    <div className="p-4 md:p-6">
+      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between">
         <button
           onClick={() => setShowAddModal(true)}
-          className="mt-4 md:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+          className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors font-medium"
         >
           <UserPlus className="w-4 h-4 mr-2" />
-          Add User
+          Add New User
         </button>
       </div>
 
       {/* Search and filter */}
       <div className="mb-6">
-        <div className="relative">
+        <div className="relative max-w-md">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="h-5 w-5 text-gray-400" />
+            <Search className="h-4 w-4 text-gray-400" />
           </div>
           <input
             type="text"
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             placeholder="Search users by name, email or role..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              // Update the input value immediately for UX
+              setSearchQuery(value);
+
+              // Clear any previous timeout
+              if (searchTimeout.current) {
+                clearTimeout(searchTimeout.current);
+              }
+
+              // Set a new timeout for debounced filtering
+              searchTimeout.current = setTimeout(() => {
+                // Update the debounced search query after delay
+                setDebouncedSearchQuery(value);
+              }, 300); // 300ms debounce delay
+            }}
           />
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 p-4 rounded-md mb-6">
-          {error}
+        <div className="bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-300 p-4 rounded-lg border border-red-100 dark:border-red-900 mb-6">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <X className="h-5 w-5 text-red-400" aria-hidden="true" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm font-medium">{error}</p>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Users table */}
-      <div className="bg-white dark:bg-gray-800 shadow overflow-hidden rounded-md">
+      <div className="bg-white dark:bg-gray-800 shadow-sm overflow-hidden border dark:border-gray-700 rounded-lg">
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead className="bg-gray-50 dark:bg-gray-900/50">
-              <tr>
+            <thead>
+              <tr className="bg-gray-50 dark:bg-gray-900/40">
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                  className="px-6 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                 >
                   User
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                  className="px-6 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                 >
                   Role
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                  className="px-6 py-3.5 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                 >
                   Joined
                 </th>
                 <th
                   scope="col"
-                  className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+                  className="px-6 py-3.5 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
                 >
                   Actions
                 </th>
@@ -350,11 +371,11 @@ export function UserManagement() {
                 filteredUsers.map((user) => (
                   <tr
                     key={getUserId(user)}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center">
                           {user.role === "admin" ? (
                             <Shield className="h-5 w-5 text-green-500" />
                           ) : (
@@ -379,48 +400,52 @@ export function UserManagement() {
                         ? new Date(user.createdAt).toLocaleDateString()
                         : "N/A"}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
-                      <button
-                        onClick={() => {
-                          setEditingUser({ ...user });
-                          setShowEditModal(true);
-                        }}
-                        className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
-                        title="Edit user"
-                      >
-                        <Edit className="w-3.5 h-3.5 mr-1" /> Edit
-                      </button>
-                      <button
-                        onClick={() => handleRoleToggle(user)}
-                        className={`inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded ${
-                          user.role === "admin"
-                            ? "text-yellow-700 bg-yellow-100 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:hover:bg-yellow-900/50"
-                            : "text-green-700 bg-green-100 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300 dark:hover:bg-green-900/50"
-                        }`}
-                        title={`Change to ${
-                          user.role === "admin" ? "User" : "Admin"
-                        }`}
-                      >
-                        {user.role === "admin" ? (
-                          <>
-                            <UserX className="w-3.5 h-3.5 mr-1" /> Demote
-                          </>
-                        ) : (
-                          <>
-                            <Shield className="w-3.5 h-3.5 mr-1" /> Promote
-                          </>
-                        )}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setUserToDelete(user);
-                          setShowDeleteModal(true);
-                        }}
-                        className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50"
-                        title="Delete user"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete
-                      </button>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex items-center justify-end space-x-3">
+                        <button
+                          onClick={() => {
+                            setEditingUser({ ...user });
+                            setShowEditModal(true);
+                          }}
+                          className="inline-flex items-center px-2.5 py-1.5 border border-gray-200 dark:border-gray-700 text-xs font-medium rounded-md text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                          title="Edit user"
+                        >
+                          <Edit className="w-3.5 h-3.5 mr-1 text-blue-500" />{" "}
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleRoleToggle(user)}
+                          className={`inline-flex items-center px-2.5 py-1.5 border text-xs font-medium rounded-md transition-colors ${
+                            user.role === "admin"
+                              ? "border-yellow-200 dark:border-yellow-900/50 text-yellow-800 dark:text-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 hover:bg-yellow-100 dark:hover:bg-yellow-900/30"
+                              : "border-green-200 dark:border-green-900/50 text-green-800 dark:text-green-200 bg-green-50 dark:bg-green-900/20 hover:bg-green-100 dark:hover:bg-green-900/30"
+                          }`}
+                          title={`Change to ${
+                            user.role === "admin" ? "User" : "Admin"
+                          }`}
+                        >
+                          {user.role === "admin" ? (
+                            <>
+                              <UserX className="w-3.5 h-3.5 mr-1" /> Demote
+                            </>
+                          ) : (
+                            <>
+                              <Shield className="w-3.5 h-3.5 mr-1" /> Promote
+                            </>
+                          )}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setUserToDelete(user);
+                            setShowDeleteModal(true);
+                          }}
+                          className="inline-flex items-center px-2.5 py-1.5 border border-red-200 dark:border-red-900/50 text-xs font-medium rounded-md text-red-800 dark:text-red-200 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                          title="Delete user"
+                        >
+                          <Trash2 className="w-3.5 h-3.5 mr-1 text-red-500" />{" "}
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -432,12 +457,13 @@ export function UserManagement() {
 
       {/* Delete Confirmation Modal */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm flex justify-center items-center z-50">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
-              Confirm Delete
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-2xl max-w-md w-full border dark:border-gray-700">
+            <div className="flex items-center mb-4 text-red-600 dark:text-red-400">
+              <Trash2 className="h-5 w-5 mr-2" />
+              <h3 className="text-lg font-medium">Delete User</h3>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400 mb-2">
               Are you sure you want to delete user{" "}
               <span className="font-medium">{userToDelete?.name}</span>? This
               action cannot be undone.

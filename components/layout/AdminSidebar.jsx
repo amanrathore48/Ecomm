@@ -44,18 +44,21 @@ export default function AdminSidebar() {
   const isAdmin = session?.user?.role === "admin";
 
   return (
-    <aside className="w-64 bg-background border-r p-6 sticky top-0 h-screen overflow-auto font-sans">
-      <div className="flex items-center justify-center mb-8">
-        <h2 className="text-2xl font-serif font-semibold text-primary tracking-tight">
+    <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-5 sticky top-0 h-screen overflow-auto font-sans flex flex-col">
+      <div className="flex items-center mb-8">
+        <div className="h-8 w-8 rounded-md bg-blue-600 flex items-center justify-center mr-2">
+          <span className="text-white font-bold text-lg">E</span>
+        </div>
+        <h2 className="text-xl font-semibold text-blue-600 dark:text-blue-400">
           Admin Panel
         </h2>
       </div>
 
       <div className="mb-6">
-        <h3 className="text-xs uppercase tracking-wider text-muted-foreground font-medium mb-2 px-4">
+        <h3 className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 font-medium mb-2 px-3">
           Navigation
         </h3>
-        <div className="h-px bg-border mb-2"></div>
+        <div className="h-px bg-gray-200 dark:bg-gray-700 mb-2"></div>
       </div>
 
       <nav className="flex flex-col space-y-1">
@@ -63,26 +66,26 @@ export default function AdminSidebar() {
           <div key={link.href} className="mb-2">
             <Link
               href={link.href}
-              className={`flex items-center px-4 py-2.5 rounded-lg transition-colors ${
+              className={`flex items-center px-3 py-2.5 rounded-lg transition-colors ${
                 pathname === link.href
-                  ? "bg-primary/10 text-primary font-medium"
-                  : "text-foreground/80 hover:bg-accent hover:text-foreground"
+                  ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium"
+                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-gray-900 dark:hover:text-white"
               }`}
             >
               {link.icon}
-              <span className="font-serif font-medium">{link.label}</span>
+              <span className="font-medium">{link.label}</span>
             </Link>
 
             {link.subLinks && (
-              <div className="pl-4 mt-1 space-y-1 border-l border-border ml-4">
+              <div className="pl-6 mt-1 space-y-1 border-l border-gray-200 dark:border-gray-700 ml-3">
                 {link.subLinks.map((subLink) => (
                   <Link
                     key={subLink.href}
                     href={subLink.href}
-                    className={`block px-4 py-2 text-sm rounded-md transition-colors ${
+                    className={`block px-3 py-2 text-sm rounded-md transition-colors ${
                       pathname === subLink.href
-                        ? "bg-accent text-primary font-medium"
-                        : "text-foreground/70 hover:bg-accent/50 hover:text-foreground"
+                        ? "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 font-medium"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700/30 hover:text-gray-900 dark:hover:text-white"
                     }`}
                   >
                     {subLink.label}

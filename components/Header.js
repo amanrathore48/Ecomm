@@ -19,10 +19,12 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
+  const searchTimeout = useRef(null);
   const router = useRouter();
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
 
   // Define navigation links
@@ -84,27 +86,76 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Handle search submission
+  // Handle debounced search
+  const performSearch = (query) => {
+    // If we're already on the products page, preserve other search parameters
+    if (pathname.startsWith("/products")) {
+      // Get current URL search params
+      const url = new URL(window.location.href);
+      const params = url.searchParams;
+
+      // If query is empty or less than 2 chars, remove the search parameter completely
+      if (!query || query.trim().length < 2) {
+        params.delete("search");
+      } else {
+        // Otherwise set the search parameter
+        params.set("search", query);
+      }
+
+      // Reset to page 1 when changing search
+      params.set("page", "1");
+
+      // Navigate with all parameters preserved
+      router.push(`/products?${params.toString()}`, { scroll: false });
+    } else if (query && query.trim().length >= 2) {
+      // If not on products page and has valid search query, navigate to products with search
+      router.push(`/products?search=${query}`);
+    }
+    // Remove the automatic redirect to products page when query is empty
+  };
+
+  // Update debounced search when search query changes
+  useEffect(() => {
+    // Clear any existing timeout
+    if (searchTimeout.current) {
+      clearTimeout(searchTimeout.current);
+    }
+
+    // Set a new timeout for debouncing (300ms)
+    searchTimeout.current = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    // Cleanup timeout on component unmount
+    return () => {
+      if (searchTimeout.current) {
+        clearTimeout(searchTimeout.current);
+      }
+    };
+  }, [searchQuery]);
+
+  // Perform search when debounced search query changes
+  useEffect(() => {
+    // Only perform search when on products page or when search query is valid
+    if (
+      pathname.startsWith("/products") ||
+      (debouncedSearchQuery && debouncedSearchQuery.trim().length >= 2)
+    ) {
+      performSearch(debouncedSearchQuery);
+    }
+  }, [debouncedSearchQuery, pathname]);
+
+  // Handle search form submission
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.length >= 2) {
-      // If we're already on the products page, preserve other search parameters
-      if (pathname.startsWith("/products")) {
-        // Get current URL search params
-        const url = new URL(window.location.href);
-        const params = url.searchParams;
-
-        // Update only the search parameter
-        params.set("search", searchQuery);
-        // Reset to page 1 when searching
-        params.set("page", "1");
-
-        // Navigate with all parameters preserved
-        router.push(`/products?${params.toString()}`);
-      } else {
-        // If not on products page, simply navigate to products with search
-        router.push(`/products?search=${searchQuery}`);
-      }
+    if (searchQuery && searchQuery.trim().length >= 2) {
+      performSearch(searchQuery);
+    } else if (pathname.startsWith("/products")) {
+      // If on products page with empty query, just clear search parameter
+      const url = new URL(window.location.href);
+      const params = url.searchParams;
+      params.delete("search");
+      router.push(`/products?${params.toString()}`, { scroll: false });
     }
   };
 
@@ -201,13 +252,45 @@ const Header = () => {
                   type="search"
                   name="search"
                   placeholder="Search products..."
-                  className="w-48 xl:w-64 pl-9 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm focus:outline-none focus:ring-1 focus:ring-blue-300 dark:focus:ring-blue-500 focus:border-blue-300 dark:focus:border-blue-500 dark:text-gray-100"
+                  className="w-48 xl:w-64 pl-9 pr-9 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full text-sm focus:outline-none focus:ring-1 focus:ring-blue-300 dark:focus:ring-blue-500 focus:border-blue-300 dark:focus:border-blue-500 dark:text-gray-100"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Search className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                 </div>
+                {searchQuery && (
+                  <button
+                    type="button"
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    onClick={() => {
+                      setSearchQuery("");
+                      if (pathname.startsWith("/products")) {
+                        const url = new URL(window.location.href);
+                        const params = url.searchParams;
+                        params.delete("search");
+                        router.push(`/products?${params.toString()}`, {
+                          scroll: false,
+                        });
+                      }
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                )}
               </form>
             </div>
 
@@ -423,17 +506,53 @@ const Header = () => {
                     type="search"
                     name="search"
                     placeholder="Search products..."
-                    className="w-full pl-9 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-300 dark:focus:ring-blue-500 focus:border-blue-300 dark:focus:border-blue-500 dark:text-gray-100"
+                    className="w-full pl-9 pr-16 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-300 dark:focus:ring-blue-500 focus:border-blue-300 dark:focus:border-blue-500 dark:text-gray-100"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Search className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                   </div>
+
+                  {searchQuery && (
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-10 pr-1 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      onClick={() => {
+                        setSearchQuery("");
+                        if (pathname.startsWith("/products")) {
+                          const url = new URL(window.location.href);
+                          const params = url.searchParams;
+                          params.delete("search");
+                          router.push(`/products?${params.toString()}`, {
+                            scroll: false,
+                          });
+                        }
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  )}
+
                   <button
                     type="submit"
                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
+                      performSearch(searchQuery);
                       if (searchQuery.length >= 2) {
                         setIsMenuOpen(false);
                       }

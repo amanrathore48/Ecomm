@@ -28,9 +28,11 @@ export default function AdminLayout({ children }) {
 
   if (status === "authenticated" && session?.user?.role === "admin") {
     return (
-      <div className="flex min-h-screen bg-background">
+      <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
         <AdminSidebar />
-        <main className="flex-1 p-6 overflow-auto">{children}</main>
+        <main className="flex-1 p-6 md:p-8 overflow-auto">
+          <div className="max-w-7xl mx-auto">{children}</div>
+        </main>
       </div>
     );
   }
