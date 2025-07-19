@@ -1,15 +1,13 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { Footer } from "./footer";
+import { Footer } from "@/components/layout/footer";
 
 export default function FooterWrapper() {
   const pathname = usePathname();
-
-  // Don't show footer on admin pages
+  // Hide footer on admin routes
   if (pathname.startsWith("/admin")) {
     return null;
   }
-
   return <Footer />;
 }
