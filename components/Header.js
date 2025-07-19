@@ -13,9 +13,12 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import useCartStore from "@/stores/zustand-cart";
 
 const Header = () => {
   const { data: session, status } = useSession();
+  const { items } = useCartStore();
+  const cartCount = items.reduce((total, item) => total + item.quantity, 0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
@@ -339,27 +342,34 @@ const Header = () => {
                   />
                 </svg>
               </Link>
-
               <Link
                 href="/cart"
-                className="p-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 relative"
+                className="group relative p-3 text-gray-600 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 rounded-xl hover:bg-gradient-to-br hover:from-gray-50 hover:to-gray-100 dark:hover:from-gray-800/50 dark:hover:to-gray-700/50 transition-all duration-300 ease-out hover:scale-105 hover:shadow-lg hover:shadow-gray-200/50 dark:hover:shadow-gray-900/50 border border-transparent hover:border-gray-200/60 dark:hover:border-gray-700/60"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                  />
-                </svg>
+                {cartCount > 0 && (
+                  <span className="absolute -top-0 -right-0 h-4 w-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs font-medium flex items-center justify-center ring-1 ring-white dark:ring-gray-900 shadow-md">
+                    {cartCount}
+                  </span>
+                )}
+                <div className="relative">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-6 h-6 group-hover:scale-110 transition-transform duration-200"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                    />
+                  </svg>
+                  {/* Subtle glow effect */}
+                  <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+                </div>
               </Link>
-
               <div className="relative" ref={userMenuRef}>
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
