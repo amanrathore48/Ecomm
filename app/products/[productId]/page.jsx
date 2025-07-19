@@ -17,8 +17,11 @@ import { apiGet } from "@/helpers/api";
 
 async function fetchProduct(productId) {
   try {
+    // Enhanced logging to debug the API request
+    console.log(`Sending API request for product ID/slug: ${productId}`);
+
     // Use our new apiGet function with enhanced error handling and retries
-    return await apiGet(`/products/${productId}`, {
+    const response = await apiGet(`/products/${productId}`, {
       timeout: 10000, // 10 seconds timeout for product details
       retries: 3, // Use 3 retries for product detail pages
       headers: {
@@ -26,6 +29,9 @@ async function fetchProduct(productId) {
         "x-request-source": "product-detail-page", // For debugging and analytics
       },
     });
+
+    console.log("Raw API Response:", response);
+    return response;
   } catch (error) {
     console.error("Error fetching product:", error);
 
@@ -63,11 +69,14 @@ export default function ProductDetailPage({ params }) {
   const { productId } = params;
   const { toast } = useToast();
 
+  console.log("Rendering ProductDetailPage with productId:", productId);
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
+  const [hasAttemptedLoad, setHasAttemptedLoad] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isInWishlistLocal, setIsInWishlistLocal] = useState(false);
   const { data: session } = useSession();
@@ -86,16 +95,56 @@ export default function ProductDetailPage({ params }) {
   }, [session, product, isInWishlist]);
 
   useEffect(() => {
+    // Prevent duplicate loading attempts that might cause loops
+    if (hasAttemptedLoad) return;
+
     async function loadProduct(retryCount = 0) {
       setLoading(true);
+      setHasAttemptedLoad(true);
+
       try {
+        console.log(`Loading product ${productId} (attempt ${retryCount + 1})`);
         const data = await fetchProduct(productId);
-        if (data?.product) {
-          setProduct(data.product);
-          setRelatedProducts(data.relatedProducts || []);
+        console.log("API Response:", data); // Add logging to debug response structure
+
+        if (data) {
+          console.log("Processing API response with data:", data);
+          // More precise handling of different response formats
+          let productData;
+
+          // Case 1: Direct product data in the response object
+          if (data._id && data.name) {
+            productData = data;
+          }
+          // Case 2: Product is nested in product property
+          else if (data.product && data.product._id) {
+            productData = data.product;
+          }
+          // Case 3: Product might be the entire response if it has success:true
+          else if (data.success && data._id) {
+            productData = data;
+          }
+
+          console.log("Setting product data:", productData);
+
+          // Ensure we have a valid product with essential properties
+          if (productData && productData._id) {
+            setProduct(productData);
+            setRelatedProducts(data.relatedProducts || []);
+          } else {
+            console.error(
+              "Invalid product data structure or missing ID:",
+              data
+            );
+            setError(
+              "The product information is incomplete. Please try another product."
+            );
+          }
         } else {
+          console.error("Invalid product data structure:", data);
           setError("Product not found");
-          notFound();
+          // Instead of notFound() which might cause navigation, show error UI
+          // notFound();
         }
       } catch (err) {
         console.error(
@@ -134,11 +183,60 @@ export default function ProductDetailPage({ params }) {
       }
     }
     loadProduct();
-  }, [productId]);
+  }, [productId, hasAttemptedLoad]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!product) return notFound();
+  // Display loading state during initial load
+  if (loading && !product) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="flex justify-center items-center h-96">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-lg">Loading product details...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Display error state without redirecting
+  if (error) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-2xl mx-auto">
+          <h1 className="text-xl font-semibold text-red-700 mb-4">
+            Error Loading Product
+          </h1>
+          <p className="text-red-600 mb-2">{error}</p>
+          <p className="text-gray-600">
+            Please try refreshing the page or go back to browse other products.
+          </p>
+          <Button className="mt-4" asChild>
+            <a href="/products">Return to Products</a>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't use notFound() as it might be causing navigation issues
+  if (!product) {
+    return (
+      <div className="container mx-auto p-4">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 max-w-2xl mx-auto">
+          <h1 className="text-xl font-semibold text-amber-700 mb-4">
+            Product Not Found
+          </h1>
+          <p className="text-gray-600">
+            The product you're looking for could not be found.
+          </p>
+          <Button className="mt-4" asChild>
+            <a href="/products">Browse All Products</a>
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const handleAddToCart = async () => {
     try {

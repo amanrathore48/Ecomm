@@ -53,13 +53,16 @@ const Header = () => {
     setMounted(true);
   }, []);
 
-  // Sync search query with URL parameters when on products page
+  // Sync search query with URL parameters when on products listing page only
   useEffect(() => {
-    if (pathname.startsWith("/products") && typeof window !== "undefined") {
+    // Only run this logic on the exact products listing page, not product detail pages
+    if (pathname === "/products") {
       const params = new URLSearchParams(window.location.search);
       const searchParam = params.get("search");
       if (searchParam) {
         setSearchQuery(searchParam);
+      } else {
+        setSearchQuery("");
       }
     }
   }, [pathname]);
@@ -88,8 +91,14 @@ const Header = () => {
 
   // Handle debounced search
   const performSearch = (query) => {
-    // If we're already on the products page, preserve other search parameters
-    if (pathname.startsWith("/products")) {
+    // Don't redirect when on a product detail page - check pathname pattern
+    if (pathname.match(/^\/products\/[^\/]+$/)) {
+      console.log("Search from product detail page - not redirecting");
+      return;
+    }
+
+    // If we're already on the products listing page, preserve other search parameters
+    if (pathname === "/products") {
       // Get current URL search params
       const url = new URL(window.location.href);
       const params = url.searchParams;
@@ -136,9 +145,15 @@ const Header = () => {
 
   // Perform search when debounced search query changes
   useEffect(() => {
-    // Only perform search when on products page or when search query is valid
+    // Skip search redirects on product detail pages
+    if (pathname.match(/^\/products\/[^\/]+$/)) {
+      console.log("Skipping search redirect on product detail page");
+      return;
+    }
+
+    // Only perform search when on products listing page or when search query is valid
     if (
-      pathname.startsWith("/products") ||
+      pathname === "/products" ||
       (debouncedSearchQuery && debouncedSearchQuery.trim().length >= 2)
     ) {
       performSearch(debouncedSearchQuery);
@@ -148,10 +163,19 @@ const Header = () => {
   // Handle search form submission
   const handleSearch = (e) => {
     e.preventDefault();
+
+    // Skip redirects on product detail pages
+    if (pathname.match(/^\/products\/[^\/]+$/)) {
+      console.log(
+        "Search form submitted on product detail page - not redirecting"
+      );
+      return;
+    }
+
     if (searchQuery && searchQuery.trim().length >= 2) {
       performSearch(searchQuery);
-    } else if (pathname.startsWith("/products")) {
-      // If on products page with empty query, just clear search parameter
+    } else if (pathname === "/products") {
+      // If on products listing page with empty query, just clear search parameter
       const url = new URL(window.location.href);
       const params = url.searchParams;
       params.delete("search");

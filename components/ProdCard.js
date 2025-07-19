@@ -18,7 +18,7 @@ const ProdCard = ({
   }
   return (
     <Link
-      href={`/products/${slug}`}
+      href={`/products/${slug || _id}`}
       className="block w-52 hover:shadow-lg transition"
     >
       <div className="bg-blue-100 p-5 rounded-xl">

@@ -142,7 +142,7 @@ export function ProductCard({ product }) {
       </div>
 
       {/* Product image with action buttons overlay */}
-      <Link href={`/products/${p._id}`} className="block">
+      <Link href={`/products/${p.slug || p._id}`} className="block">
         <div className="relative h-60 bg-secondary/20">
           <ImageWithFallback
             src={p.mainImage || p.images || p.img}
@@ -183,7 +183,7 @@ export function ProductCard({ product }) {
 
       {/* Product info */}
       <div className="p-4">
-        <Link href={`/products/${p._id}`} className="block">
+        <Link href={`/products/${p.slug || p._id}`} className="block">
           <h3 className="font-medium text-lg hover:text-primary transition-colors line-clamp-2">
             {p.name}
           </h3>

@@ -42,7 +42,7 @@ const ProdCard3 = ({ product }) => {
     <div className="relative m-10 w-full max-w-xs overflow-hidden rounded-lg bg-white shadow-md">
       <Link
         className="flex justify-center p-4"
-        href={`/products/${product._id}`}
+        href={`/products/${product.slug || product._id}`}
       >
         <img
           className="h-60 rounded-t-lg object-cover"

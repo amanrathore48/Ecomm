@@ -330,7 +330,7 @@ function ProductsList({ products }) {
         // Add staggered animation with different delays
         const animationDelay = `${(index % 5) * 0.05}s`;
 
-        // Ensure the product has mainImage by copying the first image if needed
+        // Ensure the product has mainImage and slug fields
         let productToRender = { ...product };
 
         if (
@@ -339,6 +339,11 @@ function ProductsList({ products }) {
           productToRender.images.length > 0
         ) {
           productToRender.mainImage = productToRender.images[0];
+        }
+
+        // Ensure the slug field exists (fallback to _id if missing)
+        if (!productToRender.slug) {
+          console.warn(`Product missing slug field: ${productToRender._id}`);
         }
 
         return (

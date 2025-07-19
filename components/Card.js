@@ -42,7 +42,7 @@ const Card = ({ image, type, width, productInfo }) => {
               <button className="text-lg block font-semibold py-2 px-6 text-green-100 hover:text-white bg-green-400 rounded-lg shadow hover:shadow-md transition duration-300">
                 <Link
                   href={`/products/${
-                    productInfo._id || productInfo.slug || "id"
+                    productInfo.slug || productInfo._id || "id"
                   }`}
                 >
                   Buy

@@ -5,7 +5,7 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 const ProdCard1 = ({ product }) => {
   return (
     <article className="rounded-xl bg-white p-3 shadow-lg hover:shadow-xl hover:transform hover:scale-105 duration-300 h-[280px] flex flex-col">
-      <Link href={`/products/${product._id}`}>
+      <Link href={`/products/${product.slug || product._id}`}>
         <div className="relative h-[150px] flex items-end overflow-hidden rounded-xl">
           <img
             className="object-contain w-full h-full"
