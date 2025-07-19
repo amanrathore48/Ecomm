@@ -133,55 +133,6 @@ export default function Home() {
 
       {/* Interactive Shop By Category - Always visible */}
       <ShopByCategory categories={categories} />
-
-      {/* Features Section */}
-      <section className="py-16 bg-gray-100 dark:bg-gray-800">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Why Choose Us</h2>
-            <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              We offer the best shopping experience with exceptional service and
-              quality products.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                title: "Free Shipping",
-                description: "Free shipping on all orders over $50",
-                icon: "📦",
-              },
-              {
-                title: "24/7 Support",
-                description: "Round-the-clock customer service",
-                icon: "🛎️",
-              },
-              {
-                title: "Money Back",
-                description: "30-day money-back guarantee",
-                icon: "💸",
-              },
-              {
-                title: "Secure Payment",
-                description: "100% secure payment processing",
-                icon: "🔒",
-              },
-            ].map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow duration-300"
-              >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
     </main>
   );
 }

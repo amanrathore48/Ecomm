@@ -5,7 +5,7 @@ import { Providers } from "@/app/providers";
 
 // Import components
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import FooterWrapper from "@/components/layout/FooterWrapper";
 import { Toaster } from "@/components/ui/toaster";
 
 // Define fonts
@@ -49,7 +49,7 @@ export default function RootLayout({ children }) {
           <Providers>
             <Header />
             <main className="flex-grow">{children}</main>
-            <Footer />
+            <FooterWrapper />
             <Toaster />
           </Providers>
         </ThemeProvider>
