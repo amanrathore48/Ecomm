@@ -1,28 +1,13 @@
 /** @type {import('tailwindcss').Config} */
-const { fontFamily } = require("tailwindcss/defaultTheme");
-
 module.exports = {
-  darkMode: ["class"],
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./layouts/**/*.{js,ts,jsx,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: "class",
   theme: {
-    container: {
-      center: true,
-      padding: "2rem",
-      screens: {
-        "2xl": "1400px",
-      },
-    },
-    fontFamily: {
-      sans: ["var(--font-sans)", ...fontFamily.sans],
-      serif: ["var(--font-serif)", ...fontFamily.serif],
-      mono: ["var(--font-mono)", ...fontFamily.mono],
-      heading: ["var(--font-serif)", ...fontFamily.serif],
-    },
     extend: {
       colors: {
         border: "hsl(var(--border))",
@@ -58,39 +43,61 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-      keyframes: {
-        "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+        // Additional brand colors
+        brand: {
+          red: "hsl(346, 77%, 41%)",
         },
-        "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
-        },
-      },
-      animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
       },
       backgroundImage: {
         "herobg-1": "url('/slide.jpg')",
         formbg: "url('/formimg.jpg')",
       },
-      fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
-        monster: ["Montserrat", "sans-serif"],
-        pango: ["Pangolin", "cursive"],
-        poppins: ["Poppins", "sans-serif"],
-        roboto: ["Roboto", "sans-serif"],
-        ubuntu: ["Ubuntu", "sans-serif"],
+      fontSize: {
+        xs: "0.75rem", // 12px
+        sm: "0.875rem", // 14px
+        base: "1rem", // 16px
+        lg: "1.125rem", // 18px
+        xl: "1.25rem", // 20px
+        "2xl": "1.5rem", // 24px
+        "3xl": "1.875rem", // 30px
+        "4xl": "2.25rem", // 36px
+        "5xl": "3rem", // 48px
+        "6xl": "3.75rem", // 60px
+      },
+      typography: {
+        DEFAULT: {
+          css: {
+            maxWidth: "65ch",
+            h1: {
+              fontSize: "2.25rem",
+              marginTop: "2rem",
+              marginBottom: "1rem",
+            },
+            h2: {
+              fontSize: "1.5rem",
+              marginTop: "1.75rem",
+              marginBottom: "0.75rem",
+            },
+            h3: {
+              fontSize: "1.25rem",
+              marginTop: "1.5rem",
+              marginBottom: "0.5rem",
+            },
+          },
+        },
       },
     },
+    fontFamily: {
+      sans: ["var(--font-poppins)", "system-ui", "sans-serif"],
+      serif: ["Georgia", "serif"],
+      mono: ["Menlo", "Monaco", "Courier New", "monospace"],
+      montserrat: ["var(--font-montserrat)", "sans-serif"],
+      poppins: ["var(--font-poppins)", "sans-serif"],
+      inter: ["var(--font-inter)", "sans-serif"],
+      roboto: ["Roboto", "sans-serif"],
+      ubuntu: ["Ubuntu", "sans-serif"],
+      pango: ["Pangolin", "cursive"],
+    },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("@tailwindcss/typography")],
 };

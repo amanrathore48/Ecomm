@@ -1,7 +1,6 @@
 import "./globals.css";
 import { Montserrat, Poppins, Inter } from "next/font/google";
-import { ThemeProvider } from "@/app/providers";
-import { Providers } from "@/app/providers";
+import { ThemeProvider, Providers } from "@/app/providers";
 
 // Import components
 import Header from "@/components/Header";
@@ -44,8 +43,8 @@ export default function RootLayout({ children }) {
       suppressHydrationWarning
       className={`${montserrat.variable} ${poppins.variable} ${inter.variable}`}
     >
-      <body className="min-h-screen flex flex-col bg-background">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <body className="min-h-screen flex flex-col bg-background font-sans antialiased">
+        <ThemeProvider>
           <Providers>
             <Header />
             <main className="flex-grow">{children}</main>

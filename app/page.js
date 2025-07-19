@@ -58,11 +58,16 @@ const categories = [
 // Featured Products Section Component
 function FeaturedProductsSection() {
   return (
-    <section className="py-16 bg-white dark:bg-gray-900">
+    <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold mb-4">Featured Products</h2>
-          <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold mb-4 text-foreground">
+            <span className="relative">
+              Featured Products
+              <span className="absolute bottom-0 left-1/4 right-1/4 h-1 bg-primary/70 rounded"></span>
+            </span>
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
             Discover our handpicked selection of premium products that represent
             the best in quality and value.
           </p>
@@ -89,23 +94,35 @@ export default function Home() {
       <section className="bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto px-4 py-20 lg:py-32 flex flex-col lg:flex-row items-center">
           <div className="lg:w-1/2 lg:pr-10 mb-10 lg:mb-0">
-            <div className="bg-primary/10 text-primary px-4 py-1 rounded-full text-sm inline-block mb-4">
+            <div className="bg-primary/15 text-primary font-medium px-4 py-1 rounded-full text-sm inline-block mb-4 border border-primary/20">
               Premium Quality Products
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Find Your Perfect Style at{" "}
-              <span className="text-primary">Ecomm.</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground">
+              Find Your Perfect Style at
+              <br className="hidden sm:block" />
+              <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent inline-block mt-2">
+                Ecomm.
+              </span>
             </h1>
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
+            <p className="text-lg text-muted-foreground mb-8">
               Discover a wide range of products with excellent quality at
               affordable prices. Shop with confidence and enjoy a seamless
               experience.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button size="lg" asChild>
+              <Button
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-white font-medium"
+                asChild
+              >
                 <Link href="/products">Shop Now</Link>
               </Button>
-              <Button size="lg" variant="outline" asChild>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-primary text-primary hover:bg-primary/10"
+                asChild
+              >
                 <Link href="/products">Explore Categories</Link>
               </Button>
             </div>

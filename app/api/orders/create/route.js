@@ -1,30 +1,33 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
-import connectDB from "@/config/db";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+import dbConnect from "@/config/db";
 import Order from "@/models/Order";
 import { razorpay } from "@/config/razorpay";
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
+export async function POST(request) {
   try {
     // Connect to database
-    await connectDB();
+    await dbConnect();
 
     // Verify user authentication
-    const session = await getServerSession(req, res, authOptions);
+    const session = await getServerSession();
 
     // Allow checkout in development environment without authentication
     if (!session && process.env.NODE_ENV !== "development") {
-      return res.status(401).json({ message: "Not authenticated" });
+      return NextResponse.json(
+        { success: false, message: "Not authenticated" },
+        { status: 401 }
+      );
     }
 
-    const { amount, currency, items, shippingDetails } = req.body;
+    const requestData = await request.json();
+    const { amount, currency, items, shippingDetails } = requestData;
 
     if (!amount || !currency || !items || items.length === 0) {
-      return res.status(400).json({ message: "Missing required parameters" });
+      return NextResponse.json(
+        { success: false, message: "Missing required parameters" },
+        { status: 400 }
+      );
     }
 
     // Create Razorpay order
@@ -71,7 +74,8 @@ export default async function handler(req, res) {
 
     await order.save();
 
-    return res.status(200).json({
+    return NextResponse.json({
+      success: true,
       orderId: order._id,
       razorpayOrderId: razorpayOrder.id,
       currency: currency,
@@ -79,9 +83,13 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Error creating order:", error);
-    return res.status(500).json({
-      message: "Error creating order",
-      error: error.message,
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Error creating order",
+        error: error.message,
+      },
+      { status: 500 }
+    );
   }
 }

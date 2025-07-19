@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import dbConnect from "@/config/db";
 import User from "@/models/User";
-import { encryptSensitiveData } from "@/lib/encryption";
 
 // GET /api/user/profile
 export async function GET() {
@@ -21,21 +20,7 @@ export async function GET() {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Encrypt sensitive user data before sending response
-    const userData = {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      address: user.address,
-      billingDetails: user.billingDetails,
-      // Additional user data
-    };
-
-    // Encrypt sensitive data in the response
-    const encryptedUserData = encryptSensitiveData(userData);
-
-    return NextResponse.json({ success: true, user: encryptedUserData });
+    return NextResponse.json({ user });
   } catch (error) {
     console.error("GET /api/user/profile error:", error);
     return NextResponse.json(
@@ -55,9 +40,6 @@ export async function PUT(request) {
 
     const data = await request.json();
 
-    // Decrypt request data if needed
-    const { name, phone, address } = data;
-
     await dbConnect();
     const user = await User.findOne({ email: session.user.email });
 
@@ -66,27 +48,29 @@ export async function PUT(request) {
     }
 
     // Update user fields
-    if (name) user.name = name;
-    if (phone) user.phone = phone;
-    if (address) user.address = address;
+    if (data.name) user.name = data.name;
+    if (data.email && data.email !== session.user.email) {
+      // Check if new email is available
+      const existingUser = await User.findOne({ email: data.email });
+      if (existingUser) {
+        return NextResponse.json(
+          { error: "Email already in use" },
+          { status: 400 }
+        );
+      }
+      user.email = data.email;
+    }
+    if (data.phone) user.phone = data.phone;
+    if (data.address) user.address = data.address;
+    if (data.city) user.city = data.city;
+    if (data.state) user.state = data.state;
+    if (data.zipCode) user.zipCode = data.zipCode;
+    if (data.country) user.country = data.country;
 
     await user.save();
 
     const updatedUser = await User.findById(user._id).select("-password");
-
-    // Encrypt sensitive data in the response
-    const userData = {
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      phone: updatedUser.phone,
-      address: updatedUser.address,
-      // Other user data
-    };
-
-    const encryptedUserData = encryptSensitiveData(userData);
-
-    return NextResponse.json({ success: true, user: encryptedUserData });
+    return NextResponse.json({ user: updatedUser });
   } catch (error) {
     console.error("PUT /api/user/profile error:", error);
     return NextResponse.json(

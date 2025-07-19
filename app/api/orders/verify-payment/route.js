@@ -1,25 +1,22 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/[...nextauth]";
-import connectDB from "@/config/db";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
+import dbConnect from "@/config/db";
 import Order from "@/models/Order";
-import { razorpay } from "@/config/razorpay";
 import crypto from "crypto";
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
+export async function POST(request) {
   try {
     // Connect to database
-    await connectDB();
+    await dbConnect();
 
+    // Parse request data
+    const requestData = await request.json();
     const {
       paymentId,
       orderId: razorpayOrderId,
       signature,
       orderDbId,
-    } = req.body;
+    } = requestData;
 
     // Verify payment signature
     const generatedSignature = crypto
@@ -29,18 +26,27 @@ export default async function handler(req, res) {
 
     // If the signature doesn't match, payment is not valid
     if (generatedSignature !== signature) {
-      return res.status(400).json({ message: "Invalid payment signature" });
+      return NextResponse.json(
+        { success: false, message: "Invalid payment signature" },
+        { status: 400 }
+      );
     }
 
     // Find the order in our database
     const order = await Order.findById(orderDbId);
 
     if (!order) {
-      return res.status(404).json({ message: "Order not found" });
+      return NextResponse.json(
+        { success: false, message: "Order not found" },
+        { status: 404 }
+      );
     }
 
     if (order.paymentStatus === "completed") {
-      return res.status(200).json({ message: "Payment already verified" });
+      return NextResponse.json({
+        success: true,
+        message: "Payment already verified",
+      });
     }
 
     // Update order status
@@ -52,7 +58,7 @@ export default async function handler(req, res) {
 
     await order.save();
 
-    return res.status(200).json({
+    return NextResponse.json({
       success: true,
       message: "Payment verified successfully",
       order: {
@@ -63,9 +69,13 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error("Error verifying payment:", error);
-    return res.status(500).json({
-      message: "Error verifying payment",
-      error: error.message,
-    });
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Error verifying payment",
+        error: error.message,
+      },
+      { status: 500 }
+    );
   }
 }
