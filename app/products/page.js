@@ -46,8 +46,15 @@ async function getProducts(searchParams) {
   const params = new URLSearchParams();
 
   // Copy all relevant search parameters to the API request
+  // Handle multiple category selections
   if (searchParams.category) {
-    params.append("category", searchParams.category);
+    if (Array.isArray(searchParams.category)) {
+      searchParams.category.forEach((cat) => {
+        params.append("category", cat);
+      });
+    } else {
+      params.append("category", searchParams.category);
+    }
   }
 
   if (searchParams.minPrice) {
@@ -132,11 +139,12 @@ async function getProducts(searchParams) {
       const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
 
       const response = await fetch(url, {
-        next: { revalidate: 60 }, // Cache for 60 seconds
+        next: { revalidate: 0 }, // Don't cache this request
         signal: controller.signal,
         headers: {
-          "Cache-Control": "no-cache",
+          "Cache-Control": "no-cache, no-store, must-revalidate",
           Pragma: "no-cache",
+          Expires: "0",
         },
       });
 
@@ -292,17 +300,10 @@ function ProductsLoading() {
 
 // Products list component
 function ProductsList({ products }) {
-  // Debug - log products to server console
-  console.log(
-    "ProductsList rendering - products:",
-    products ? products.length : 0
-  );
-  if (products && products.length > 0) {
-    console.log("First product in list:", products[0]);
-  }
+  // Check product length for rendering decisions
+  const productCount = products ? products.length : 0;
 
   if (!products || products.length === 0) {
-    console.log("No products found, showing empty state");
     return (
       <EmptyState
         icon="🔍"
@@ -329,6 +330,17 @@ function ProductsList({ products }) {
         // Add staggered animation with different delays
         const animationDelay = `${(index % 5) * 0.05}s`;
 
+        // Ensure the product has mainImage by copying the first image if needed
+        let productToRender = { ...product };
+
+        if (
+          !productToRender.mainImage &&
+          productToRender.images &&
+          productToRender.images.length > 0
+        ) {
+          productToRender.mainImage = productToRender.images[0];
+        }
+
         return (
           <div
             key={product._id}
@@ -339,7 +351,7 @@ function ProductsList({ products }) {
               opacity: 0,
             }}
           >
-            <ProductCard product={product} />
+            <ProductCard product={productToRender} />
           </div>
         );
       })}
@@ -409,12 +421,7 @@ export default async function ProductsPage({ searchParams }) {
   // Add animation styles to the page
   const pageStyles = styles;
 
-  // Debug - log products to server console
-  console.log("Products fetched:", products && products.length);
-  if (products && products.length > 0) {
-    console.log("First product:", products[0]._id, products[0].name);
-  }
-  console.log("Categories fetched:", categories.length);
+  // Calculate values for pagination
 
   // Calculate values for pagination
   const currentPage = parseInt(searchParams?.page || "1");
@@ -429,10 +436,10 @@ export default async function ProductsPage({ searchParams }) {
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl mb-10 p-8 shadow-sm">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div>
-              <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">
+              <h1 className="text-xl font-medium mb-1.5 text-gray-900 dark:text-white font-heading">
                 Browse Our Collection
               </h1>
-              <p className="text-muted-foreground text-lg">
+              <p className="text-muted-foreground text-sm">
                 {products && products.length > 0 ? (
                   <>
                     Showing {products.length} of {totalProducts} products
@@ -466,9 +473,9 @@ export default async function ProductsPage({ searchParams }) {
             className="lg:col-span-1 space-y-6 lg:sticky lg:top-24 lg:self-start"
           >
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-              <div className="flex items-center justify-between mb-5">
-                <h2 className="font-bold text-xl text-gray-900 dark:text-white flex items-center">
-                  <Filter className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-medium text-lg text-gray-900 dark:text-white flex items-center">
+                  <Filter className="w-4 h-4 mr-1.5 text-blue-600 dark:text-blue-400" />
                   Filters
                 </h2>
                 <Button

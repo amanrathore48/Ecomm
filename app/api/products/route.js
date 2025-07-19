@@ -59,21 +59,28 @@ export async function GET(request) {
 
     // Search filter - check name and description
     if (searchParams.get("search")) {
-      const searchTerm = searchParams.get("search");
-      // Use text index if available, otherwise fall back to regex
-      if (searchTerm.length > 3) {
+      const searchTerm = searchParams.get("search").trim();
+
+      if (searchTerm.length > 0) {
+        // For any length search term, check both name and description
         filter.$or = [
           { name: { $regex: searchTerm, $options: "i" } },
           { description: { $regex: searchTerm, $options: "i" } },
+          // Also check in category names
+          { categories: { $regex: searchTerm, $options: "i" } },
         ];
-      } else {
-        filter.name = { $regex: `^${searchTerm}`, $options: "i" }; // Starts with for short terms
       }
     }
 
-    // Category filter
-    if (searchParams.get("category")) {
-      filter.categories = searchParams.get("category");
+    // Category filter - handle multiple selections
+    const categoryParams = searchParams.getAll("category");
+    if (categoryParams.length > 0) {
+      if (categoryParams.length === 1) {
+        filter.categories = categoryParams[0];
+      } else {
+        // If multiple categories selected, match any of them
+        filter.categories = { $in: categoryParams };
+      }
     }
 
     // Price range filter
@@ -109,7 +116,7 @@ export async function GET(request) {
       ]),
       Promise.race([
         Product.find(filter)
-          .select("name slug price images rating stock categories") // Only select needed fields
+          .select("name slug price mainImage images rating stock categories") // Include mainImage field
           .lean() // Return plain objects instead of Mongoose documents
           .sort(sort)
           .skip(skip)

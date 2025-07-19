@@ -14,7 +14,17 @@ const ProdCard2 = ({ product }) => {
           className="relative mx-3 mt-3 flex justify-center h-60 overflow-hidden rounded-xl"
           href={`/products/${product._id}`}
         >
-          <img className="object-cover" src={product.img} alt="product image" />
+          <img
+            className="object-cover"
+            src={
+              product.mainImage ||
+              product.img ||
+              (product.images && product.images.length > 0
+                ? product.images[0]
+                : "/images/product-placeholder.png")
+            }
+            alt={product.name || "product image"}
+          />
           <span className="absolute top-0 left-0 m-2 rounded-full bg-black px-2 text-center text-sm font-medium text-white">
             {product.discount}% OFF
           </span>

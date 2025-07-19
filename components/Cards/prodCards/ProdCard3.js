@@ -12,13 +12,19 @@ const ProdCard3 = ({ product }) => {
     const cartPro = {
       id: product._id,
       title: product.title,
-      img: product.img,
+      img:
+        product.mainImage ||
+        product.img ||
+        (product.images && product.images.length > 0
+          ? product.images[0]
+          : "/images/product-placeholder.png"),
       brand: product.brand,
       discount: product.discount,
       price: product.price,
       quantity: 1,
-      size: product.sizes[0],
-      color: product.colors[0],
+      size: product.sizes && product.sizes.length > 0 ? product.sizes[0] : "",
+      color:
+        product.colors && product.colors.length > 0 ? product.colors[0] : "",
     };
     await addToCart({ ...cartPro });
 
@@ -40,8 +46,14 @@ const ProdCard3 = ({ product }) => {
       >
         <img
           className="h-60 rounded-t-lg object-cover"
-          src={product.img}
-          alt="product image"
+          src={
+            product.mainImage ||
+            product.img ||
+            (product.images && product.images.length > 0
+              ? product.images[0]
+              : "/images/product-placeholder.png")
+          }
+          alt={product.name || "product image"}
         />
       </Link>
       <span className="absolute top-0 left-0 w-28 translate-y-4 -translate-x-6 -rotate-45 bg-black text-center text-sm text-white">

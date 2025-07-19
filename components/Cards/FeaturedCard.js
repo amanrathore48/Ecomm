@@ -6,8 +6,8 @@ const SingleCard = ({ data }) => {
     <div className="w-full h-full relative">
       {" "}
       <div className="w-full flex flex-col gap-2">
-        <h1 className="font-pango text-2xl font-semibold">{data.title}</h1>
-        <img className=" object-contain" alt="" src={data.img}></img>
+        <h2 className="font-montserrat text-xl font-semibold">{data.title}</h2>
+        <img className="object-contain" alt="" src={data.img}></img>
         <Link
           href={"/products"}
           className="absolute bottom-1 text-left text-sm mt-1 text-blue-700 font-medium"
@@ -21,12 +21,12 @@ const SingleCard = ({ data }) => {
 const QuadCard = ({ data }) => {
   return (
     <div className="w-full h-full relative ">
-      <h1 className="font-pango text-2xl font-semibold">{data.title}</h1>
-      <div className="flex flex-wrap  justify-evenly mt-2">
+      <h2 className="font-montserrat text-xl font-semibold">{data.title}</h2>
+      <div className="flex flex-wrap justify-evenly mt-2">
         {data.blocks.map((block, index) => (
           <div key={index} className="w-1/2">
             <img className="w-full p-1" src={block.img} alt="" />
-            <p className="text-left text-xs font-pango p-1 ">{block.des}</p>
+            <p className="text-left text-xs font-poppins p-1">{block.des}</p>
           </div>
         ))}
       </div>

@@ -1,23 +1,28 @@
-import { Poppins, Playfair_Display, Source_Code_Pro } from "next/font/google";
+import { Inter, Roboto, Montserrat, Poppins } from "next/font/google";
 
-// Configure the fonts
-export const fontSans = Poppins({
+export const inter = Inter({
   subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+export const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-roboto",
+});
+
+export const montserrat = Montserrat({
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-sans",
+  subsets: ["latin"],
   display: "swap",
+  variable: "--font-montserrat",
 });
 
-export const fontSerif = Playfair_Display({
+export const poppins = Poppins({
+  weight: ["300", "400", "500", "600", "700"],
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-serif",
   display: "swap",
-});
-
-export const fontMono = Source_Code_Pro({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-mono",
-  display: "swap",
+  variable: "--font-poppins",
 });

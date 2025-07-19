@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Heart, ShoppingCart, Eye, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
+import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 import useCartStore from "@/stores/zustand-cart";
 import useWishlistStore from "@/stores/useWishlist";
 
@@ -26,8 +26,16 @@ export function ProductCard({ product }) {
     stock: 10,
   };
 
-  // Use provided product or default
-  const p = product || defaultProduct;
+  // Process the product data to ensure consistent structure
+  let p = product || defaultProduct;
+
+  // If no mainImage but has images array, add mainImage for consistent API
+  if (!p.mainImage && p.images && p.images.length > 0) {
+    p = {
+      ...p,
+      mainImage: p.images[0],
+    };
+  }
 
   // Discount percentage calculation
   const discountPercentage = p.discount ? p.discount : 0;
@@ -119,6 +127,8 @@ export function ProductCard({ product }) {
     // Quick view functionality would be implemented here
   };
 
+  // ImageWithFallback component will handle the fallback logic
+
   return (
     <div
       className="group relative bg-card border rounded-lg overflow-hidden transition-all duration-300 hover:shadow-lg"
@@ -134,9 +144,9 @@ export function ProductCard({ product }) {
       {/* Product image with action buttons overlay */}
       <Link href={`/products/${p._id}`} className="block">
         <div className="relative h-60 bg-secondary/20">
-          <Image
-            src={p.mainImage || "/placeholder-product.jpg"}
-            alt={p.name}
+          <ImageWithFallback
+            src={p.mainImage || p.images || p.img}
+            alt={p.name || "Product image"}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
           />

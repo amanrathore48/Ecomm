@@ -341,7 +341,9 @@ export default function ProductDetailPage({ params }) {
               {product.brand}
             </div>
           )}
-          <h1 className="text-3xl font-bold mb-3">{product.name}</h1>
+          <h1 className="text-2xl font-semibold mb-3 font-heading">
+            {product.name}
+          </h1>
 
           {/* Rating and reviews */}
           <div className="flex items-center gap-4 mb-5">
@@ -349,7 +351,7 @@ export default function ProductDetailPage({ params }) {
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`h-5 w-5 ${
+                  className={`h-4 w-4 ${
                     i < Math.round(product.rating || 0)
                       ? "fill-yellow-400 text-yellow-400"
                       : "fill-muted text-muted"
@@ -357,7 +359,7 @@ export default function ProductDetailPage({ params }) {
                 />
               ))}
             </div>
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground text-sm">
               {product.reviews?.length || 0} reviews
             </span>
           </div>
@@ -366,18 +368,18 @@ export default function ProductDetailPage({ params }) {
           <div className="mb-6">
             {product.discount ? (
               <div className="flex items-center gap-2">
-                <p className="text-3xl font-bold text-primary">
+                <p className="text-xl font-medium text-primary">
                   ${(product.price * (1 - product.discount / 100)).toFixed(2)}
                 </p>
-                <p className="text-lg text-muted-foreground line-through">
+                <p className="text-sm text-muted-foreground line-through">
                   ${product.price.toFixed(2)}
                 </p>
-                <span className="bg-red-100 text-red-700 text-xs font-semibold px-2 py-1 rounded">
+                <span className="bg-red-100 text-red-700 text-xs font-medium px-2 py-1 rounded">
                   {product.discount}% OFF
                 </span>
               </div>
             ) : (
-              <p className="text-3xl font-bold">${product.price.toFixed(2)}</p>
+              <p className="text-xl font-medium">${product.price.toFixed(2)}</p>
             )}
           </div>
 
@@ -393,10 +395,12 @@ export default function ProductDetailPage({ params }) {
           {/* Key features */}
           {product.features && product.features.length > 0 && (
             <div className="mb-6">
-              <h3 className="font-medium mb-2">Key Features:</h3>
+              <h3 className="text-sm font-medium mb-2">Key Features:</h3>
               <ul className="list-disc list-inside space-y-1 text-sm">
                 {product.features.map((feature, index) => (
-                  <li key={index}>{feature}</li>
+                  <li key={index} className="text-muted-foreground">
+                    {feature}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -505,47 +509,53 @@ export default function ProductDetailPage({ params }) {
       </div>
 
       {/* Tabs */}
-      <div className="mt-16">
+      <div className="mt-12">
         <Tabs defaultValue="description">
-          <TabsList>
-            <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="specifications">Specifications</TabsTrigger>
-            <TabsTrigger value="reviews">
+          <TabsList className="w-full border-b mb-6 pb-0 font-medium">
+            <TabsTrigger value="description" className="text-sm">
+              Description
+            </TabsTrigger>
+            <TabsTrigger value="specifications" className="text-sm">
+              Specifications
+            </TabsTrigger>
+            <TabsTrigger value="reviews" className="text-sm">
               Reviews ({product.reviews?.length || 0})
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="description" className="mt-6">
-            <div className="prose max-w-none">
-              <p>{product.description}</p>
+          <TabsContent value="description" className="mt-4">
+            <div className="prose max-w-none text-muted-foreground">
+              <p className="text-sm leading-relaxed">{product.description}</p>
             </div>
           </TabsContent>
 
-          <TabsContent value="specifications" className="mt-6">
-            <div className="grid gap-4">
+          <TabsContent value="specifications" className="mt-4">
+            <div className="grid gap-3">
               {product.specifications?.map((spec, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-2 gap-4 p-4 bg-muted/50 rounded-lg"
+                  className="grid grid-cols-2 gap-4 p-3 bg-muted/30 rounded-md border border-muted/20"
                 >
-                  <div className="font-medium">{spec.name}</div>
-                  <div>{spec.value}</div>
+                  <div className="text-sm font-medium">{spec.name}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {spec.value}
+                  </div>
                 </div>
               ))}
               {(!product.specifications ||
                 product.specifications.length === 0) && (
-                <p className="text-center py-8 text-muted-foreground">
+                <p className="text-center py-6 text-sm text-muted-foreground">
                   No specifications available
                 </p>
               )}
             </div>
           </TabsContent>
 
-          <TabsContent value="reviews" className="mt-6">
+          <TabsContent value="reviews" className="mt-4">
             {product.reviews && product.reviews.length > 0 ? (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {product.reviews.map((review) => (
-                  <div key={review._id} className="border-b pb-6">
+                  <div key={review._id} className="border-b pb-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="font-medium">{review.user.name}</span>

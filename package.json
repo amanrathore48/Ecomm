@@ -60,6 +60,7 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20.11.20",
     "@types/react": "^18.2.57",
     "autoprefixer": "^10.4.17",

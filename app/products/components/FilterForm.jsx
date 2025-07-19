@@ -2,26 +2,76 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export function FilterForm({ categories, searchParams }) {
+  const router = useRouter();
+  // Parse searchParams.category as an array
+  const initialSelectedCategories = searchParams?.category
+    ? Array.isArray(searchParams.category)
+      ? searchParams.category
+      : [searchParams.category]
+    : [];
+
+  const [selectedCategories, setSelectedCategories] = useState(
+    initialSelectedCategories
+  );
+  const [minPrice, setMinPrice] = useState(searchParams?.minPrice || "");
+  const [maxPrice, setMaxPrice] = useState(searchParams?.maxPrice || "");
+  const [inStock, setInStock] = useState(searchParams?.inStock || "");
+
+  // Handle category checkbox change
+  const handleCategoryChange = (categoryId) => {
+    setSelectedCategories((prev) => {
+      if (prev.includes(categoryId)) {
+        return prev.filter((id) => id !== categoryId);
+      } else {
+        return [...prev, categoryId];
+      }
+    });
+  };
+
+  // Apply all filters
+  const applyFilters = (e) => {
+    e.preventDefault();
+
+    const params = new URLSearchParams();
+
+    // Add selected categories
+    selectedCategories.forEach((cat) => {
+      params.append("category", cat);
+    });
+
+    // Add other filters
+    if (minPrice) params.set("minPrice", minPrice);
+    if (maxPrice) params.set("maxPrice", maxPrice);
+    if (inStock) params.set("inStock", inStock);
+
+    // Preserve other searchParams
+    if (searchParams?.sort) params.set("sort", searchParams.sort);
+    if (searchParams?.rating) params.set("rating", searchParams.rating);
+    if (searchParams?.page) params.set("page", "1"); // Reset to page 1 when filters change
+    if (searchParams?.search) params.set("search", searchParams.search);
+
+    // Navigate with the new params
+    router.push(`/products?${params.toString()}`);
+  };
+
   return (
-    <form action="/products" method="GET" className="space-y-6">
+    <form onSubmit={applyFilters} className="space-y-6">
       {/* Categories filter */}
       <div className="pb-5 border-b">
-        <h3 className="font-medium mb-3">Categories</h3>
+        <h3 className="text-sm font-medium mb-2.5">Categories</h3>
         <div className="space-y-2">
           {categories.map((category) => (
             <div key={category.name} className="flex items-center">
               <input
                 type="checkbox"
-                name="category"
-                value={category.id}
                 id={`category-${category.id}`}
                 className="h-4 w-4 rounded border-gray-300"
-                defaultChecked={searchParams?.category === category.id}
-                onChange={(e) => {
-                  if (e.target.form) e.target.form.submit();
-                }}
+                checked={selectedCategories.includes(category.id)}
+                onChange={() => handleCategoryChange(category.id)}
               />
               <label
                 htmlFor={`category-${category.id}`}
@@ -39,44 +89,38 @@ export function FilterForm({ categories, searchParams }) {
 
       {/* Price range filter */}
       <div className="py-5 border-b">
-        <h3 className="font-medium mb-3">Price Range</h3>
+        <h3 className="text-sm font-medium mb-2.5">Price Range</h3>
         <div className="flex items-center gap-2">
           <Input
             type="number"
-            name="minPrice"
             placeholder="Min"
             className="h-9"
-            defaultValue={searchParams?.minPrice || ""}
+            value={minPrice}
+            onChange={(e) => setMinPrice(e.target.value)}
           />
           <span className="text-muted-foreground">-</span>
           <Input
             type="number"
-            name="maxPrice"
             placeholder="Max"
             className="h-9"
-            defaultValue={searchParams?.maxPrice || ""}
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(e.target.value)}
           />
-          <Button type="submit" size="sm" className="h-9">
-            Go
-          </Button>
         </div>
       </div>
 
       {/* Availability filter */}
       <div className="py-5 border-b">
-        <h3 className="font-medium mb-3">Availability</h3>
+        <h3 className="text-sm font-medium mb-2.5">Availability</h3>
         <div className="space-y-2">
           <div className="flex items-center">
             <input
               type="radio"
               id="in-stock"
-              name="inStock"
               value="true"
               className="h-4 w-4 rounded border-gray-300"
-              defaultChecked={searchParams?.inStock === "true"}
-              onChange={(e) => {
-                if (e.target.form) e.target.form.submit();
-              }}
+              checked={inStock === "true"}
+              onChange={() => setInStock("true")}
             />
             <label htmlFor="in-stock" className="ml-2 text-sm">
               In Stock
@@ -86,13 +130,10 @@ export function FilterForm({ categories, searchParams }) {
             <input
               type="radio"
               id="out-of-stock"
-              name="inStock"
               value="false"
               className="h-4 w-4 rounded border-gray-300"
-              defaultChecked={searchParams?.inStock === "false"}
-              onChange={(e) => {
-                if (e.target.form) e.target.form.submit();
-              }}
+              checked={inStock === "false"}
+              onChange={() => setInStock("false")}
             />
             <label htmlFor="out-of-stock" className="ml-2 text-sm">
               Out of Stock
@@ -102,13 +143,10 @@ export function FilterForm({ categories, searchParams }) {
             <input
               type="radio"
               id="all-stock"
-              name="inStock"
               value=""
               className="h-4 w-4 rounded border-gray-300"
-              defaultChecked={!searchParams?.inStock}
-              onChange={(e) => {
-                if (e.target.form) e.target.form.submit();
-              }}
+              checked={inStock === ""}
+              onChange={() => setInStock("")}
             />
             <label htmlFor="all-stock" className="ml-2 text-sm">
               All Products
@@ -118,8 +156,8 @@ export function FilterForm({ categories, searchParams }) {
       </div>
 
       {/* Rating filter */}
-      <div className="pt-5">
-        <h3 className="font-medium mb-3">Rating</h3>
+      <div className="pt-5 border-b pb-5">
+        <h3 className="text-sm font-medium mb-2.5">Rating</h3>
         <div className="space-y-2">
           {[5, 4, 3, 2, 1].map((rating) => (
             <div key={rating} className="flex items-center">
@@ -130,9 +168,6 @@ export function FilterForm({ categories, searchParams }) {
                 id={`rating-${rating}`}
                 className="h-4 w-4 rounded border-gray-300"
                 defaultChecked={searchParams?.rating === rating.toString()}
-                onChange={(e) => {
-                  if (e.target.form) e.target.form.submit();
-                }}
               />
               <label
                 htmlFor={`rating-${rating}`}

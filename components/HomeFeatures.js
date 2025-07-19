@@ -8,47 +8,55 @@ const HomeFeatures = () => {
     <div className="pt-10">
       <div className="bg-zinc-900 mx-auto py-10 grid max-w-screen grid-cols-1 text-white pl-6 pr-4 sm:px-20 lg:grid-cols-3 ">
         <div className="col-span-1 flex flex-col justify-center text-center sm:text-left md:pr-10">
-          <h1 className="mb-6 text-4xl">Save More with Ecomm.</h1>
-          <p className="text-gray-400">
+          <h2 className="mb-6 text-3xl font-montserrat">
+            Save More with Ecomm.
+          </h2>
+          <p className="text-gray-400 font-poppins">
             We make your shopping experience better!
           </p>
         </div>
         <div className="col-span-2 mt-10 grid grid-cols-1 gap-6 rounded-2xl bg-black p-8 sm:p-10 md:grid-cols-2 lg:mt-0">
           <div className="relative flex gap-5">
-            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-zinc-500 sm:relative md:bg-transparent md:text-5xl">
+            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-zinc-500 sm:relative md:bg-transparent md:text-3xl">
               01
             </div>
             <div className="">
-              <h3 className="text-xl font-semibold">Premium Products</h3>
-              <p className="text-gray-400 mt-3">
+              <h3 className="text-lg font-semibold font-montserrat">
+                Premium Products
+              </h3>
+              <p className="text-gray-400 mt-2 font-poppins text-sm">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit..
               </p>
             </div>
           </div>
           <div className="relative flex gap-5">
-            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-gray-500 sm:relative md:bg-transparent md:text-5xl">
+            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-gray-500 sm:relative md:bg-transparent md:text-3xl">
               02
             </div>
             <div className="">
-              <h3 className="text-xl font-semibold">Free Shipping</h3>
-              <p className="text-gray-400 mt-3">
+              <h3 className="text-lg font-semibold font-montserrat">
+                Free Shipping
+              </h3>
+              <p className="text-gray-400 mt-2 font-poppins text-sm">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit..
               </p>
             </div>
           </div>
           <div className="relative flex gap-5">
-            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-gray-500 sm:relative md:bg-transparent md:text-5xl">
+            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-gray-500 sm:relative md:bg-transparent md:text-3xl">
               03
             </div>
             <div className="">
-              <h3 className="text-xl font-semibold">Exciting Offers</h3>
-              <p className="text-gray-400 mt-3">
+              <h3 className="text-lg font-semibold font-montserrat">
+                Exciting Offers
+              </h3>
+              <p className="text-gray-400 mt-2 font-poppins text-sm">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit..
               </p>
             </div>
           </div>
           <div className="relative flex gap-5">
-            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-gray-500 sm:relative md:bg-transparent md:text-5xl">
+            <div className="absolute -left-12 sm:left-auto flex h-10 w-10 items-center justify-center rounded-full bg-gray-800 text-lg text-gray-500 sm:relative md:bg-transparent md:text-3xl">
               04
             </div>
             <div className="">

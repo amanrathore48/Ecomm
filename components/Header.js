@@ -12,7 +12,7 @@ import {
   ShieldCheck,
   ChevronDown,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Header = () => {
   const { data: session, status } = useSession();
@@ -183,10 +183,10 @@ const Header = () => {
                 <span className="text-lg font-bold text-white">E</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-serif font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 leading-tight">
+                <span className="text-xl font-montserrat font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 leading-tight">
                   Ecomm
                 </span>
-                <span className="text-[10px] font-sans text-gray-500 dark:text-gray-400 -mt-1 hidden sm:block">
+                <span className="text-xs font-poppins text-gray-500 dark:text-gray-400 -mt-1 hidden sm:block">
                   Premium Shopping
                 </span>
               </div>

@@ -7,8 +7,8 @@ const Card = ({ image, type, width, productInfo }) => {
         <div className=" p-6 bg-white rounded-xl shadow-xl hover:shadow-2xl hover:scale-105 transition-all transform duration-500 flex-row  w-[95%]">
           <img
             className={`${width} h-56 object-top rounded-t-md`}
-            src={image}
-            alt=""
+            src={productInfo.mainImage || image || "/placeholder-product.jpg"}
+            alt={productInfo.name || "Product image"}
           />
           <div className="mt-4">
             <h1 className="text-2xl font-bold text-gray-700">
@@ -37,10 +37,16 @@ const Card = ({ image, type, width, productInfo }) => {
             </div>
             <div className="mt-4 mb-2 flex justify-between pl-4 pr-2">
               <button className="block text-xl font-semibold text-gray-700 cursor-auto">
-                ₹12.99
+                ₹{productInfo.price || "12.99"}
               </button>
               <button className="text-lg block font-semibold py-2 px-6 text-green-100 hover:text-white bg-green-400 rounded-lg shadow hover:shadow-md transition duration-300">
-                <Link href={"/product/id"}>Buy</Link>
+                <Link
+                  href={`/products/${
+                    productInfo._id || productInfo.slug || "id"
+                  }`}
+                >
+                  Buy
+                </Link>
               </button>
             </div>
           </div>

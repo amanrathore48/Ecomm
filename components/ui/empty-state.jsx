@@ -23,11 +23,11 @@ export function EmptyState({
       )}
     >
       {/* Icon */}
-      {icon && <div className="text-4xl md:text-6xl mb-4">{icon}</div>}
+      {icon && <div className="text-3xl md:text-4xl mb-3">{icon}</div>}
 
       {/* Title */}
       {title && (
-        <h3 className="text-xl md:text-2xl font-semibold mb-2">{title}</h3>
+        <h3 className="text-lg md:text-xl font-medium mb-2">{title}</h3>
       )}
 
       {/* Description */}
@@ -64,9 +64,9 @@ export function ProductsEmptyState({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center text-center p-12 rounded-lg border bg-muted/30">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
-        <h3 className="text-xl font-medium">Loading products...</h3>
-        <p className="text-muted-foreground mt-2">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mb-3"></div>
+        <h3 className="text-base font-medium">Loading products...</h3>
+        <p className="text-muted-foreground mt-2 text-sm">
           Please wait while we fetch the products
         </p>
       </div>

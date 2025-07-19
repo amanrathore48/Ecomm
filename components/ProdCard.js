@@ -2,7 +2,16 @@ import { useContext } from "react";
 import Link from "next/link";
 import { ProductsContext } from "./ProductsContext";
 
-const ProdCard = ({ _id, slug, name, price, description, picture }) => {
+const ProdCard = ({
+  _id,
+  slug,
+  name,
+  price,
+  description,
+  mainImage,
+  picture,
+}) => {
+  // Use mainImage if available, fallback to picture
   const { setSelectedProducts } = useContext(ProductsContext);
   function addProduct() {
     setSelectedProducts((prev) => [...prev, _id]);
@@ -13,7 +22,10 @@ const ProdCard = ({ _id, slug, name, price, description, picture }) => {
       className="block w-52 hover:shadow-lg transition"
     >
       <div className="bg-blue-100 p-5 rounded-xl">
-        <img src={picture} alt="" />
+        <img
+          src={mainImage || picture || "/placeholder-product.jpg"}
+          alt={name}
+        />
       </div>
       <div className="mt-2">
         <h3 className="font-bold text-lg">{name}</h3>

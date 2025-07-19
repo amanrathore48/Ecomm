@@ -9,8 +9,14 @@ const ProdCard1 = ({ product }) => {
         <div className="relative h-[150px] flex items-end overflow-hidden rounded-xl">
           <img
             className="object-contain w-full h-full"
-            src={product.img}
-            alt="Hotel Photo"
+            src={
+              product.mainImage ||
+              product.img ||
+              (product.images && product.images.length > 0
+                ? product.images[0]
+                : "/images/product-placeholder.png")
+            }
+            alt={product.name || "Product Image"}
           />
         </div>
       </Link>

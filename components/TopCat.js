@@ -7,19 +7,19 @@ const TopCat = ({ products }) => {
   const categoriesNames = [...new Set(products.map((p) => p.category))];
   return (
     <div className="mx-4 lg:mx-20">
-      <h1 className=" text-left font-semibold mt-6 py-2 text-3xl font-ubuntu text-zinc-800 uppercase">
+      <h2 className="text-left font-semibold mt-6 py-2 text-2xl font-montserrat text-zinc-800 uppercase">
         Top Categories
-      </h1>
+      </h2>
       <div>
         {categoriesNames.map((categoryName) => (
           <div className="mx-2 sm:mx-4 md:mx-2" key={categoryName}>
             {products.find((p) => p.category === categoryName) && (
               <div>
                 <div className="h-10 w-40 flex items-center">
-                  <h2 className="text-xl font-pango capitalize">
+                  <h3 className="text-lg font-montserrat capitalize">
                     {" "}
                     {categoryName}
-                  </h2>
+                  </h3>
                 </div>
 
                 <div className="swiper-container">
@@ -57,7 +57,10 @@ const TopCat = ({ products }) => {
                           className="w-full md:w-1/3 lg:w-1/4 px-2 py-10 "
                         >
                           <Card
-                            image="https://m.media-amazon.com/images/I/61-lXIEMabL._AC_UL480_FMwebp_QL65_.jpg"
+                            image={
+                              productInfo.mainImage ||
+                              "https://m.media-amazon.com/images/I/61-lXIEMabL._AC_UL480_FMwebp_QL65_.jpg"
+                            }
                             type={"Exclusive"}
                             width={"w-full"}
                             productInfo={productInfo}

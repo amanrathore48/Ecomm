@@ -1,22 +1,36 @@
 import "./globals.css";
-import "./typography.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Providers } from "./providers";
-import { Toaster } from "@/components/ui/toaster";
+import { Montserrat, Poppins, Inter } from "next/font/google";
+import { ThemeProvider } from "@/app/providers";
+import { Providers } from "@/app/providers";
+
+// Import components
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import BottomTabNav from "@/components/BottomTabNav";
-import { FontPreloader } from "@/components/ui/font-preloader";
-import { fontSans, fontSerif, fontMono } from "./fonts";
 
-// Font configuration is now handled in app/fonts.js
+// Define fonts
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-montserrat",
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-poppins",
+  weight: ["300", "400", "500", "600", "700"],
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata = {
-  title: {
-    default: "Ecomm - Shopping made easier",
-    template: "%s | Ecomm",
-  },
-  description: "Your one-stop shop for all your shopping needs",
+  title: "Ecomm - Modern E-commerce Store",
+  description: "Premium products at affordable prices",
   icons: {
     icon: "/favicon.ico",
   },
@@ -27,25 +41,16 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${fontSans.variable} ${fontSerif.variable} ${fontMono.variable}`}
+      className={`${montserrat.variable} ${poppins.variable} ${inter.variable}`}
     >
-      <head />
-      <body className="font-sans min-h-screen flex flex-col">
-        <FontPreloader />
-        <Providers>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+      <body className="min-h-screen flex flex-col bg-background">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Providers>
             <Header />
-            <main className="flex-1 pb-24 lg:pb-4">{children}</main>
+            <main className="flex-grow">{children}</main>
             <Footer />
-            <BottomTabNav />
-            <Toaster />
-          </ThemeProvider>
-        </Providers>
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

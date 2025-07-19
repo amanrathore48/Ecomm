@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Trash2, Plus, Minus, ShoppingBag } from "lucide-react";
@@ -8,98 +8,51 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
+import useCartStore from "@/stores/zustand-cart";
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [couponCode, setCouponCode] = useState("");
   const { toast } = useToast();
-
   const { data: session } = useSession();
 
-  useEffect(() => {
-    const fetchCart = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch("/api/cart");
+  // Use the Zustand cart store
+  const {
+    items: cartItems,
+    loading,
+    updateQuantity: updateCartQuantity,
+    removeItem: removeCartItem,
+  } = useCartStore();
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch cart items");
-        }
-
-        const data = await response.json();
-        setCartItems(data.items || []);
-      } catch (error) {
-        console.error("Error fetching cart:", error);
-        toast({
-          variant: "destructive",
-          description: "Failed to load cart items",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCart();
-  }, [toast]);
-
-  const updateQuantity = async (id, newQuantity) => {
+  // Handle updating item quantity
+  const handleUpdateQuantity = (id, newQuantity) => {
     if (newQuantity < 1) return;
 
     try {
-      const response = await fetch("/api/cart", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          productId: id,
-          quantity: newQuantity,
-        }),
+      updateCartQuantity(id, newQuantity);
+      toast({
+        description: "Cart updated successfully",
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to update quantity");
-      }
-
-      setCartItems(
-        cartItems.map((item) =>
-          item.id === id ? { ...item, quantity: newQuantity } : item
-        )
-      );
     } catch (error) {
-      console.error("Error updating quantity:", error);
       toast({
         variant: "destructive",
-        description: "Failed to update item quantity",
+        description: "Failed to update cart",
       });
     }
   };
 
-  const removeItem = async (id) => {
+  // Handle removing item from cart
+  const handleRemoveItem = (id) => {
     try {
-      const response = await fetch(`/api/cart?productId=${id}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to remove item");
-      }
-
-      setCartItems(cartItems.filter((item) => item.id !== id));
+      removeCartItem(id);
       toast({
         description: "Item removed from cart",
       });
     } catch (error) {
-      console.error("Error removing item:", error);
       toast({
         variant: "destructive",
-        description: "Failed to remove item from cart",
+        description: "Failed to remove item",
       });
     }
-    toast({
-      description: "Item removed from cart",
-    });
   };
 
   const applyCoupon = () => {
@@ -117,12 +70,12 @@ export default function CartPage() {
     // In a real app, you would validate the coupon code with your API
   };
 
-  // Calculate cart totals
+  // Calculate cart totals using cart items
   const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+    (total, item) => total + item.price * item.quantity,
     0
   );
-  const shipping = 5.99;
+  const shipping = subtotal > 0 ? 5.99 : 0;
   const total = subtotal + shipping;
 
   if (loading) {
@@ -196,7 +149,7 @@ export default function CartPage() {
                     <div>
                       <h3 className="font-medium">{item.name}</h3>
                       <button
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => handleRemoveItem(item.id)}
                         className="text-sm flex items-center text-red-500 mt-1"
                       >
                         <Trash2 className="h-3 w-3 mr-1" />
@@ -216,7 +169,7 @@ export default function CartPage() {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() =>
-                          updateQuantity(item.id, item.quantity - 1)
+                          handleUpdateQuantity(item.id, item.quantity - 1)
                         }
                         disabled={item.quantity <= 1}
                       >
@@ -228,7 +181,7 @@ export default function CartPage() {
                         size="icon"
                         className="h-8 w-8"
                         onClick={() =>
-                          updateQuantity(item.id, item.quantity + 1)
+                          handleUpdateQuantity(item.id, item.quantity + 1)
                         }
                       >
                         <Plus className="h-3 w-3" />
