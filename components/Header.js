@@ -192,13 +192,13 @@ const Header = () => {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full ${
+      className={`fixed top-0 z-40 w-full ${
         isScrolled
           ? "shadow-md bg-white dark:bg-gray-900"
           : "bg-white dark:bg-gray-900"
       } transition-all duration-300`}
     >
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 bg-white dark:bg-gray-900">
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
@@ -499,9 +499,15 @@ const Header = () => {
             <ThemeToggle />
 
             {/* Mobile menu button - only visible on mobile */}
-            <div className="lg:hidden">
+            <div className="block lg:hidden">
               <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                onClick={() => {
+                  console.log(
+                    "Menu button clicked, current state:",
+                    isMenuOpen
+                  );
+                  setIsMenuOpen(!isMenuOpen);
+                }}
                 className="p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
                 aria-label="Toggle mobile menu"
               >
@@ -520,7 +526,7 @@ const Header = () => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 overflow-hidden"
+            className="fixed inset-x-0 top-16 z-50 lg:hidden bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 overflow-y-auto max-h-[calc(100vh-4rem-64px)] shadow-lg"
           >
             <div className="px-4 py-3 space-y-1">
               {/* Mobile search */}
