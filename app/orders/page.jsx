@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formatPrice } from "@/lib/currency";
 import {
   Table,
   TableBody,
@@ -195,7 +196,7 @@ export default function OrdersPage() {
                 <TableCell>{formatDate(order.date)}</TableCell>
                 <TableCell>{getStatusBadge(order.status)}</TableCell>
                 <TableCell className="text-right">
-                  ${order.total.toFixed(2)}
+                  {formatPrice(order.total)}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button
@@ -259,12 +260,12 @@ export default function OrdersPage() {
                         <div>
                           <p className="font-medium">{item.name}</p>
                           <p className="text-sm text-muted-foreground">
-                            Qty: {item.quantity} × ${item.price.toFixed(2)}
+                            Qty: {item.quantity} × {formatPrice(item.price)}
                           </p>
                         </div>
                       </div>
                       <p className="font-medium">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        {formatPrice(item.price * item.quantity)}
                       </p>
                     </div>
                   ))}
@@ -303,7 +304,7 @@ export default function OrdersPage() {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Subtotal</span>
-                      <span>${(selectedOrder.total - 5.99).toFixed(2)}</span>
+                      <span>{formatPrice(selectedOrder.total - 499)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">Shipping</span>
@@ -311,7 +312,7 @@ export default function OrdersPage() {
                     </div>
                     <div className="pt-2 mt-2 border-t flex justify-between font-medium">
                       <span>Total</span>
-                      <span>${selectedOrder.total.toFixed(2)}</span>
+                      <span>{formatPrice(selectedOrder.total)}</span>
                     </div>
                   </div>
                 </div>

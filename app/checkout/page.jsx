@@ -38,6 +38,7 @@ import {
 
 // Import useCartStore for real cart data
 import useCartStore from "@/stores/zustand-cart";
+import { formatPrice } from "@/lib/currency";
 
 // Form validation schema
 const shippingFormSchema = z.object({
@@ -76,10 +77,18 @@ export default function CheckoutPage() {
   const { data: session } = useSession();
 
   const { items, getTotal, clearCart } = useCartStore();
-  const shipping = 5.99;
-  const subtotal = getTotal();
-  const tax = subtotal * 0.08; // 8% tax
-  const total = subtotal + shipping + tax;
+  const shipping = 49; // ₹49 shipping
+  const [subtotal, setSubtotal] = useState(0);
+  const [tax, setTax] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    const subtotalAmount = getTotal();
+    setSubtotal(subtotalAmount);
+    const taxAmount = Math.round(subtotalAmount * 0.18); // 18% GST
+    setTax(taxAmount);
+    setTotal(subtotalAmount + shipping + taxAmount);
+  }, [getTotal, shipping]);
 
   // Load Razorpay script
   useEffect(() => {
@@ -538,7 +547,7 @@ export default function CheckoutPage() {
                                       <Truck className="h-4 w-4" /> Standard
                                       Shipping (3-5 days)
                                     </label>
-                                    <span>$5.99</span>
+                                    <span>{formatPrice(49)}</span>
                                   </div>
                                 </div>
                                 <div className="flex items-center space-x-2 border rounded-md p-3 cursor-pointer hover:bg-muted/50">
@@ -554,7 +563,7 @@ export default function CheckoutPage() {
                                       <Package className="h-4 w-4" /> Express
                                       Shipping (1-2 days)
                                     </label>
-                                    <span>$12.99</span>
+                                    <span>{formatPrice(99)}</span>
                                   </div>
                                 </div>
                               </RadioGroup>
@@ -793,11 +802,12 @@ export default function CheckoutPage() {
                       <div className="flex-1">
                         <h3 className="text-sm font-medium">{item.name}</h3>
                         <p className="text-sm text-muted-foreground">
-                          ${parseFloat(item.price).toFixed(2)} × {item.quantity}
+                          {formatPrice(item.price)} × {item.quantity} ={" "}
+                          {formatPrice(item.price * item.quantity)}
                         </p>
                       </div>
                       <div className="text-sm font-medium">
-                        ${(parseFloat(item.price) * item.quantity).toFixed(2)}
+                        {formatPrice(item.price * item.quantity)}
                       </div>
                     </div>
                   ))
@@ -815,19 +825,19 @@ export default function CheckoutPage() {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>${subtotal.toFixed(2)}</span>
+                    <span>{formatPrice(subtotal)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>${shipping.toFixed(2)}</span>
+                    <span>₹49</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Tax</span>
-                    <span>${tax.toFixed(2)}</span>
+                    <span>₹{tax.toFixed(2)}</span>
                   </div>
                   <div className="pt-2 mt-2 border-t flex justify-between font-medium">
                     <span>Total</span>
-                    <span>${total.toFixed(2)}</span>
+                    <span>₹{total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

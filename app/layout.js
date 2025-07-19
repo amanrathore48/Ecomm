@@ -48,7 +48,9 @@ export default function RootLayout({ children }) {
         <ThemeProvider>
           <Providers>
             <Header />
-            <main className="flex-grow pb-16 lg:pb-0">{children}</main>
+            <main className="flex-grow pt-[72px] md:pt-[80px] pb-16 lg:pb-0">
+              {children}
+            </main>
             <BottomTabNav />
             <FooterWrapper />
             <Toaster />

@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import useCartStore from "@/stores/zustand-cart";
+import { formatPrice } from "@/lib/currency";
 
 export default function CartPage() {
   const [couponCode, setCouponCode] = useState("");
@@ -75,7 +76,7 @@ export default function CartPage() {
     (total, item) => total + item.price * item.quantity,
     0
   );
-  const shipping = subtotal > 0 ? 5.99 : 0;
+  const shipping = subtotal > 0 ? 49 : 0; // ₹49 shipping
   const total = subtotal + shipping;
 
   if (loading) {
@@ -159,7 +160,7 @@ export default function CartPage() {
                   </div>
 
                   <div className="col-span-2 text-center">
-                    ${item.price.toFixed(2)}
+                    {formatPrice(item.price)}
                   </div>
 
                   <div className="col-span-2 flex items-center justify-center">
@@ -190,7 +191,7 @@ export default function CartPage() {
                   </div>
 
                   <div className="col-span-2 text-center font-medium">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {formatPrice(item.price * item.quantity)}
                   </div>
                 </div>
               ))}
@@ -207,15 +208,15 @@ export default function CartPage() {
               <div className="space-y-2 mb-4">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>${shipping.toFixed(2)}</span>
+                  <span>{formatPrice(shipping)}</span>
                 </div>
                 <div className="pt-2 mt-2 border-t flex justify-between font-medium">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>{formatPrice(total)}</span>
                 </div>
               </div>
 

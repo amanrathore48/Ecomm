@@ -64,9 +64,9 @@ export async function POST(request) {
       },
       paymentMethod: shippingDetails.paymentMethod,
       shippingMethod: shippingDetails.shippingMethod,
-      subtotal: (amount / 100) * 0.92, // Remove tax (8%)
-      tax: (amount / 100) * 0.08,
-      shippingCost: 5.99, // Standard shipping cost
+      subtotal: amount / 100 / 1.18, // Remove GST (18%)
+      tax: (amount / 100 / 1.18) * 0.18, // 18% GST
+      shippingCost: 49, // Standard shipping cost in INR
       total: amount / 100,
       razorpayOrderId: razorpayOrder.id,
       paymentStatus: "pending",

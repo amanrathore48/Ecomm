@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import { Heart, ShoppingCart, Eye, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { formatPrice } from "@/lib/currency";
 import { useToast } from "@/components/ui/use-toast";
 import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 import useCartStore from "@/stores/zustand-cart";
@@ -19,7 +20,7 @@ export function ProductCard({ product }) {
   const defaultProduct = {
     _id: "default",
     name: "Product Name",
-    price: 49.99,
+    price: 4999, // Price in INR
     mainImage: "https://via.placeholder.com/300x300",
     rating: 4.5,
     reviews: 12,
@@ -191,10 +192,10 @@ export function ProductCard({ product }) {
 
         {/* Price */}
         <div className="flex items-center mt-2">
-          <span className="text-lg font-bold">${salePrice.toFixed(2)}</span>
-          {isSale && (
-            <span className="ml-2 text-muted-foreground line-through text-sm">
-              ${p.price.toFixed(2)}
+          <span className="text-lg font-bold">{formatPrice(salePrice)}</span>
+          {discountPercentage > 0 && (
+            <span className="text-sm text-gray-500 line-through ml-2">
+              {formatPrice(p.price)}
             </span>
           )}
         </div>

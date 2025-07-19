@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/components/ui/use-toast";
+import { formatPrice } from "@/lib/currency";
 
 const SideCart = ({ isOpen, onClose }) => {
   const {
@@ -136,7 +137,7 @@ const SideCart = ({ isOpen, onClose }) => {
                       </button>
                     </div>
                     <p className="text-sm text-muted-foreground mb-2">
-                      ${item.price.toFixed(2)}
+                      {formatPrice(item.price)}
                     </p>
                     <div className="flex items-center gap-2">
                       <Button
@@ -174,7 +175,7 @@ const SideCart = ({ isOpen, onClose }) => {
           <div className="border-t p-4 space-y-4">
             <div className="flex justify-between text-lg font-medium">
               <span>Total</span>
-              <span>${getTotal().toFixed(2)}</span>
+              <span>{formatPrice(getTotal())}</span>
             </div>
             <Button className="w-full" asChild>
               <Link href="/checkout">Proceed to Checkout</Link>
