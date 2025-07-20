@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -10,10 +10,14 @@ export function useAddress() {
   const [isLoading, setIsLoading] = useState(false);
   const [addresses, setAddresses] = useState([]);
 
-  const fetchAddresses = async () => {
+  const fetchAddresses = useCallback(async () => {
+    console.log("[useAddress] fetchAddresses called. session:", session);
     if (!session) {
       setAddresses([]);
       setIsLoading(false);
+      console.log(
+        "[useAddress] No session, set addresses to [] and loading false"
+      );
       return;
     }
     setIsLoading(true);
@@ -25,11 +29,12 @@ export function useAddress() {
         throw new Error(data.error || "Failed to fetch addresses");
       }
 
-      // Always set addresses to an array, even if missing or not an array
-      setAddresses(Array.isArray(data.addresses) ? data.addresses : []);
-      return Array.isArray(data.addresses) ? data.addresses : [];
+      const arr = Array.isArray(data.addresses) ? data.addresses : [];
+      setAddresses(arr);
+      console.log("[useAddress] fetchAddresses success, addresses:", arr);
+      return arr;
     } catch (error) {
-      console.error("Error fetching addresses:", error);
+      console.error("[useAddress] Error fetching addresses:", error);
       setAddresses([]);
       toast({
         variant: "destructive",
@@ -39,8 +44,9 @@ export function useAddress() {
       return [];
     } finally {
       setIsLoading(false);
+      console.log("[useAddress] fetchAddresses finished, loading set to false");
     }
-  };
+  }, [session, toast]);
 
   const addAddress = async (addressData) => {
     if (!session) {

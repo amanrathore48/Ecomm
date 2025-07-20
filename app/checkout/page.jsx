@@ -461,6 +461,12 @@ export default function CheckoutPage() {
                             <FormLabel>Select delivery address</FormLabel>
                             <FormControl>
                               <div className="space-y-3">
+                                {console.log(
+                                  "[CheckoutPage] Render: addressLoading",
+                                  addressLoading,
+                                  "addresses",
+                                  addresses
+                                )}
                                 {addressLoading ? (
                                   <div className="text-center py-8 border border-dashed rounded-lg">
                                     <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto"></div>
