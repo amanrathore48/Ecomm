@@ -27,11 +27,13 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
+    "asynckit": "^0.4.0",
     "axios": "^1.6.7",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
+    "combined-stream": "^1.0.8",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
     "eslint-config-next": "^14.1.0",
@@ -69,6 +71,7 @@
     "kill-port": "^2.0.1",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
+    "ts-interface-checker": "^1.0.2",
     "typescript": "^5.3.3"
   }
 }
