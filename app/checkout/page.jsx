@@ -14,6 +14,7 @@ import { useSession } from "next-auth/react";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -28,43 +29,64 @@ import {
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
   CreditCard,
   Truck,
   Package,
   Check,
   AlertTriangle,
   ArrowLeft,
+  Home,
+  Briefcase,
+  MapPin,
+  Plus,
 } from "lucide-react";
 
 // Import useCartStore for real cart data
 import useCartStore from "@/stores/zustand-cart";
 import { formatPrice } from "@/lib/currency";
+import { useAddress } from "@/helpers/useAddress";
 
-// Form validation schema
-const shippingFormSchema = z.object({
-  firstName: z
+// Form validation schema for address
+const addressFormSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  phoneNo: z
     .string()
-    .min(2, { message: "First name must be at least 2 characters." }),
-  lastName: z
-    .string()
-    .min(2, { message: "Last name must be at least 2 characters." }),
+    .min(10, { message: "Please enter a valid phone number." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
-  address: z
-    .string()
-    .min(5, { message: "Address must be at least 5 characters." }),
+  houseNo: z.string().min(1, { message: "House/flat no. is required." }),
+  street: z.string().min(3, { message: "Street address is required." }),
   city: z.string().min(2, { message: "City must be at least 2 characters." }),
   state: z.string().min(2, { message: "State must be at least 2 characters." }),
   zipCode: z
     .string()
     .min(5, { message: "ZIP code must be at least 5 characters." }),
-  country: z.string().min(2, { message: "Please select your country." }),
+  country: z.string().min(2, { message: "Country is required." }),
+  addressType: z.enum(["home", "work", "other"], {
+    message: "Please select an address type.",
+  }),
+  isDefault: z.boolean().optional(),
+});
+
+// Form validation schema for checkout (payment related)
+const checkoutFormSchema = z.object({
   shippingMethod: z.enum(["standard", "express"], {
     message: "Please select a shipping method.",
   }),
   paymentMethod: z.enum(["credit_card", "paypal", "razorpay"], {
     message: "Please select a payment method.",
   }),
+  selectedAddressId: z
+    .string()
+    .min(1, { message: "Please select a delivery address." }),
 });
 
 export default function CheckoutPage() {
@@ -72,23 +94,43 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderCompleted, setOrderCompleted] = useState(false);
   const [orderId, setOrderId] = useState("");
+  const [isAddressDialogOpen, setIsAddressDialogOpen] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
   const { toast } = useToast();
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
+  // Address management
+  const {
+    addresses,
+    isLoading: addressLoading,
+    fetchAddresses,
+    addAddress,
+  } = useAddress();
+
+  // Cart management
   const { items, getTotal, clearCart } = useCartStore();
-  const shipping = 49; // ₹49 shipping
+  const shipping = { standard: 49, express: 149 }; // Shipping costs
   const [subtotal, setSubtotal] = useState(0);
   const [tax, setTax] = useState(0);
   const [total, setTotal] = useState(0);
+  const [selectedShippingMethod, setSelectedShippingMethod] =
+    useState("standard");
 
   useEffect(() => {
     const subtotalAmount = getTotal();
     setSubtotal(subtotalAmount);
     const taxAmount = Math.round(subtotalAmount * 0.18); // 18% GST
     setTax(taxAmount);
-    setTotal(subtotalAmount + shipping + taxAmount);
-  }, [getTotal, shipping]);
+    setTotal(subtotalAmount + shipping[selectedShippingMethod] + taxAmount);
+  }, [getTotal, shipping, selectedShippingMethod]);
+
+  // Fetch addresses when session is available
+  useEffect(() => {
+    if (session) {
+      fetchAddresses();
+    }
+  }, [session, fetchAddresses]);
 
   // Load Razorpay script
   useEffect(() => {
@@ -105,28 +147,46 @@ export default function CheckoutPage() {
     loadRazorpayScript();
   }, []);
 
-  // Initialize form
-  const form = useForm({
-    resolver: zodResolver(shippingFormSchema),
+  // Initialize checkout form
+  const checkoutForm = useForm({
+    resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      state: "",
-      zipCode: "",
-      country: "US",
       shippingMethod: "standard",
-      paymentMethod: "razorpay", // Default to Razorpay
+      paymentMethod: "razorpay",
+      selectedAddressId: "",
     },
   });
 
+  // Update shipping method when form field changes
+  useEffect(() => {
+    const subscription = checkoutForm.watch((value, { name }) => {
+      if (name === "shippingMethod" && value.shippingMethod) {
+        setSelectedShippingMethod(value.shippingMethod);
+      }
+      if (name === "selectedAddressId" && value.selectedAddressId) {
+        setSelectedAddressId(value.selectedAddressId);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [checkoutForm]);
+
   // Initialize Razorpay payment
   const initializeRazorpayPayment = async (orderData) => {
-    // Create order on the server
     try {
+      const selectedAddress = addresses.find(
+        (addr) => addr._id === selectedAddressId
+      );
+      if (!selectedAddress) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please select a delivery address",
+        });
+        return;
+      }
+
+      // Create order on the server
       const response = await fetch("/api/orders/create", {
         method: "POST",
         headers: {
@@ -136,7 +196,10 @@ export default function CheckoutPage() {
           amount: Math.round(total * 100), // Razorpay expects amount in smallest currency unit (paise)
           currency: "INR",
           items: items,
-          shippingDetails: form.getValues(),
+          shippingDetails: {
+            ...selectedAddress,
+            shippingMethod: orderData.shippingMethod,
+          },
         }),
       });
 
@@ -161,9 +224,9 @@ export default function CheckoutPage() {
           verifyPayment(response, orderResponse.orderId);
         },
         prefill: {
-          name: `${form.getValues("firstName")} ${form.getValues("lastName")}`,
-          email: form.getValues("email"),
-          contact: form.getValues("phone"),
+          name: selectedAddress.name,
+          email: selectedAddress.email,
+          contact: selectedAddress.phoneNo,
         },
         theme: {
           color: "#4F46E5", // Primary color
@@ -226,6 +289,25 @@ export default function CheckoutPage() {
       });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  // Handle adding a new address
+  const handleAddAddress = async (values) => {
+    try {
+      await addAddress(values);
+      setIsAddressDialogOpen(false);
+      toast({
+        title: "Address Added",
+        description: "Your address has been added successfully.",
+      });
+    } catch (error) {
+      console.error("Error adding address:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to add address. Please try again.",
+      });
     }
   };
 
@@ -359,171 +441,127 @@ export default function CheckoutPage() {
           {/* Left Column: Form */}
           <div className="lg:col-span-2">
             <div className="bg-card border rounded-lg p-6">
-              <Form {...form}>
+              <Form {...checkoutForm}>
                 <form
-                  onSubmit={form.handleSubmit(onSubmit)}
+                  onSubmit={checkoutForm.handleSubmit(onSubmit)}
                   className="space-y-6"
                 >
                   {currentStep === 1 && (
                     <>
                       <h2 className="text-xl font-bold mb-4">
-                        Shipping Information
+                        Delivery Address
                       </h2>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="firstName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>First Name</FormLabel>
-                              <FormControl>
-                                <Input placeholder="John" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="lastName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Last Name</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Doe" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Email Address</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="john.doe@example.com"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="phone"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Phone Number</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="(123) 456-7890"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
+                      {/* Address Management */}
                       <FormField
-                        control={form.control}
-                        name="address"
+                        control={checkoutForm.control}
+                        name="selectedAddressId"
                         render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Street Address</FormLabel>
+                          <FormItem className="space-y-4">
+                            <FormLabel>Select delivery address</FormLabel>
                             <FormControl>
-                              <Input placeholder="123 Main St" {...field} />
+                              <div className="space-y-3">
+                                {addressLoading ? (
+                                  <div className="text-center py-8 border border-dashed rounded-lg">
+                                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto"></div>
+                                    <p className="font-medium mt-2">
+                                      Loading your saved addresses
+                                    </p>
+                                    <p className="text-muted-foreground text-sm mt-1">
+                                      Please wait while we retrieve your
+                                      addresses
+                                    </p>
+                                  </div>
+                                ) : addresses && addresses.length > 0 ? (
+                                  <div className="grid gap-4">
+                                    {addresses.map((address) => (
+                                      <div
+                                        key={address._id}
+                                        className={`border rounded-lg p-4 cursor-pointer transition-all hover:border-primary ${
+                                          selectedAddressId === address._id
+                                            ? "border-2 border-primary bg-primary/5"
+                                            : "border-muted"
+                                        }`}
+                                        onClick={() => {
+                                          setSelectedAddressId(address._id);
+                                          checkoutForm.setValue(
+                                            "selectedAddressId",
+                                            address._id
+                                          );
+                                        }}
+                                      >
+                                        <div className="flex justify-between items-start">
+                                          <div>
+                                            <div className="font-medium">
+                                              {address.name}
+                                            </div>
+                                            <div className="text-sm text-muted-foreground mt-1">
+                                              {address.houseNo},{" "}
+                                              {address.street},
+                                              <br />
+                                              {address.city}, {address.state}{" "}
+                                              {address.zipCode},
+                                              <br />
+                                              {address.country}
+                                            </div>
+                                            <div className="text-sm mt-1">
+                                              <span className="text-muted-foreground">
+                                                Phone:
+                                              </span>{" "}
+                                              {address.phoneNo}
+                                            </div>
+                                          </div>
+                                          <div className="flex space-x-2 items-center">
+                                            {address.isDefault && (
+                                              <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded">
+                                                Default
+                                              </span>
+                                            )}
+                                            <span className="text-xs bg-secondary/40 px-2 py-1 rounded capitalize">
+                                              {address.addressType}
+                                            </span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <div className="text-center border border-dashed rounded-lg p-8">
+                                    <MapPin className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+                                    <p className="font-medium mb-2">
+                                      You don't have any saved addresses
+                                    </p>
+                                    <p className="text-muted-foreground mb-4">
+                                      Please add a new delivery address to
+                                      continue
+                                    </p>
+                                  </div>
+                                )}
+
+                                <Button
+                                  type="button"
+                                  variant={
+                                    addresses && addresses.length === 0
+                                      ? "default"
+                                      : "outline"
+                                  }
+                                  className="w-full mt-4"
+                                  onClick={() => setIsAddressDialogOpen(true)}
+                                >
+                                  <Plus className="mr-2 h-4 w-4" />{" "}
+                                  {addresses && addresses.length === 0
+                                    ? "Add Your First Address"
+                                    : "Add New Address"}
+                                </Button>
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="city"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>City</FormLabel>
-                              <FormControl>
-                                <Input placeholder="Anytown" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="state"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>State/Province</FormLabel>
-                              <FormControl>
-                                <Input placeholder="CA" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="zipCode"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>ZIP/Postal Code</FormLabel>
-                              <FormControl>
-                                <Input placeholder="12345" {...field} />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name="country"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Country</FormLabel>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select country" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  <SelectItem value="US">
-                                    United States
-                                  </SelectItem>
-                                  <SelectItem value="CA">Canada</SelectItem>
-                                  <SelectItem value="UK">
-                                    United Kingdom
-                                  </SelectItem>
-                                  <SelectItem value="AU">Australia</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
                       <FormField
-                        control={form.control}
+                        control={checkoutForm.control}
                         name="shippingMethod"
                         render={({ field }) => (
                           <FormItem className="space-y-3">
@@ -547,7 +585,9 @@ export default function CheckoutPage() {
                                       <Truck className="h-4 w-4" /> Standard
                                       Shipping (3-5 days)
                                     </label>
-                                    <span>{formatPrice(49)}</span>
+                                    <span>
+                                      {formatPrice(shipping.standard)}
+                                    </span>
                                   </div>
                                 </div>
                                 <div className="flex items-center space-x-2 border rounded-md p-3 cursor-pointer hover:bg-muted/50">
@@ -563,7 +603,7 @@ export default function CheckoutPage() {
                                       <Package className="h-4 w-4" /> Express
                                       Shipping (1-2 days)
                                     </label>
-                                    <span>{formatPrice(99)}</span>
+                                    <span>{formatPrice(shipping.express)}</span>
                                   </div>
                                 </div>
                               </RadioGroup>
@@ -579,7 +619,7 @@ export default function CheckoutPage() {
                     <>
                       <h2 className="text-xl font-bold mb-4">Payment Method</h2>
                       <FormField
-                        control={form.control}
+                        control={checkoutForm.control}
                         name="paymentMethod"
                         render={({ field }) => (
                           <FormItem className="space-y-3">
@@ -670,7 +710,7 @@ export default function CheckoutPage() {
                         )}
                       />
 
-                      {form.watch("paymentMethod") === "razorpay" && (
+                      {checkoutForm.watch("paymentMethod") === "razorpay" && (
                         <div className="space-y-4 pt-4 border-t">
                           <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
                             <div className="flex items-center gap-2 text-blue-700 mb-2">
@@ -700,7 +740,8 @@ export default function CheckoutPage() {
                         </div>
                       )}
 
-                      {form.watch("paymentMethod") === "credit_card" && (
+                      {checkoutForm.watch("paymentMethod") ===
+                        "credit_card" && (
                         <div className="space-y-4 pt-4 border-t">
                           <div>
                             <label className="block text-sm font-medium mb-1">
@@ -769,7 +810,7 @@ export default function CheckoutPage() {
                         ? "Processing..."
                         : currentStep === 1
                         ? "Continue to Payment"
-                        : form.watch("paymentMethod") === "razorpay"
+                        : checkoutForm.watch("paymentMethod") === "razorpay"
                         ? "Pay with Razorpay"
                         : "Place Order"}
                     </Button>
@@ -865,6 +906,269 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {/* Address Dialog */}
+      <AddressDialog
+        isOpen={isAddressDialogOpen}
+        setIsOpen={setIsAddressDialogOpen}
+        onAddAddress={handleAddAddress}
+      />
     </div>
+  );
+}
+
+// Address Dialog Component for adding new addresses
+function AddressDialog({ isOpen, setIsOpen, onAddAddress }) {
+  const addressForm = useForm({
+    resolver: zodResolver(addressFormSchema),
+    defaultValues: {
+      name: "",
+      phoneNo: "",
+      email: "",
+      houseNo: "",
+      street: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "India",
+      addressType: "home",
+      isDefault: false,
+    },
+  });
+
+  const onSubmit = async (values) => {
+    await onAddAddress(values);
+    addressForm.reset();
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="sm:max-w-[600px]">
+        <DialogHeader>
+          <DialogTitle>Add New Address</DialogTitle>
+          <DialogDescription>
+            Enter your address details below. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+
+        <Form {...addressForm}>
+          <form
+            onSubmit={addressForm.handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={addressForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={addressForm.control}
+                name="phoneNo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input placeholder="9876543210" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={addressForm.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input placeholder="your@email.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={addressForm.control}
+                name="houseNo"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>House/Flat No.</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Apartment 4B" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={addressForm.control}
+                name="street"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Street Address</FormLabel>
+                    <FormControl>
+                      <Input placeholder="123 Main Street" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <FormField
+                control={addressForm.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <Input placeholder="New Delhi" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={addressForm.control}
+                name="state"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>State</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Delhi" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={addressForm.control}
+                name="zipCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Postal Code</FormLabel>
+                    <FormControl>
+                      <Input placeholder="110001" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={addressForm.control}
+              name="country"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Country</FormLabel>
+                  <FormControl>
+                    <Input placeholder="India" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addressForm.control}
+              name="addressType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Address Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select address type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="home">
+                        <div className="flex items-center gap-2">
+                          <Home className="h-4 w-4" />
+                          <span>Home</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="work">
+                        <div className="flex items-center gap-2">
+                          <Briefcase className="h-4 w-4" />
+                          <span>Work</span>
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="other">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4" />
+                          <span>Other</span>
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={addressForm.control}
+              name="isDefault"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 py-2">
+                  <FormControl>
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 mt-1 rounded border-gray-300"
+                      checked={field.value}
+                      onChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Set as default address</FormLabel>
+                    <FormDescription>
+                      This address will be selected by default for shipping
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={() => setIsOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={addressForm.formState.isSubmitting}
+              >
+                {addressForm.formState.isSubmitting && (
+                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-b-transparent"></div>
+                )}
+                Save Address
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }

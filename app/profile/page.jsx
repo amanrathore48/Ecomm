@@ -10,14 +10,52 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreditCard, Lock, Loader2, Package, UserCircle } from "lucide-react";
+import {
+  CreditCard,
+  Lock,
+  Loader2,
+  Package,
+  UserCircle,
+  Home,
+  Briefcase,
+  MapPin,
+  Plus,
+  Edit,
+  Trash2,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { useAddress } from "@/helpers/useAddress";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 // Form validation schemas
 const profileFormSchema = z.object({
@@ -27,17 +65,23 @@ const profileFormSchema = z.object({
 });
 
 const addressFormSchema = z.object({
-  address: z
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  phoneNo: z
     .string()
-    .min(5, { message: "Address must be at least 5 characters." }),
+    .min(10, { message: "Please enter a valid phone number." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  houseNo: z.string().min(1, { message: "House/flat no. is required." }),
+  street: z.string().min(3, { message: "Street address is required." }),
   city: z.string().min(2, { message: "City must be at least 2 characters." }),
   state: z.string().min(2, { message: "State must be at least 2 characters." }),
   zipCode: z
     .string()
     .min(5, { message: "ZIP code must be at least 5 characters." }),
-  country: z
-    .string()
-    .min(2, { message: "Country must be at least 2 characters." }),
+  country: z.string().min(2, { message: "Country is required." }),
+  addressType: z.enum(["home", "work", "other"], {
+    message: "Please select an address type.",
+  }),
+  isDefault: z.boolean().optional(),
 });
 
 const passwordFormSchema = z
@@ -65,6 +109,22 @@ export default function ProfilePage() {
   const { data: session } = useSession();
   const router = useRouter();
 
+  // Address management state
+  const [currentAddressId, setCurrentAddressId] = useState(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [addressSubmitting, setAddressSubmitting] = useState(false);
+
+  // Use the address management hook
+  const {
+    addresses,
+    isLoading: addressLoading,
+    fetchAddresses,
+    addAddress,
+    updateAddress,
+    deleteAddress,
+    setDefaultAddress,
+  } = useAddress();
+
   const [userData, setUserData] = useState(null);
 
   // Initialize forms first to avoid the reference error
@@ -80,11 +140,34 @@ export default function ProfilePage() {
   const addressForm = useForm({
     resolver: zodResolver(addressFormSchema),
     defaultValues: {
-      address: "",
+      name: session?.user?.name || "",
+      email: session?.user?.email || "",
+      phoneNo: "",
+      houseNo: "",
+      street: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      country: "India",
+      addressType: "home",
+      isDefault: true,
+    },
+  });
+
+  const editAddressForm = useForm({
+    resolver: zodResolver(addressFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phoneNo: "",
+      houseNo: "",
+      street: "",
       city: "",
       state: "",
       zipCode: "",
       country: "",
+      addressType: "home",
+      isDefault: false,
     },
   });
 
@@ -132,7 +215,12 @@ export default function ProfilePage() {
     }
 
     fetchUserData();
-  }, [session, router, toast]);
+
+    // Fetch addresses
+    if (session) {
+      fetchAddresses();
+    }
+  }, [session, router, toast, fetchAddresses]);
 
   const passwordForm = useForm({
     resolver: zodResolver(passwordFormSchema),
@@ -186,6 +274,74 @@ export default function ProfilePage() {
     }
   };
 
+  // Address handlers
+  const onAddAddress = async (values) => {
+    setAddressSubmitting(true);
+    try {
+      await addAddress(values);
+      addressForm.reset();
+      // Close the dialog if open
+      document.querySelector('[role="dialog"]')?.closest("dialog")?.close();
+    } catch (error) {
+      console.error("Error adding address:", error);
+    } finally {
+      setAddressSubmitting(false);
+    }
+  };
+
+  const handleEditAddress = (address) => {
+    setCurrentAddressId(address._id);
+    editAddressForm.reset({
+      name: address.name,
+      email: address.email,
+      phoneNo: address.phoneNo,
+      houseNo: address.houseNo,
+      street: address.street,
+      city: address.city,
+      state: address.state,
+      zipCode: address.zipCode,
+      country: address.country,
+      addressType: address.addressType,
+      isDefault: address.isDefault,
+    });
+    setIsEditDialogOpen(true);
+  };
+
+  const onUpdateAddress = async (values) => {
+    if (!currentAddressId) return;
+
+    setAddressSubmitting(true);
+    try {
+      await updateAddress(currentAddressId, values);
+      setIsEditDialogOpen(false);
+    } catch (error) {
+      console.error("Error updating address:", error);
+    } finally {
+      setAddressSubmitting(false);
+    }
+  };
+
+  const handleDeleteAddress = async (addressId) => {
+    if (!window.confirm("Are you sure you want to delete this address?")) {
+      return;
+    }
+
+    try {
+      await deleteAddress(addressId);
+    } catch (error) {
+      console.error("Error deleting address:", error);
+    }
+  };
+
+  const handleSetDefaultAddress = async (addressId) => {
+    try {
+      await setDefaultAddress(addressId);
+    } catch (error) {
+      console.error("Error setting default address:", error);
+    }
+  };
+
+  // Legacy address handler for backward compatibility
   const onSubmitAddress = async (values) => {
     setIsSubmitting(true);
 
