@@ -135,7 +135,7 @@ export default function AboutPage() {
           </div>
 
           {/* Team */}
-          <div className="mb-20">
+          {/* <div className="mb-20">
             <div className="text-center max-w-2xl mx-auto mb-12">
               <h2 className="text-3xl font-bold mb-4">Meet Our Team</h2>
               <p className="text-muted-foreground">
@@ -193,7 +193,7 @@ export default function AboutPage() {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Call to action */}
           <div className="relative overflow-hidden bg-gradient-to-br from-primary to-primary-dark rounded-2xl p-12 text-center">

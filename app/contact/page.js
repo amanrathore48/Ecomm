@@ -2,11 +2,6 @@
 import React, { useState } from "react";
 import { Mail, Phone, MapPin, Clock, Send } from "lucide-react";
 
-export const metadata = {
-  title: "Contact Us",
-  description: "Get in touch with our team for support or inquiries",
-};
-
 export default function ContactPage() {
   const [formData, setFormData] = useState({
     name: "",

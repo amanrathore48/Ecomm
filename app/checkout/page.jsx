@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
+import { useEffect as useLayoutEffect } from "react";
 import {
   Form,
   FormControl,
@@ -52,6 +53,7 @@ import {
 
 // Import useCartStore for real cart data
 import useCartStore from "@/stores/zustand-cart";
+import useGuestCartStore from "@/stores/useGuestCart";
 import { formatPrice } from "@/lib/currency";
 import { useAddress } from "@/helpers/useAddress";
 
@@ -109,7 +111,24 @@ export default function CheckoutPage() {
   } = useAddress();
 
   // Cart management
-  const { items, getTotal, clearCart } = useCartStore();
+  // Use guest cart for unauthenticated users, user cart for authenticated
+  const guestCart = useGuestCartStore();
+  const userCart = useCartStore();
+  const isAuthenticated = !!session;
+  const items = isAuthenticated ? userCart.items : guestCart.items;
+  const getTotal = isAuthenticated ? userCart.getTotal : guestCart.getTotal;
+  const clearCart = isAuthenticated ? userCart.clearCart : guestCart.clearCart;
+
+  // On sign-in, merge guest cart with user cart and clear guest cart
+  useEffect(() => {
+    if (isAuthenticated && guestCart.items.length > 0) {
+      // Merge guest cart into user cart
+      guestCart.items.forEach((item) => {
+        userCart.addItem(item);
+      });
+      guestCart.clearCart();
+    }
+  }, [isAuthenticated]);
   const shipping = { standard: 49, express: 149 }; // Shipping costs
   const [subtotal, setSubtotal] = useState(0);
   const [tax, setTax] = useState(0);
@@ -127,10 +146,10 @@ export default function CheckoutPage() {
 
   // Fetch addresses when session is available
   useEffect(() => {
-    if (session) {
+    if (isAuthenticated) {
       fetchAddresses();
     }
-  }, [session, fetchAddresses]);
+  }, [isAuthenticated, fetchAddresses]);
 
   // Load Razorpay script
   useEffect(() => {
@@ -328,8 +347,8 @@ export default function CheckoutPage() {
       return;
     }
 
-    // Check if user is signed in (only if not in dev mode)
-    if (!session && process.env.NODE_ENV !== "development") {
+    // Require sign-in for checkout (except in dev mode)
+    if (!isAuthenticated && process.env.NODE_ENV !== "development") {
       toast({
         variant: "destructive",
         title: "Sign in required",
@@ -347,7 +366,6 @@ export default function CheckoutPage() {
         await initializeRazorpayPayment(values);
       } else {
         // For other payment methods (e.g. credit_card, paypal)
-        // This is where you'd integrate other payment gateways
         toast({
           title: "Payment Method Not Available",
           description: "Please select Razorpay as the payment method.",
@@ -461,12 +479,6 @@ export default function CheckoutPage() {
                             <FormLabel>Select delivery address</FormLabel>
                             <FormControl>
                               <div className="space-y-3">
-                                {console.log(
-                                  "[CheckoutPage] Render: addressLoading",
-                                  addressLoading,
-                                  "addresses",
-                                  addresses
-                                )}
                                 {addressLoading ? (
                                   <div className="text-center py-8 border border-dashed rounded-lg">
                                     <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent mx-auto"></div>
@@ -541,24 +553,38 @@ export default function CheckoutPage() {
                                       Please add a new delivery address to
                                       continue
                                     </p>
+                                    {!isAuthenticated && (
+                                      <Button
+                                        type="button"
+                                        className="w-full mt-4"
+                                        onClick={() =>
+                                          router.push(
+                                            "/login?redirect=checkout"
+                                          )
+                                        }
+                                      >
+                                        Sign in to add address
+                                      </Button>
+                                    )}
                                   </div>
                                 )}
-
-                                <Button
-                                  type="button"
-                                  variant={
-                                    addresses && addresses.length === 0
-                                      ? "default"
-                                      : "outline"
-                                  }
-                                  className="w-full mt-4"
-                                  onClick={() => setIsAddressDialogOpen(true)}
-                                >
-                                  <Plus className="mr-2 h-4 w-4" />{" "}
-                                  {addresses && addresses.length === 0
-                                    ? "Add Your First Address"
-                                    : "Add New Address"}
-                                </Button>
+                                {isAuthenticated && (
+                                  <Button
+                                    type="button"
+                                    variant={
+                                      addresses && addresses.length === 0
+                                        ? "default"
+                                        : "outline"
+                                    }
+                                    className="w-full mt-4"
+                                    onClick={() => setIsAddressDialogOpen(true)}
+                                  >
+                                    <Plus className="mr-2 h-4 w-4" />{" "}
+                                    {addresses && addresses.length === 0
+                                      ? "Add Your First Address"
+                                      : "Add New Address"}
+                                  </Button>
+                                )}
                               </div>
                             </FormControl>
                             <FormMessage />

@@ -36,7 +36,8 @@ const Header = () => {
     { name: "Products", path: "/products" },
     { name: "New Arrivals", path: "/products?sort=newest" },
     { name: "Deals", path: "/products?discount=true" },
-    { name: "Categories", path: "/categories" },
+    { name: "About", path: "/about" },
+    { name: "Contact", path: "/contact" },
   ];
 
   // Check if user is admin

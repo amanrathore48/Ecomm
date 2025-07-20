@@ -59,3 +59,5 @@ const useGuestCart = create(
     }
   )
 );
+
+export default useGuestCart;

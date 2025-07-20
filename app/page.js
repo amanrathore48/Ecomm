@@ -50,7 +50,7 @@ const categories = [
     name: "Sports",
     icon: "⚽",
     image:
-      "https://images.unsplash.com/photo-1535131749006-b7d58e7ffca1?q=80&w=1000&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?q=80&w=1000&auto=format&fit=crop",
     description: "Equipment for every athlete",
   },
 ];
