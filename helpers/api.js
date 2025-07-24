@@ -1,7 +1,11 @@
-export const server = "http://localhost:3000/api";
-// export const server = "https://ecomm-eight-pearl.vercel.app/api";
+// Dynamically set API base URL for dev/prod
+export const server =
+  process.env.NODE_ENV === "production"
+    ? "https://ecomm-eight-pearl.vercel.app/api"
+    : "http://localhost:3000/api";
 
 // Helper function for GET requests with enhanced error handling
+
 export async function apiGet(endpoint, options = {}) {
   const { timeout = 10000, retries = 1, headers = {} } = options;
 
@@ -10,9 +14,15 @@ export async function apiGet(endpoint, options = {}) {
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {
-    const fullUrl = endpoint.startsWith("/")
-      ? `${server}${endpoint}`
-      : `${server}/${endpoint}`;
+    // Always use the correct server base URL
+    let fullUrl;
+    if (endpoint.startsWith("http")) {
+      fullUrl = endpoint;
+    } else if (endpoint.startsWith("/")) {
+      fullUrl = `${server}${endpoint}`;
+    } else {
+      fullUrl = `${server}/${endpoint}`;
+    }
 
     const response = await fetch(fullUrl, {
       method: "GET",
