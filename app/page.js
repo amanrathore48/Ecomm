@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import ShopByCategory from "@/components/ShopByCategory";
+import { HeroSection } from "@/components/Hero";
 
 // Categories for the shop by category section
 const categories = [
@@ -91,14 +92,16 @@ export default function Home() {
   return (
     <main>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      {/* <section className="bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto px-4 py-20 lg:py-32 flex flex-col lg:flex-row items-center">
           <div className="lg:w-1/2 lg:pr-10 mb-10 lg:mb-0">
             <div className="bg-primary/15 text-primary font-medium px-4 py-1 rounded-full text-sm inline-block mb-4 border border-primary/20">
               Premium Quality Products
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground">
-              Find Your Perfect Style at
+              <span className="text-transparent bg-gradient-to-r from-primary to-primary/80 bg-clip-text">
+                Find Your Perfect Style at
+              </span>
               <br className="hidden sm:block" />
               <span className="bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent inline-block mt-2">
                 Ecomm.
@@ -143,7 +146,8 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
+      <HeroSection />
 
       {/* Featured Products Section - Only shown if there are products */}
       <FeaturedProductsSection />
