@@ -186,10 +186,10 @@ export function ProductCard({ product = {}, variant = "featured" }) {
     },
     list: {
       containerClass:
-        "flex flex-col sm:flex-row gap-4 sm:gap-6 rounded-xl hover:shadow-xl transition-all duration-300 hover:bg-gray-50/70 dark:hover:bg-gray-800/40 border border-gray-200 dark:border-slate-800 sm:h-60",
+        "flex flex-col sm:flex-row gap-4 sm:gap-4 rounded-xl hover:shadow-xl transition-all duration-300 hover:bg-gray-50/70 dark:hover:bg-gray-800/40 border border-gray-200 dark:border-slate-800 sm:min-h-[15rem] sm:max-h-[16rem]",
       imageHeight: "h-40 sm:h-full sm:w-48 md:w-56 lg:w-56 flex-shrink-0",
-      padding: "p-3 sm:py-4 sm:pr-3 sm:pl-5",
-      spacing: "space-y-2 sm:space-y-3",
+      padding: "p-3 sm:py-4 sm:pr-4 sm:pl-5",
+      spacing: "space-y-2 sm:space-y-2",
       titleSize: "text-lg sm:text-xl font-semibold leading-snug line-clamp-2",
       showBrand: true,
       showCategories: true,
@@ -333,7 +333,9 @@ export function ProductCard({ product = {}, variant = "featured" }) {
 
   return (
     <div
-      className={`group relative bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 overflow-hidden transition-all duration-700 hover:border-blue-200 dark:hover:border-blue-600/40 backdrop-blur-sm will-change-transform ${config.containerClass}`}
+      className={`group relative bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 overflow-hidden transition-all duration-700 hover:border-blue-200 dark:hover:border-blue-600/40 backdrop-blur-sm will-change-transform ${
+        config.containerClass
+      } ${variant === "list" ? "sm:flex-row" : ""}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -374,7 +376,11 @@ export function ProductCard({ product = {}, variant = "featured" }) {
       {/* Product image with wrapper for list view */}
       <Link
         href={`/products/${p.slug || p._id}`}
-        className={`block ${variant === "list" ? "sm:h-full" : ""}`}
+        className={`block ${
+          variant === "list"
+            ? "sm:flex-shrink-0 sm:min-w-[12rem] md:min-w-[14rem]"
+            : ""
+        }`}
       >
         <div
           className={`relative ${
@@ -403,7 +409,7 @@ export function ProductCard({ product = {}, variant = "featured" }) {
             }
             className={`transition-all duration-700 group-hover:scale-110 ${
               variant === "list"
-                ? "object-cover object-center"
+                ? "object-cover object-center !h-full !w-full"
                 : "object-contain p-2 md:p-3"
             }`}
             onLoad={() => setImageLoading(false)}
@@ -441,7 +447,7 @@ export function ProductCard({ product = {}, variant = "featured" }) {
       <div
         className={`${config.padding} ${config.spacing} ${
           variant === "list"
-            ? "flex-grow sm:flex sm:flex-col sm:justify-between sm:h-full"
+            ? "sm:flex-1 sm:flex sm:flex-col sm:justify-between sm:h-full sm:overflow-hidden"
             : ""
         }`}
       >
@@ -486,7 +492,9 @@ export function ProductCard({ product = {}, variant = "featured" }) {
         {config.showDescription && p.description && (
           <p
             className={`text-sm text-gray-600 dark:text-gray-400 ${
-              variant === "list" ? "line-clamp-3 sm:my-3" : "line-clamp-2"
+              variant === "list"
+                ? "line-clamp-2 sm:line-clamp-3 sm:my-2"
+                : "line-clamp-2"
             }`}
           >
             {p.description}
@@ -561,13 +569,15 @@ export function ProductCard({ product = {}, variant = "featured" }) {
             variant === "compact"
               ? "space-y-1"
               : variant === "list"
-              ? "space-y-1 flex-shrink-0 sm:mt-auto sm:pt-2"
+              ? "flex-shrink-0 sm:mt-auto sm:pt-3 sm:pb-1"
               : "space-y-2 bg-gradient-to-br from-blue-50/50 to-purple-50/30 dark:from-blue-950/20 dark:to-purple-950/10 p-3 rounded-xl border border-blue-100/50 dark:border-blue-900/30"
           }
         >
           <div
             className={`flex ${
-              variant === "list" ? "flex-col sm:items-start" : "items-center"
+              variant === "list"
+                ? "sm:flex-row sm:items-center sm:justify-between"
+                : "items-center"
             } gap-2`}
           >
             <span
@@ -581,20 +591,39 @@ export function ProductCard({ product = {}, variant = "featured" }) {
             >
               ₹{discountedPrice.toLocaleString("en-IN")}
             </span>
-            {isSale && (
-              <Badge
-                className={`bg-gradient-to-r from-red-500 to-rose-500 text-white ${
-                  variant === "list"
-                    ? "text-sm px-2 py-0.5"
-                    : "text-xs px-1.5 py-0.5"
-                } font-medium rounded-full`}
-              >
-                {discountPercentage}% OFF
-              </Badge>
+
+            {variant === "list" && isSale ? (
+              <div className="flex items-center gap-2">
+                <Badge className="bg-gradient-to-r from-red-500 to-rose-500 text-white text-sm px-2 py-0.5 font-medium rounded-full">
+                  {discountPercentage}% OFF
+                </Badge>
+                <div className="flex items-center">
+                  <span className="text-xs text-gray-500 dark:text-gray-400 mr-1">
+                    M.R.P.:
+                  </span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 line-through">
+                    ₹{originalPrice.toLocaleString("en-IN")}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <>
+                {isSale && (
+                  <Badge
+                    className={`bg-gradient-to-r from-red-500 to-rose-500 text-white ${
+                      variant === "list"
+                        ? "text-sm px-2 py-0.5"
+                        : "text-xs px-1.5 py-0.5"
+                    } font-medium rounded-full`}
+                  >
+                    {discountPercentage}% OFF
+                  </Badge>
+                )}
+              </>
             )}
           </div>
 
-          {isSale && (
+          {isSale && variant !== "list" && (
             <div className="flex gap-2 items-center">
               {variant !== "compact" && (
                 <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -650,7 +679,7 @@ export function ProductCard({ product = {}, variant = "featured" }) {
         {config.showColors && p.colors && p.colors.length > 0 && (
           <div
             className={`flex items-center gap-2 flex-wrap ${
-              variant === "list" ? "sm:inline-flex" : ""
+              variant === "list" ? "sm:inline-flex sm:mb-1" : ""
             }`}
           >
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -685,7 +714,7 @@ export function ProductCard({ product = {}, variant = "featured" }) {
         {config.showSizes && p.sizes && p.sizes.length > 0 && (
           <div
             className={`flex items-center gap-2 flex-wrap ${
-              variant === "list" ? "sm:inline-flex" : ""
+              variant === "list" ? "sm:inline-flex sm:mb-2" : ""
             }`}
           >
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -699,7 +728,7 @@ export function ProductCard({ product = {}, variant = "featured" }) {
                     key={index}
                     variant="outline"
                     className={`text-xs ${
-                      variant === "list" ? "px-1 py-0" : "px-1.5 py-0.5"
+                      variant === "list" ? "px-1.5 py-0.5" : "px-1.5 py-0.5"
                     } border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer`}
                   >
                     {size}
@@ -713,7 +742,7 @@ export function ProductCard({ product = {}, variant = "featured" }) {
         <Button
           onClick={handleAddToCart}
           className={`${
-            variant === "list" ? "sm:w-auto sm:px-8 sm:mt-auto" : "w-full"
+            variant === "list" ? "sm:w-auto sm:px-8 sm:mt-2" : "w-full"
           } rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl ${
             variant === "list" ? "sm:h-11 sm:text-sm" : config.buttonSize
           } ${
