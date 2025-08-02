@@ -1,6 +1,6 @@
 "use client";
 
-import { ProductCard } from "@/components/product-card";
+import ProductCard from "@/components/product-card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
@@ -91,7 +91,7 @@ export default function ProductDetailPage({ params }) {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const [hasAttemptedLoad, setHasAttemptedLoad] = useState(false);
-  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [activeImageIndex, setActiveImageIndex] = useState(0); // 0 = mainImage, 1+ = images array
   const [isInWishlistLocal, setIsInWishlistLocal] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
   const { data: session } = useSession();
@@ -135,6 +135,21 @@ export default function ProductDetailPage({ params }) {
           console.log("Setting product data:", productData);
 
           if (productData && productData._id) {
+            // Initialize images array if it doesn't exist
+            if (!productData.images) {
+              productData.images = [];
+            }
+
+            // Ensure we don't duplicate the main image in the images array
+            if (
+              productData.mainImage &&
+              productData.images.includes(productData.mainImage)
+            ) {
+              productData.images = productData.images.filter(
+                (img) => img !== productData.mainImage
+              );
+            }
+
             setProduct(productData);
             setRelatedProducts(data.relatedProducts || []);
           } else {
@@ -369,7 +384,8 @@ export default function ProductDetailPage({ params }) {
       <div className="container mx-auto px-4 py-8 lg:py-12">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
           {/* Enhanced Image Gallery */}
-          <div className="space-y-4">
+          <div className="space-y-6">
+            {/* Main Image Display */}
             <div className="relative group">
               <div className="aspect-square bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 shadow-lg overflow-hidden relative">
                 {imageLoading && (
@@ -379,8 +395,12 @@ export default function ProductDetailPage({ params }) {
                 )}
                 <Image
                   src={
-                    product.images[activeImageIndex] ||
-                    "/placeholder-product.jpg"
+                    activeImageIndex === 0 && product.mainImage
+                      ? product.mainImage
+                      : (product.images &&
+                          product.images[activeImageIndex - 1]) ||
+                        product.mainImage ||
+                        "/placeholder-product.jpg"
                   }
                   alt={product.name}
                   fill
@@ -393,25 +413,25 @@ export default function ProductDetailPage({ params }) {
                 />
 
                 {/* Enhanced Navigation */}
-                {product.images.length > 1 && (
+                {(product.images?.length > 0 || product.mainImage) && (
                   <>
                     <button
                       onClick={() =>
                         setActiveImageIndex((prev) =>
-                          prev === 0 ? product.images.length - 1 : prev - 1
+                          prev === 0 ? product.images?.length || 0 : prev - 1
                         )
                       }
-                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-800 backdrop-blur-sm rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
                     >
                       <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() =>
                         setActiveImageIndex((prev) =>
-                          prev === product.images.length - 1 ? 0 : prev + 1
+                          prev >= (product.images?.length || 0) ? 0 : prev + 1
                         )
                       }
-                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white dark:bg-gray-800/90 dark:hover:bg-gray-800 backdrop-blur-sm rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
                     >
                       <ChevronRight className="w-5 h-5" />
                     </button>
@@ -419,9 +439,9 @@ export default function ProductDetailPage({ params }) {
                 )}
 
                 {/* Image Counter */}
-                {product.images.length > 1 && (
+                {(product.images?.length > 0 || product.mainImage) && (
                   <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm font-medium">
-                    {activeImageIndex + 1} / {product.images.length}
+                    {activeImageIndex + 1} / {(product.images?.length || 0) + 1}
                   </div>
                 )}
 
@@ -436,17 +456,38 @@ export default function ProductDetailPage({ params }) {
               </div>
             </div>
 
-            {/* Enhanced Thumbnails */}
-            {product.images.length > 1 && (
-              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700">
-                {product.images.map((image, index) => (
+            {/* Gallery Thumbnails */}
+            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700">
+              {/* Main Image Thumbnail */}
+              {product.mainImage && (
+                <button
+                  onClick={() => setActiveImageIndex(0)}
+                  className={`relative min-w-[80px] w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+                    activeImageIndex === 0
+                      ? "border-primary ring-2 ring-primary/20 scale-105"
+                      : "border-gray-200 dark:border-gray-700 hover:border-primary/50"
+                  }`}
+                >
+                  <Image
+                    src={product.mainImage || "/placeholder-product.jpg"}
+                    alt={`${product.name} main view`}
+                    fill
+                    className="object-cover"
+                    sizes="80px"
+                  />
+                </button>
+              )}
+
+              {/* Additional Images Thumbnails */}
+              {product.images &&
+                product.images.map((image, index) => (
                   <button
                     key={index}
-                    onClick={() => setActiveImageIndex(index)}
+                    onClick={() => setActiveImageIndex(index + 1)}
                     className={`relative min-w-[80px] w-20 h-20 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
-                      index === activeImageIndex
+                      index + 1 === activeImageIndex
                         ? "border-primary ring-2 ring-primary/20 scale-105"
-                        : "border-gray-200 hover:border-primary/50"
+                        : "border-gray-200 dark:border-gray-700 hover:border-primary/50"
                     }`}
                   >
                     <Image
@@ -458,8 +499,7 @@ export default function ProductDetailPage({ params }) {
                     />
                   </button>
                 ))}
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Enhanced Product Details */}
@@ -505,24 +545,24 @@ export default function ProductDetailPage({ params }) {
                 <div className="space-y-2">
                   <div className="flex items-center gap-3">
                     <span className="text-3xl font-bold text-primary">
-                      $
+                      ₹
                       {(product.price * (1 - product.discount / 100)).toFixed(
-                        2
+                        0
                       )}
                     </span>
                     <span className="text-lg text-gray-500 line-through">
-                      ${product.price.toFixed(2)}
+                      ₹{product.price.toFixed(0)}
                     </span>
                   </div>
                   <div className="text-green-600 font-medium">
-                    You save $
-                    {((product.price * product.discount) / 100).toFixed(2)} (
+                    You save ₹
+                    {((product.price * product.discount) / 100).toFixed(0)} (
                     {product.discount}% off)
                   </div>
                 </div>
               ) : (
                 <span className="text-3xl font-bold text-primary">
-                  ${product.price.toFixed(2)}
+                  ₹{product.price.toFixed(0)}
                 </span>
               )}
             </div>
@@ -603,12 +643,12 @@ export default function ProductDetailPage({ params }) {
                   </Button>
                 </div>
                 <span className="text-sm text-gray-600 dark:text-gray-300">
-                  $
+                  ₹
                   {(
                     (product.discount
                       ? product.price * (1 - product.discount / 100)
                       : product.price) * quantity
-                  ).toFixed(2)}{" "}
+                  ).toFixed(0)}{" "}
                   total
                 </span>
               </div>

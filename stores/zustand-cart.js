@@ -11,11 +11,21 @@ const useCartStore = create(
 
       setAuthenticated: async (status) => {
         // When user logs in, sync guest cart with server
+        console.log("Cart authentication status changed:", {
+          newStatus: status,
+          previousStatus: get().isAuthenticated,
+          hasItems: get().items.length > 0,
+        });
+
         if (status && !get().isAuthenticated) {
           const guestItems = get().items;
           set({ isAuthenticated: status });
 
           if (guestItems.length > 0) {
+            console.log(
+              "Syncing guest cart items to authenticated cart:",
+              guestItems
+            );
             try {
               // Sync each guest cart item with the server
               for (const item of guestItems) {
@@ -25,12 +35,14 @@ const useCartStore = create(
               console.error("Failed to sync guest cart:", error);
             }
           } else {
+            console.log("Fetching user cart from server");
             // If guest cart is empty, fetch the user's cart from server
             await get().fetchCart();
           }
         } else {
           set({ isAuthenticated: status });
           if (!status) {
+            console.log("User logged out, clearing cart");
             // When logging out, clear the cart
             set({ items: [] });
           }
@@ -65,6 +77,8 @@ const useCartStore = create(
             const existingItem = items.find((item) => item.id === product._id);
 
             if (existingItem) {
+              // When item exists, keep all properties but update quantity
+              // We don't recalculate the price as it was already calculated when first added
               set({
                 items: items.map((item) =>
                   item.id === product._id
@@ -80,8 +94,16 @@ const useCartStore = create(
                   {
                     id: product._id,
                     name: product.name,
-                    price: product.price,
-                    image: product.images[0],
+                    price:
+                      product.calculatedPrice ||
+                      (product.discount
+                        ? Math.round(
+                            product.price * (1 - product.discount / 100)
+                          )
+                        : product.price),
+                    originalPrice: product.price,
+                    discount: product.discount || 0,
+                    image: product.images?.[0] || product.mainImage,
                     quantity,
                   },
                 ],

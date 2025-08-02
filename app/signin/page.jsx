@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -33,6 +33,16 @@ export default function SignIn() {
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [redirectPath, setRedirectPath] = useState("/");
+
+  // Check for redirect parameter in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
+    if (redirect) {
+      setRedirectPath(`/${redirect}`);
+    }
+  }, []);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -63,7 +73,8 @@ export default function SignIn() {
         if (session?.user?.role === "admin") {
           router.push("/admin");
         } else {
-          router.push("/");
+          // Redirect to the specified path or default to home
+          router.push(redirectPath);
         }
       }
     } catch (error) {

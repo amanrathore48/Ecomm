@@ -116,7 +116,9 @@ export async function GET(request) {
       ]),
       Promise.race([
         Product.find(filter)
-          .select("name slug price mainImage images rating stock categories") // Include mainImage field
+          .select(
+            "name slug price mainImage images rating stock categories discount brand"
+          ) // Include discount field
           .lean() // Return plain objects instead of Mongoose documents
           .sort(sort)
           .skip(skip)

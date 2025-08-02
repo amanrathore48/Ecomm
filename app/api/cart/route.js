@@ -20,14 +20,26 @@ export async function GET(request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Transform cart items to client format
-    const items = user.cart.map((item) => ({
-      id: item.product._id.toString(),
-      name: item.product.name,
-      price: item.product.price,
-      image: item.product.mainImage,
-      quantity: item.quantity,
-    }));
+    // Transform cart items to client format with discount calculation
+    const items = user.cart.map((item) => {
+      const product = item.product;
+      const originalPrice = product.price;
+      const discount = product.discount || 0;
+      const discountedPrice =
+        discount > 0
+          ? Math.round(originalPrice * (1 - discount / 100))
+          : originalPrice;
+
+      return {
+        id: product._id.toString(),
+        name: product.name,
+        price: discountedPrice,
+        originalPrice: originalPrice,
+        discount: discount,
+        image: product.mainImage || (product.images && product.images[0]),
+        quantity: item.quantity,
+      };
+    });
 
     return NextResponse.json({ items });
   } catch (error) {
@@ -83,14 +95,26 @@ export async function POST(request) {
     // Fetch updated cart with populated products
     const updatedUser = await User.findById(user._id).populate("cart.product");
 
-    // Transform cart items to client format
-    const items = updatedUser.cart.map((item) => ({
-      id: item.product._id.toString(),
-      name: item.product.name,
-      price: item.product.price,
-      image: item.product.mainImage,
-      quantity: item.quantity,
-    }));
+    // Transform cart items to client format with discount calculation
+    const items = updatedUser.cart.map((item) => {
+      const product = item.product;
+      const originalPrice = product.price;
+      const discount = product.discount || 0;
+      const discountedPrice =
+        discount > 0
+          ? Math.round(originalPrice * (1 - discount / 100))
+          : originalPrice;
+
+      return {
+        id: product._id.toString(),
+        name: product.name,
+        price: discountedPrice,
+        originalPrice: originalPrice,
+        discount: discount,
+        image: product.mainImage || (product.images && product.images[0]),
+        quantity: item.quantity,
+      };
+    });
 
     return NextResponse.json({ items });
   } catch (error) {
@@ -140,14 +164,26 @@ export async function PUT(request) {
     // Fetch updated cart with populated products
     const updatedUser = await User.findById(user._id).populate("cart.product");
 
-    // Transform cart items to client format
-    const items = updatedUser.cart.map((item) => ({
-      id: item.product._id.toString(),
-      name: item.product.name,
-      price: item.product.price,
-      image: item.product.mainImage,
-      quantity: item.quantity,
-    }));
+    // Transform cart items to client format with discount calculation
+    const items = updatedUser.cart.map((item) => {
+      const product = item.product;
+      const originalPrice = product.price;
+      const discount = product.discount || 0;
+      const discountedPrice =
+        discount > 0
+          ? Math.round(originalPrice * (1 - discount / 100))
+          : originalPrice;
+
+      return {
+        id: product._id.toString(),
+        name: product.name,
+        price: discountedPrice,
+        originalPrice: originalPrice,
+        discount: discount,
+        image: product.mainImage || (product.images && product.images[0]),
+        quantity: item.quantity,
+      };
+    });
 
     return NextResponse.json({ items });
   } catch (error) {
@@ -192,14 +228,26 @@ export async function DELETE(request) {
     // Fetch updated cart with populated products
     const updatedUser = await User.findById(user._id).populate("cart.product");
 
-    // Transform cart items to client format
-    const items = updatedUser.cart.map((item) => ({
-      id: item.product._id.toString(),
-      name: item.product.name,
-      price: item.product.price,
-      image: item.product.mainImage,
-      quantity: item.quantity,
-    }));
+    // Transform cart items to client format with discount calculation
+    const items = updatedUser.cart.map((item) => {
+      const product = item.product;
+      const originalPrice = product.price;
+      const discount = product.discount || 0;
+      const discountedPrice =
+        discount > 0
+          ? Math.round(originalPrice * (1 - discount / 100))
+          : originalPrice;
+
+      return {
+        id: product._id.toString(),
+        name: product.name,
+        price: discountedPrice,
+        originalPrice: originalPrice,
+        discount: discount,
+        image: product.mainImage || (product.images && product.images[0]),
+        quantity: item.quantity,
+      };
+    });
 
     return NextResponse.json({ items });
   } catch (error) {

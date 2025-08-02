@@ -425,20 +425,14 @@ function ProductsList({ products }) {
           console.warn(`Product missing slug field: ${productToRender._id}`);
         }
 
+        console.log("Product to render:", productToRender);
+
         return (
-          <div
-            key={product._id}
-            className="group transform transition-all duration-500 hover:scale-105 hover:shadow-xl"
-            style={{
-              animationDelay,
-              animation: `fadeInUp 0.6s ease-out ${animationDelay} forwards`,
-              opacity: 0,
-            }}
-          >
-            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300">
-              <ProductCard product={productToRender} />
-            </div>
-          </div>
+          <ProductCard
+            key={productToRender._id}
+            product={productToRender}
+            variant="compact"
+          />
         );
       })}
     </div>

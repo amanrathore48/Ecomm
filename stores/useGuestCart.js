@@ -51,6 +51,19 @@ const useGuestCart = create(
 
       clearCart: () => set({ items: [] }),
 
+      // Get cart total
+      getTotal: () => {
+        return get().items.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        );
+      },
+
+      // Get cart item count
+      getItemCount: () => {
+        return get().items.reduce((count, item) => count + item.quantity, 0);
+      },
+
       // For syncing with server when user logs in
       getItems: () => get().items,
     }),

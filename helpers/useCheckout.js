@@ -64,7 +64,7 @@ export function useCheckout() {
 
     if (!session) {
       toast.error("Please sign in to complete your order");
-      router.push("/login?redirect=checkout");
+      router.push("/signin?redirect=checkout");
       return;
     }
 

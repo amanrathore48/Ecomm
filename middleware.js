@@ -12,7 +12,8 @@ export default withAuth({
 export const config = {
   matcher: [
     "/profile/:path*",
-    "/checkout/:path*",
+    // Temporarily commenting out checkout protection to troubleshoot authentication issue
+    // "/checkout/:path*",
     "/orders/:path*",
     "/admin/:path*",
   ],
