@@ -1,8 +1,9 @@
 "use client";
+import React from "react";
 import {
   Filter,
   Search,
-  Grid,
+  Grid3X3,
   List,
   Sparkles,
   TrendingUp,
@@ -13,6 +14,9 @@ import {
   ChevronDown,
   ChevronUp,
   Settings,
+  Clock,
+  Zap,
+  MoreHorizontal,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -165,8 +169,8 @@ function ProductsList({ products, viewType = "grid" }) {
     <div
       className={
         viewType === "grid"
-          ? "grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-2 xxs:gap-3 xs:gap-4 sm:gap-6"
-          : "flex flex-col gap-2 xxs:gap-3 xs:gap-4"
+          ? "grid grid-cols-2 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 xxs:gap-3 xs:gap-4 sm:gap-5 lg:gap-6"
+          : "flex flex-col gap-2 xxs:gap-3 xs:gap-4 sm:gap-5"
       }
     >
       {products.map((product, index) => {
@@ -262,6 +266,14 @@ export default function ProductsPageClient({
   border: 1px solid rgba(75, 85, 99, 0.2);
 }
 
+.bg-grid-white\/\[0\.02\] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M96,95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-10,0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9zm10,0h9v-9h-9v9z' fill='white' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
 .gradient-border {
   position: relative;
   background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4);
@@ -340,79 +352,126 @@ export default function ProductsPageClient({
     <div>
       <style dangerouslySetInnerHTML={{ __html: styles }} />
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <div className="w-full max-w-screen-2xl mx-auto px-2 xxs:px-3 xs:px-4 sm:px-6 py-2 xxs:py-4 xs:py-6 sm:py-8">
-          {/* Combined Hero and Sorting Section */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-xl mb-4 sm:mb-6 shadow-lg">
-            <div className="absolute inset-0 bg-black/10"></div>
-            <div className="relative p-3 sm:p-4">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                <div className="flex-1 space-y-2">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-white font-medium text-sm sm:text-base">
-                        {totalProducts} Products
+        <div className="w-full max-w-[2000px] mx-auto px-2 xxs:px-3 xs:px-4 sm:px-6 lg:px-8 xl:px-10 py-2 xxs:py-3 xs:py-4 sm:py-6 md:py-8 lg:py-10">
+          {/* Enhanced Hero Section */}
+          <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 lg:mb-8 shadow-lg">
+            {/* Background pattern/effect */}
+            <div className="absolute inset-0 bg-black/10 mix-blend-overlay"></div>
+            <div className="absolute right-0 top-0 w-32 h-32 md:w-64 md:h-64 bg-purple-500/20 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+            <div className="absolute left-0 bottom-0 w-32 h-32 md:w-64 md:h-64 bg-blue-500/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+
+            {/* Subtle grid pattern */}
+            <div className="absolute inset-0 bg-grid-white/[0.01] bg-[size:20px_20px]"></div>
+
+            {/* Content Container */}
+            <div className="relative p-3 sm:p-5 md:p-6 lg:p-7">
+              {/* Header Section */}
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 lg:gap-6">
+                <div className="flex-1">
+                  {/* Products count with visual indicator */}
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1.5 rounded-full">
+                      <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-400 rounded-full animate-pulse shadow-sm"></div>
+                      <span className="text-white font-medium text-sm">
+                        {totalProducts.toLocaleString()} Products
                       </span>
                     </div>
 
+                    {/* Active filters badge */}
                     {hasActiveFilters && (
-                      <Badge className="bg-green-500/20 text-white border-green-400/30 text-xs">
+                      <Badge className="bg-green-500/15 text-white border-green-400/20 text-xs py-1 px-2">
                         <Filter className="w-3 h-3 mr-1" />
                         <span>Filtered</span>
                       </Badge>
                     )}
 
+                    {/* Search parameter badge */}
                     {searchParams?.search && (
-                      <Badge className="bg-white/20 text-white border-white/30 text-xs">
+                      <Badge className="bg-white/15 text-white border-white/20 text-xs py-1 px-2">
                         <Search className="w-3 h-3 mr-1" />
-                        <span className="max-w-[100px] truncate">
+                        <span className="max-w-[80px] sm:max-w-[120px] md:max-w-[200px] truncate">
                           {searchParams.search}
                         </span>
                       </Badge>
                     )}
 
+                    {/* Category badge */}
                     {searchParams?.category && (
-                      <Badge className="bg-purple-500/20 text-white border-purple-400/30 text-xs">
+                      <Badge className="bg-purple-500/15 text-white border-purple-400/20 text-xs py-1 px-2">
                         <Tag className="w-3 h-3 mr-1" />
-                        <span className="max-w-[100px] truncate">
+                        <span className="max-w-[80px] sm:max-w-[120px] md:max-w-[200px] truncate">
                           {searchParams.category}
                         </span>
                       </Badge>
                     )}
                   </div>
+                </div>
 
-                  <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-white/80">Sort by:</span>
-                      <div className="glass-effect rounded-lg p-1">
-                        <SortForm searchParams={searchParams} />
-                      </div>
+                {/* Controls - grouped together on right side */}
+                <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-0 w-full sm:w-auto justify-between sm:justify-end">
+                  {/* Sort controls - moved to right side */}
+                  <div className="flex items-center gap-1.5 order-1 sm:order-2">
+                    <span className="text-xs text-white/80 font-medium hidden xs:inline">
+                      Sort by:
+                    </span>
+                    <div className="glass-effect rounded-lg p-1 backdrop-blur-md bg-white/15">
+                      <SortForm searchParams={searchParams} />
+                    </div>
+                  </div>
+
+                  {/* View toggle */}
+                  <div className="flex items-center gap-2 order-2 sm:order-1">
+                    <div className="glass-effect rounded-lg p-1 backdrop-blur-md bg-white/15 border border-white/20">
+                      <ViewToggle
+                        viewType={viewType}
+                        onViewChange={setViewType}
+                      />
+                    </div>
+
+                    {/* Mobile filter button */}
+                    <div className="glass-effect rounded-lg p-0.5 backdrop-blur-md bg-white/15 border border-white/20 lg:hidden">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsMobileFilterOpen(true)}
+                        className="text-white hover:bg-white/20 hover:text-white p-1.5 rounded-md"
+                      >
+                        <SlidersHorizontal className="w-4 h-4" />
+                      </Button>
                     </div>
                   </div>
                 </div>
+              </div>
 
-                <div className="flex items-center gap-2 sm:gap-3">
-                  <div className="glass-effect rounded-lg p-1">
-                    <ViewToggle
-                      viewType={viewType}
-                      onViewChange={setViewType}
-                    />
+              {/* Quick Stats Row - Hidden on mobile */}
+              <div className="hidden md:grid md:grid-cols-4 gap-3 mt-4">
+                {[
+                  { label: "New Today", value: "127", icon: Clock },
+                  { label: "On Sale", value: "89", icon: Tag },
+                  { label: "Featured", value: "43", icon: Star },
+                  { label: "Trending", value: "156", icon: TrendingUp },
+                ].map((stat, index) => (
+                  <div
+                    key={index}
+                    className="bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/15 flex items-center"
+                  >
+                    <div className="w-6 h-6 flex-shrink-0 bg-white/5 rounded-full flex items-center justify-center mr-2">
+                      <stat.icon className="w-3 h-3 text-white/80" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-white/70 text-xs font-medium truncate">
+                        {stat.label}
+                      </div>
+                      <div className="text-white text-sm font-semibold">
+                        {stat.value}
+                      </div>
+                    </div>
                   </div>
-                  <div className="glass-effect rounded-lg p-2 lg:hidden">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setIsMobileFilterOpen(true)}
-                      className="text-white hover:bg-white/20 p-1"
-                    >
-                      <SlidersHorizontal className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 xxs:gap-6 xs:gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-5 xl:grid-cols-6 gap-4 xxs:gap-5 xs:gap-6 md:gap-7 lg:gap-8">
             {/* Desktop Sidebar - Hidden on mobile */}
             <div className="lg:col-span-1 hidden lg:block">
               <div className="sticky top-16 space-y-3">
@@ -482,9 +541,9 @@ export default function ProductsPageClient({
                   </div>
                 </div>
               </div>
-            </div>{" "}
+            </div>
             {/* Main Content */}
-            <div className="lg:col-span-4">
+            <div className="lg:col-span-4 xl:col-span-5">
               {/* Products Grid */}
               <Suspense fallback={<ProductsLoading />}>
                 <ProductsList products={products} viewType={viewType} />
