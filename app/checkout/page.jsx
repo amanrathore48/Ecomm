@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
-import { useEffect as useLayoutEffect } from "react";
+
 import {
   Form,
   FormControl,
@@ -459,8 +459,8 @@ export default function CheckoutPage() {
 
   return (
     <div className="bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50 dark:from-slate-950/50 dark:via-blue-950/30 dark:to-indigo-950/30">
-      <div className="container mx-auto px-1 xxs:px-2 xs:px-4 py-1 xxs:py-2 xs:py-4 sm:py-12">
-        <div className="max-w-full mx-auto overflow-x-hidden">
+      <div className="w-full px-1 sm:px-4 py-1 sm:py-12">
+        <div className="w-full mx-auto overflow-x-hidden">
           {/* Header */}
           <div className="text-center mb-3 xxs:mb-4 xs:mb-6 sm:mb-12">
             <h1 className="text-xl xxs:text-2xl xs:text-3xl sm:text-4xl font-bold bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 dark:from-slate-300 dark:via-blue-300 dark:to-indigo-400 bg-clip-text text-transparent mb-1 xxs:mb-2 xs:mb-3 sm:mb-4">
@@ -545,7 +545,7 @@ export default function CheckoutPage() {
           <div className="grid lg:grid-cols-3 gap-1 xxs:gap-2 xs:gap-3 sm:gap-8">
             {/* Left Column: Form */}
             <div className="lg:col-span-2">
-              <div className="bg-background/80 backdrop-blur-xl border border-border rounded-lg xxs:rounded-xl xs:rounded-2xl sm:rounded-3xl px-1 py-1 xxs:px-2 xxs:py-2 xs:px-4 xs:py-3 sm:px-6 sm:py-6 md:px-8 md:py-8 shadow-2xl shadow-black/5">
+              <div className="w-full max-w-2xl lg:max-w-3xl bg-background/80 backdrop-blur-xl border border-border rounded-lg xs:rounded-xl sm:rounded-3xl px-0 sm:px-6 py-1 sm:py-6 md:px-8 md:py-8 shadow-2xl shadow-black/5 mx-auto">
                 <Form {...checkoutForm}>
                   <form
                     onSubmit={checkoutForm.handleSubmit(onSubmit)}
@@ -553,7 +553,7 @@ export default function CheckoutPage() {
                   >
                     {currentStep === 1 && (
                       <>
-                        <div className="flex items-center gap-1 xxs:gap-1.5 xs:gap-2 sm:gap-3 mb-2 xxs:mb-3 xs:mb-4 sm:mb-6">
+                        <div className="flex items-center gap-1 xxs:gap-1.5 xs:gap-2 sm:gap-3 mb-2 xxs:mb-3 xs:mb-4 sm:mb-6 px-2 xxs:px-4 xs:px-6 sm:px-8 pt-2 xxs:pt-3 xs:pt-4 sm:pt-6">
                           <div className="w-5 h-5 xxs:w-6 xxs:h-6 xs:w-8 xs:h-8 sm:w-10 sm:h-10 rounded-md xxs:rounded-lg xs:rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 dark:from-blue-600 dark:to-indigo-500 flex items-center justify-center">
                             <MapPin className="h-2.5 w-2.5 xxs:h-3 xxs:w-3 xs:h-4 xs:w-4 sm:h-5 sm:w-5 text-white" />
                           </div>
@@ -567,7 +567,7 @@ export default function CheckoutPage() {
                           control={checkoutForm.control}
                           name="selectedAddressId"
                           render={({ field }) => (
-                            <FormItem className="space-y-2 xxs:space-y-3 xs:space-y-4 sm:space-y-6">
+                            <FormItem className="space-y-2 xxs:space-y-3 xs:space-y-4 sm:space-y-6 px-2 xxs:px-4 xs:px-6 sm:px-8">
                               <FormLabel className="text-xs xxs:text-sm xs:text-base font-semibold">
                                 Choose your delivery address
                               </FormLabel>
@@ -594,7 +594,7 @@ export default function CheckoutPage() {
                                       {addresses.map((address) => (
                                         <div
                                           key={address._id}
-                                          className={`group relative border rounded-md xxs:rounded-lg xs:rounded-xl md:rounded-2xl p-1 xxs:p-1.5 xs:p-2.5 sm:p-4 md:p-6 cursor-pointer transition-all duration-300 hover:shadow-xl ${
+                                          className={`group relative border rounded-md xxs:rounded-lg xs:rounded-xl md:rounded-2xl p-1.5 xs:p-2 sm:p-4 md:p-6 cursor-pointer transition-all duration-300 hover:shadow-xl ${
                                             selectedAddressId === address._id
                                               ? "border-blue-500 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 shadow-lg shadow-blue-500/10 dark:shadow-blue-500/5"
                                               : "border-border bg-card hover:border-blue-300 dark:hover:border-blue-600 hover:bg-blue-50/50 dark:hover:bg-blue-950/20"
@@ -709,7 +709,7 @@ export default function CheckoutPage() {
                           control={checkoutForm.control}
                           name="shippingMethod"
                           render={({ field }) => (
-                            <FormItem className="space-y-2 xxs:space-y-3 xs:space-y-4 sm:space-y-6">
+                            <FormItem className="space-y-2 xxs:space-y-3 xs:space-y-4 sm:space-y-6 p-4 xxs:p-5 xs:p-6 sm:p-8 md:p-10 bg-card rounded-lg xxs:rounded-xl xs:rounded-2xl">
                               <FormLabel className="text-xs xxs:text-sm xs:text-base font-semibold">
                                 Shipping Method
                               </FormLabel>
@@ -873,7 +873,7 @@ export default function CheckoutPage() {
                                     </label>
                                   </div>
 
-                                  <div className="relative border rounded-lg xxs:rounded-xl xs:rounded-2xl p-1 xxs:p-1.5 xs:p-2.5 sm:p-4 md:p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-800 bg-card opacity-60 dark:opacity-40">
+                                  <div className="relative border rounded-lg xxs:rounded-xl xs:rounded-2xl p-1.5 xs:p-2 sm:p-4 md:p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-800 bg-card opacity-60 dark:opacity-40">
                                     <RadioGroupItem
                                       value="credit_card"
                                       id="credit_card"
@@ -1050,7 +1050,7 @@ export default function CheckoutPage() {
 
             {/* Right Column: Order Summary */}
             <div className="lg:col-span-1">
-              <div className="bg-card/80 backdrop-blur-xl border border-border rounded-lg xxs:rounded-xl xs:rounded-2xl sm:rounded-3xl p-1 xxs:p-1.5 xs:p-2.5 sm:p-6 md:p-8 shadow-2xl shadow-black/5 sticky top-1 xxs:top-2 xs:top-4 sm:top-8">
+              <div className="bg-card/80 backdrop-blur-xl border border-border rounded-lg xxs:rounded-xl xs:rounded-2xl sm:rounded-3xl p-1 xxs:p-1.5 xs:p-2.5 sm:p-6 md:p-8 pt-2 xxs:pt-3 xs:pt-4 sm:pt-6 px-2 xxs:px-4 xs:px-6 sm:px-8 shadow-2xl shadow-black/5 sticky top-1 xxs:top-2 xs:top-4 sm:top-8">
                 <div className="flex items-center gap-1 xxs:gap-1.5 xs:gap-2 sm:gap-3 mb-2 xxs:mb-3 xs:mb-4 sm:mb-6">
                   <div className="w-4 h-4 xxs:w-5 xxs:h-5 xs:w-6 xs:h-6 sm:w-8 sm:h-8 rounded-md xxs:rounded-lg xs:rounded-xl bg-gradient-to-br from-purple-500 to-pink-600 dark:from-purple-600 dark:to-pink-700 flex items-center justify-center">
                     <Package className="h-2 w-2 xxs:h-2.5 xxs:w-2.5 xs:h-3 xs:w-3 sm:h-4 sm:w-4 text-white" />

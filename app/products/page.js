@@ -1,23 +1,4 @@
-import { Suspense } from "react";
-import {
-  Filter,
-  Search,
-  Grid,
-  List,
-  Sparkles,
-  TrendingUp,
-  Star,
-  Tag,
-} from "lucide-react";
-import { ProductCard } from "@/components/product-card";
-import { Button } from "@/components/ui/button";
-import { EmptyState } from "@/components/ui/empty-state";
-import { Badge } from "@/components/ui/badge";
-import { FilterForm } from "./components/FilterForm";
-import { SortForm } from "./components/SortForm";
-import { Pagination } from "./components/Pagination";
-import { ViewToggle } from "./components/ViewToggle";
-import { FilterButton } from "./components/FilterButton";
+import ProductsPageClient from "./components/ProductsPageClient";
 
 export const metadata = {
   title: "Shop Products",
@@ -97,6 +78,53 @@ const styles = `
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
+}
+
+.mobile-filter-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.mobile-filter-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.mobile-filter-panel {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 20px 20px 0 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  z-index: 51;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.dark .mobile-filter-panel {
+  background: rgb(31, 41, 55);
+}
+
+.mobile-filter-panel.active {
+  transform: translateY(0);
+}
+
+@media (min-width: 1024px) {
+  .mobile-filter-overlay,
+  .mobile-filter-panel {
+    display: none;
+  }
 }
 `;
 
@@ -248,6 +276,55 @@ async function getProducts(searchParams) {
   return fetchWithRetry();
 }
 
+// Enhanced product count fetching
+async function getProductsCount(searchParams) {
+  try {
+    const params = new URLSearchParams();
+
+    if (searchParams.category) {
+      params.append("category", searchParams.category);
+    }
+
+    if (searchParams.search) {
+      params.append("search", searchParams.search);
+    }
+
+    if (searchParams.minPrice) {
+      params.append("minPrice", searchParams.minPrice);
+    }
+
+    if (searchParams.maxPrice) {
+      params.append("maxPrice", searchParams.maxPrice);
+    }
+
+    if (searchParams.inStock) {
+      params.append("inStock", searchParams.inStock);
+    }
+
+    const baseUrl = `${getBaseApiUrl()}/api/products`;
+    const queryString = params.toString();
+    const url = queryString
+      ? `${baseUrl}?${queryString}&limit=1&page=1`
+      : `${baseUrl}?limit=1&page=1`;
+
+    console.log("Count API URL:", url);
+
+    const response = await fetch(url, {
+      next: { revalidate: 60 },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch product count");
+    }
+
+    const data = await response.json();
+    return data.pagination?.total || 0;
+  } catch (error) {
+    console.error("Error fetching product count:", error);
+    return 0;
+  }
+}
+
 // Enhanced category data fetching
 async function getCategoryData() {
   const defaultCategories = [
@@ -327,167 +404,6 @@ async function getCategoryData() {
   return fetchWithRetry();
 }
 
-// Enhanced loading component with skeleton effects
-function ProductsLoading() {
-  return (
-    <div className="space-y-8">
-      {/* Header skeleton */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm">
-        <div className="flex justify-between items-center">
-          <div className="space-y-2">
-            <div className="h-6 w-48 shimmer rounded"></div>
-            <div className="h-4 w-32 shimmer rounded"></div>
-          </div>
-          <div className="flex gap-2">
-            <div className="h-10 w-20 shimmer rounded-lg"></div>
-            <div className="h-10 w-20 shimmer rounded-lg"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Products grid skeleton */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {Array(12)
-          .fill(0)
-          .map((_, i) => (
-            <div
-              key={i}
-              className="bg-white dark:bg-gray-800 border rounded-2xl overflow-hidden shadow-sm"
-            >
-              <div className="aspect-square shimmer"></div>
-              <div className="p-4 space-y-3">
-                <div className="h-5 shimmer rounded"></div>
-                <div className="h-4 w-2/3 shimmer rounded"></div>
-                <div className="flex items-center justify-between">
-                  <div className="h-6 w-16 shimmer rounded"></div>
-                  <div className="h-8 w-20 shimmer rounded-lg"></div>
-                </div>
-              </div>
-            </div>
-          ))}
-      </div>
-    </div>
-  );
-}
-
-// Enhanced products list component
-function ProductsList({ products }) {
-  const productCount = products ? products.length : 0;
-
-  if (!products || products.length === 0) {
-    return (
-      <div className="text-center py-16">
-        <div className="max-w-md mx-auto">
-          <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Search className="w-12 h-12 text-blue-600" />
-          </div>
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            No products found
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-8">
-            Try adjusting your filters or search terms to find what you're
-            looking for.
-          </p>
-          <div className="flex gap-3 justify-center">
-            <Button asChild variant="outline">
-              <a href="/products">Clear Filters</a>
-            </Button>
-            <Button asChild>
-              <a href="/">Browse All</a>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {products.map((product, index) => {
-        if (!product || !product._id) {
-          console.error("Invalid product data:", product);
-          return null;
-        }
-
-        const animationDelay = `${(index % 8) * 0.1}s`;
-
-        let productToRender = { ...product };
-
-        if (
-          !productToRender.mainImage &&
-          productToRender.images &&
-          productToRender.images.length > 0
-        ) {
-          productToRender.mainImage = productToRender.images[0];
-        }
-
-        if (!productToRender.slug) {
-          console.warn(`Product missing slug field: ${productToRender._id}`);
-        }
-
-        console.log("Product to render:", productToRender);
-
-        return (
-          <ProductCard
-            key={productToRender._id}
-            product={productToRender}
-            variant="compact"
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-// Enhanced product count fetching
-async function getProductsCount(searchParams) {
-  try {
-    const params = new URLSearchParams();
-
-    if (searchParams.category) {
-      params.append("category", searchParams.category);
-    }
-
-    if (searchParams.search) {
-      params.append("search", searchParams.search);
-    }
-
-    if (searchParams.minPrice) {
-      params.append("minPrice", searchParams.minPrice);
-    }
-
-    if (searchParams.maxPrice) {
-      params.append("maxPrice", searchParams.maxPrice);
-    }
-
-    if (searchParams.inStock) {
-      params.append("inStock", searchParams.inStock);
-    }
-
-    const baseUrl = `${getBaseApiUrl()}/api/products`;
-    const queryString = params.toString();
-    const url = queryString
-      ? `${baseUrl}?${queryString}&limit=1&page=1`
-      : `${baseUrl}?limit=1&page=1`;
-
-    console.log("Count API URL:", url);
-
-    const response = await fetch(url, {
-      next: { revalidate: 60 },
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch product count");
-    }
-
-    const data = await response.json();
-    return data.pagination?.total || 0;
-  } catch (error) {
-    console.error("Error fetching product count:", error);
-    return 0;
-  }
-}
-
 export default async function ProductsPage({ searchParams }) {
   const products = await getProducts(searchParams || {});
   const totalProducts = await getProductsCount(searchParams || {});
@@ -508,221 +424,14 @@ export default async function ProductsPage({ searchParams }) {
   );
 
   return (
-    <>
-      <style dangerouslySetInnerHTML={{ __html: styles }} />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
-          {/* Enhanced Hero Section */}
-          <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 rounded-2xl sm:rounded-3xl mb-8 sm:mb-12 shadow-xl sm:shadow-2xl">
-            <div className="absolute inset-0 bg-black/20"></div>
-            <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -translate-y-48 translate-x-48 floating-element"></div>
-            <div
-              className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-32 -translate-x-32 floating-element"
-              style={{ animationDelay: "2s" }}
-            ></div>
-
-            <div className="relative p-4 sm:p-8 lg:p-12">
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-8">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
-                      <Sparkles className="w-3 h-3 mr-1" />
-                      Featured Collection
-                    </Badge>
-                    {hasActiveFilters && (
-                      <Badge className="bg-green-500/20 text-white border-green-400/30">
-                        <Filter className="w-3 h-3 mr-1" />
-                        Filtered Results
-                      </Badge>
-                    )}
-                  </div>
-
-                  <h1 className="text-2xl sm:text-3xl lg:text-5xl font-bold text-white mb-2 sm:mb-4 leading-tight">
-                    Discover Amazing Products
-                  </h1>
-
-                  <div className="text-white/90 text-base sm:text-lg lg:text-xl mb-4 sm:mb-6">
-                    {products && products.length > 0 ? (
-                      <div className="flex items-center gap-4 flex-wrap">
-                        <span className="flex items-center gap-2">
-                          <TrendingUp className="w-5 h-5" />
-                          {products.length} of {totalProducts} products
-                        </span>
-                        {searchParams?.search && (
-                          <span className="flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-sm">
-                            <Search className="w-4 h-4" />"{searchParams.search}
-                            "
-                          </span>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="flex items-center gap-2">
-                        <Search className="w-5 h-5" />
-                        No products match your criteria
-                      </span>
-                    )}
-                  </div>
-
-                  {searchParams?.category && (
-                    <div className="flex items-center gap-2 text-white/80">
-                      <Tag className="w-4 h-4" />
-                      <span className="text-sm">
-                        Category: {searchParams.category}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="flex items-center gap-2 sm:gap-4 mt-4 sm:mt-0">
-                  <div className="glass-effect rounded-xl sm:rounded-2xl p-2 sm:p-4">
-                    <ViewToggle />
-                  </div>
-                  <div className="glass-effect rounded-xl sm:rounded-2xl p-2 sm:p-4">
-                    <FilterButton />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-5 gap-4 sm:gap-8">
-            {/* Enhanced Sidebar */}
-            <div className="xl:col-span-1">
-              <div className="sticky top-20 sm:top-24 space-y-4 sm:space-y-6">
-                <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-600 p-4 sm:p-6 border-b border-gray-100 dark:border-gray-600">
-                    <div className="flex items-center justify-between">
-                      <h2 className="font-bold text-base sm:text-lg text-gray-900 dark:text-white flex items-center gap-2">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                          <Filter className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        Filters
-                      </h2>
-                      {hasActiveFilters && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 text-xs sm:text-sm hover:bg-blue-100 dark:hover:bg-gray-600 text-blue-600 dark:text-blue-400"
-                          asChild
-                        >
-                          <a href="/products">Reset</a>
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="p-4 sm:p-6">
-                    <FilterForm
-                      categories={categories}
-                      searchParams={searchParams}
-                    />
-                  </div>
-                </div>
-
-                {/* Quick Stats */}
-                <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-4 sm:p-6">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2 sm:mb-4 flex items-center gap-2 text-base sm:text-lg">
-                    <Star className="w-4 h-4 text-yellow-500" />
-                    Shop Stats
-                  </h3>
-                  <div className="space-y-2 sm:space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                        Total Products
-                      </span>
-                      <Badge variant="secondary">{totalProducts}</Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                        Categories
-                      </span>
-                      <Badge variant="secondary">{categories.length}</Badge>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                        Current Page
-                      </span>
-                      <Badge variant="secondary">
-                        {currentPage} / {totalPages}
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="xl:col-span-4">
-              {/* Enhanced Sorting Bar */}
-              <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 mb-4 sm:mb-8 overflow-hidden">
-                <div className="p-4 sm:p-6">
-                  <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 sm:gap-4">
-                    <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
-                      <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="font-semibold text-gray-900 dark:text-white text-sm sm:text-base">
-                          {totalProducts} Products
-                        </span>
-                      </div>
-
-                      {searchParams?.search && (
-                        <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 text-xs sm:text-sm">
-                          <Search className="w-3 h-3 mr-1" />
-                          {searchParams.search}
-                        </Badge>
-                      )}
-
-                      {searchParams?.category && (
-                        <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 text-xs sm:text-sm">
-                          <Tag className="w-3 h-3 mr-1" />
-                          {searchParams.category}
-                        </Badge>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2 sm:gap-3 mt-2 lg:mt-0">
-                      <span className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
-                        Sort by:
-                      </span>
-                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg sm:rounded-xl p-1">
-                        <SortForm searchParams={searchParams} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Products Grid */}
-              <Suspense fallback={<ProductsLoading />}>
-                <ProductsList products={products} />
-              </Suspense>
-
-              {/* Enhanced Pagination */}
-              {totalPages > 1 && (
-                <div className="mt-8 sm:mt-16">
-                  <div className="bg-white dark:bg-gray-800 rounded-xl sm:rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 p-4 sm:p-8">
-                    <div className="text-center mb-4 sm:mb-6">
-                      <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white mb-1 sm:mb-2">
-                        Page {currentPage} of {totalPages}
-                      </h3>
-                      <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                        Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-                        {Math.min(currentPage * itemsPerPage, totalProducts)} of{" "}
-                        {totalProducts} products
-                      </p>
-                    </div>
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      searchParams={searchParams}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+    <ProductsPageClient
+      products={products}
+      totalProducts={totalProducts}
+      categories={categories}
+      searchParams={searchParams}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      hasActiveFilters={hasActiveFilters}
+    />
   );
 }

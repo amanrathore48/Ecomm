@@ -24,11 +24,12 @@ import useWishlistStore from "@/stores/useWishlist";
 
 export function ProductCard({ product = {}, variant = "featured" }) {
   // Variants:
-  // "compact" - Minimal info for dense product listings (grid/search results)
+  // "compact" - Minimal info for dense product listings (grid view)
   // "featured" - Standard card with full details for homepage/category pages
   // "hero" - Large showcase card for promotions/featured products
   // "minimal" - Ultra-clean for premium layouts
-  // "detailed" - Maximum information display for comparison views
+  // "detailed" - Maximum information display for list view layout
+  // "list" - Horizontal layout for list view with extended details
 
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
@@ -124,7 +125,7 @@ export function ProductCard({ product = {}, variant = "featured" }) {
       showDescription: false,
       showColors: true,
       showSizes: true,
-      showDetailedPrice: true,
+      showDetailedPrice: false,
       showDeliveryInfo: true,
       showQuickView: true,
       buttonSize: "h-12 text-base",
@@ -182,6 +183,24 @@ export function ProductCard({ product = {}, variant = "featured" }) {
       showQuickView: true,
       buttonSize: "h-12 text-base",
       maxBadges: 4,
+    },
+    list: {
+      containerClass:
+        "flex flex-col sm:flex-row gap-4 sm:gap-6 rounded-xl hover:shadow-xl transition-all duration-300 hover:bg-gray-50/70 dark:hover:bg-gray-800/40 border border-gray-200 dark:border-slate-800 sm:h-60",
+      imageHeight: "h-40 sm:h-full sm:w-48 md:w-56 lg:w-56 flex-shrink-0",
+      padding: "p-3 sm:py-4 sm:pr-3 sm:pl-5",
+      spacing: "space-y-2 sm:space-y-3",
+      titleSize: "text-lg sm:text-xl font-semibold leading-snug line-clamp-2",
+      showBrand: true,
+      showCategories: true,
+      showDescription: true,
+      showColors: true,
+      showSizes: true,
+      showDetailedPrice: false,
+      showDeliveryInfo: false,
+      showQuickView: false,
+      buttonSize: "h-10 sm:h-11 text-sm",
+      maxBadges: 3,
     },
   };
 
@@ -352,10 +371,19 @@ export function ProductCard({ product = {}, variant = "featured" }) {
         </div>
       )}
 
-      {/* Product image */}
-      <Link href={`/products/${p.slug || p._id}`} className="block">
+      {/* Product image with wrapper for list view */}
+      <Link
+        href={`/products/${p.slug || p._id}`}
+        className={`block ${variant === "list" ? "sm:h-full" : ""}`}
+      >
         <div
-          className={`relative ${config.imageHeight} bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 overflow-hidden`}
+          className={`relative ${
+            config.imageHeight
+          } bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-800 dark:to-slate-900 overflow-hidden ${
+            variant === "list"
+              ? "rounded-xl sm:rounded-l-xl sm:rounded-r-none sm:shadow-md dark:sm:shadow-slate-900/30"
+              : "rounded-t-xl"
+          }`}
         >
           {/* Loading skeleton */}
           {imageLoading && (
@@ -368,7 +396,16 @@ export function ProductCard({ product = {}, variant = "featured" }) {
             src={p.mainImage || p.images?.[0]}
             alt={p.name || "Product image"}
             fill
-            className="object-contain transition-all duration-700 group-hover:scale-110 p-2 md:p-3"
+            sizes={
+              variant === "list"
+                ? "(max-width: 640px) 100vw, (max-width: 768px) 224px, 256px"
+                : "(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+            }
+            className={`transition-all duration-700 group-hover:scale-110 ${
+              variant === "list"
+                ? "object-cover object-center"
+                : "object-contain p-2 md:p-3"
+            }`}
             onLoad={() => setImageLoading(false)}
           />
 
@@ -401,7 +438,13 @@ export function ProductCard({ product = {}, variant = "featured" }) {
       </Link>
 
       {/* Product info section */}
-      <div className={`${config.padding} ${config.spacing}`}>
+      <div
+        className={`${config.padding} ${config.spacing} ${
+          variant === "list"
+            ? "flex-grow sm:flex sm:flex-col sm:justify-between sm:h-full"
+            : ""
+        }`}
+      >
         {/* Brand and categories - conditional */}
         {(config.showBrand || config.showCategories) && (
           <div className="flex items-center justify-between flex-wrap gap-2">
@@ -431,7 +474,9 @@ export function ProductCard({ product = {}, variant = "featured" }) {
         {/* Product title */}
         <Link href={`/products/${p.slug || p._id}`} className="block">
           <h3
-            className={`hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-2 leading-tight text-gray-900 dark:text-white ${config.titleSize}`}
+            className={`hover:text-blue-600 dark:hover:text-blue-400 transition-colors line-clamp-2 leading-tight text-gray-900 dark:text-white ${
+              config.titleSize
+            } ${variant === "list" ? "sm:text-xl sm:font-semibold" : ""}`}
           >
             {p.name}
           </h3>
@@ -439,17 +484,27 @@ export function ProductCard({ product = {}, variant = "featured" }) {
 
         {/* Description - only for detailed variants */}
         {config.showDescription && p.description && (
-          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+          <p
+            className={`text-sm text-gray-600 dark:text-gray-400 ${
+              variant === "list" ? "line-clamp-3 sm:my-3" : "line-clamp-2"
+            }`}
+          >
             {p.description}
           </p>
         )}
 
         {/* Rating and stock - simplified for compact */}
-        <div className="flex items-center justify-between flex-wrap gap-2">
+        <div
+          className={`flex items-center justify-between flex-wrap gap-2 ${
+            variant === "list" ? "sm:mt-1" : ""
+          }`}
+        >
           <div
             className={`flex items-center ${
               variant === "compact"
                 ? "bg-transparent px-0 py-0 border-0"
+                : variant === "list"
+                ? "bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 rounded-full px-2 py-1 border border-amber-100 dark:border-amber-900/30"
                 : "bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 rounded-full px-2 py-1 border border-amber-100 dark:border-amber-900/30"
             }`}
           >
@@ -457,7 +512,9 @@ export function ProductCard({ product = {}, variant = "featured" }) {
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
-                  className={`h-3 w-3 ${
+                  className={`${
+                    variant === "list" ? "h-3.5 w-3.5" : "h-3 w-3"
+                  } ${
                     star <= Math.floor(p.rating || 0)
                       ? "text-amber-400 fill-amber-400"
                       : "text-gray-300 dark:text-gray-600"
@@ -465,7 +522,11 @@ export function ProductCard({ product = {}, variant = "featured" }) {
                 />
               ))}
             </div>
-            <span className="ml-1 text-xs text-amber-700 dark:text-amber-300 font-medium">
+            <span
+              className={`ml-1 ${
+                variant === "list" ? "text-xs" : "text-xs"
+              } text-amber-700 dark:text-amber-300 font-medium`}
+            >
               {(p.rating || 0).toFixed(1)}
               {variant !== "compact" && ` (${p.numReviews || 0})`}
             </span>
@@ -473,9 +534,23 @@ export function ProductCard({ product = {}, variant = "featured" }) {
 
           {/* Stock status - simplified for compact */}
           {variant !== "compact" && !isOutOfStock && (
-            <div className="flex items-center text-emerald-600 dark:text-emerald-400 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 px-2 py-1 rounded-full border border-emerald-100 dark:border-emerald-900/30">
-              <Check className="h-3 w-3 mr-1" />
-              <span className="text-xs font-medium">In Stock</span>
+            <div
+              className={`flex items-center text-emerald-600 dark:text-emerald-400 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 ${
+                variant === "list" ? "px-3 py-1.5" : "px-2 py-1"
+              } rounded-full border border-emerald-100 dark:border-emerald-900/30`}
+            >
+              <Check
+                className={`${
+                  variant === "list" ? "h-3.5 w-3.5" : "h-3 w-3"
+                } mr-1`}
+              />
+              <span
+                className={`${
+                  variant === "list" ? "text-xs" : "text-xs"
+                } font-medium`}
+              >
+                In Stock
+              </span>
             </div>
           )}
         </div>
@@ -485,19 +560,35 @@ export function ProductCard({ product = {}, variant = "featured" }) {
           className={
             variant === "compact"
               ? "space-y-1"
+              : variant === "list"
+              ? "space-y-1 flex-shrink-0 sm:mt-auto sm:pt-2"
               : "space-y-2 bg-gradient-to-br from-blue-50/50 to-purple-50/30 dark:from-blue-950/20 dark:to-purple-950/10 p-3 rounded-xl border border-blue-100/50 dark:border-blue-900/30"
           }
         >
-          <div className="flex items-center gap-2">
+          <div
+            className={`flex ${
+              variant === "list" ? "flex-col sm:items-start" : "items-center"
+            } gap-2`}
+          >
             <span
               className={`font-bold text-gray-900 dark:text-white ${
-                variant === "compact" ? "text-lg" : "text-xl md:text-2xl"
+                variant === "compact"
+                  ? "text-lg"
+                  : variant === "list"
+                  ? "text-xl sm:text-2xl"
+                  : "text-xl md:text-2xl"
               }`}
             >
               ₹{discountedPrice.toLocaleString("en-IN")}
             </span>
             {isSale && (
-              <Badge className="bg-gradient-to-r from-red-500 to-rose-500 text-white text-xs font-medium px-1.5 py-0.5 rounded-full">
+              <Badge
+                className={`bg-gradient-to-r from-red-500 to-rose-500 text-white ${
+                  variant === "list"
+                    ? "text-sm px-2 py-0.5"
+                    : "text-xs px-1.5 py-0.5"
+                } font-medium rounded-full`}
+              >
                 {discountPercentage}% OFF
               </Badge>
             )}
@@ -557,21 +648,33 @@ export function ProductCard({ product = {}, variant = "featured" }) {
 
         {/* Colors - only for supported variants */}
         {config.showColors && p.colors && p.colors.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap">
+          <div
+            className={`flex items-center gap-2 flex-wrap ${
+              variant === "list" ? "sm:inline-flex" : ""
+            }`}
+          >
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
               Colors:
             </span>
             <div className="flex gap-1">
-              {p.colors.slice(0, 4).map((color, index) => (
+              {p.colors
+                .slice(0, variant === "list" ? 4 : 4)
+                .map((color, index) => (
+                  <div
+                    key={index}
+                    className={`${
+                      variant === "list" ? "w-4 h-4" : "w-5 h-5"
+                    } rounded-full border-2 border-white dark:border-slate-700 shadow-sm hover:scale-110 transition-transform cursor-pointer`}
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              {p.colors.length > (variant === "list" ? 4 : 4) && (
                 <div
-                  key={index}
-                  className="w-5 h-5 rounded-full border-2 border-white dark:border-slate-700 shadow-sm hover:scale-110 transition-transform cursor-pointer"
-                  style={{ backgroundColor: color }}
-                />
-              ))}
-              {p.colors.length > 4 && (
-                <div className="w-5 h-5 rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs font-bold text-gray-500">
-                  +{p.colors.length - 4}
+                  className={`${
+                    variant === "list" ? "w-4 h-4" : "w-5 h-5"
+                  } rounded-full border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center text-xs font-bold text-gray-500`}
+                >
+                  +{p.colors.length - (variant === "list" ? 4 : 4)}
                 </div>
               )}
             </div>
@@ -580,20 +683,28 @@ export function ProductCard({ product = {}, variant = "featured" }) {
 
         {/* Sizes - only for supported variants */}
         {config.showSizes && p.sizes && p.sizes.length > 0 && (
-          <div className="flex items-center gap-2 flex-wrap">
+          <div
+            className={`flex items-center gap-2 flex-wrap ${
+              variant === "list" ? "sm:inline-flex" : ""
+            }`}
+          >
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
               Sizes:
             </span>
             <div className="flex gap-1">
-              {p.sizes.slice(0, 4).map((size, index) => (
-                <Badge
-                  key={index}
-                  variant="outline"
-                  className="text-xs px-1.5 py-0.5 border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
-                >
-                  {size}
-                </Badge>
-              ))}
+              {p.sizes
+                .slice(0, variant === "list" ? 4 : 4)
+                .map((size, index) => (
+                  <Badge
+                    key={index}
+                    variant="outline"
+                    className={`text-xs ${
+                      variant === "list" ? "px-1 py-0" : "px-1.5 py-0.5"
+                    } border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer`}
+                  >
+                    {size}
+                  </Badge>
+                ))}
             </div>
           </div>
         )}
@@ -601,22 +712,32 @@ export function ProductCard({ product = {}, variant = "featured" }) {
         {/* Add to cart button */}
         <Button
           onClick={handleAddToCart}
-          className={`w-full rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl ${
-            config.buttonSize
+          className={`${
+            variant === "list" ? "sm:w-auto sm:px-8 sm:mt-auto" : "w-full"
+          } rounded-xl font-bold transition-all duration-300 shadow-lg hover:shadow-xl ${
+            variant === "list" ? "sm:h-11 sm:text-sm" : config.buttonSize
           } ${
             !isOutOfStock
-              ? "bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white hover:scale-[1.02] active:scale-[0.98]"
+              ? `bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white hover:scale-[1.02] active:scale-[0.98] ${
+                  variant === "list" ? "sm:hover:scale-105" : ""
+                }`
               : "bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed"
           }`}
           disabled={isOutOfStock || useCartStore.getState().loading}
         >
-          <ShoppingCart className="h-4 w-4 mr-2" />
+          <ShoppingCart
+            className={`${
+              variant === "list" ? "sm:h-5 sm:w-5" : "h-4 w-4"
+            } mr-2`}
+          />
           {useCartStore.getState().loading
             ? "Adding..."
             : isOutOfStock
             ? "Out of Stock"
             : variant === "compact"
             ? "Add"
+            : variant === "list"
+            ? "Add to Cart"
             : "Add to Cart"}
         </Button>
       </div>
